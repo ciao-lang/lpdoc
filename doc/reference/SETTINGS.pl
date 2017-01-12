@@ -27,14 +27,14 @@ doc_structure :=
 	    'metaprops/meta_props',
 	    'lpdoc_examples',
 	    'example_module',
-	    'rtchecks_doc',
-	    'unittest'-
-               ['unittest/unittest_props',
-		'unittestdecls_doc',
-		% 'unittest/unittest_utils',
-		'unittest/unittest_statistics',
-		'unittest/unittest_examples'
-	       ],
+%	    'rtchecks_doc',
+%	    'unittest'-
+%               ['unittest/unittest_props',
+%		'unittestdecls_doc',
+%		% 'unittest/unittest_utils',
+%		'unittest/unittest_statistics',
+%		'unittest/unittest_examples'
+%	       ],
 	    'lpdoc_install'
           ],
 	  'Internals'-[
