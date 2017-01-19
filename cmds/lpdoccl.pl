@@ -126,7 +126,7 @@ usage :-
 
 % ---------------------------------------------------------------------------
 
-:- use_module(library(hiordlib), [map/3]).
+:- use_module(library(hiordlib), [maplist/3]).
 
 % Parse options and normal arguments
 parse_opts([Opt|Args], Rest) :-
@@ -162,7 +162,7 @@ parse_name_value_string(NameValue, Name, ValueS) :-
 
 % Replace 0'- by 0'_ in names of flags
 norm_name(Cs0, Cs) :-
-	map(Cs0, normunderscore, Cs).
+	maplist(normunderscore, Cs0, Cs).
 
 normunderscore(0'-, 0'_) :- !.
 normunderscore(C,   C).
