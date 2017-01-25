@@ -106,7 +106,7 @@ get_infodir(all, Prefix) := ~path_concat(Prefix, 'share/info').
 % ============================================================================
 :- doc(section, "Build rules").
 
-'$builder_hook'(prebuild_bin) :-
+'$builder_hook'(prepare_build_bin) :-
 	generate_version_auto_lpdoc.
 
 :- use_module(library(bundle/bundle_paths), [bundle_path/3]).
