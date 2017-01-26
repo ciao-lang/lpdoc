@@ -2,7 +2,7 @@
           distribution. }
 
 The source and binaries distributions of @apl{lpdoc} are currently
-included in @apl{Ciao} (@href{http://ciao-lang.org}). Please, refer to
+included in @apl{Ciao} (@href{https://ciao-lang.org}). Please, refer to
 the @apl{Ciao} installation instructions for more details regarding
 the building and installation process.
 
