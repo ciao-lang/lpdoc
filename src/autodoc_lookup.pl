@@ -85,6 +85,7 @@ html_doc_file(Spec, HtmlFile) :-
 	% Enumerate candidates for manuals (nondet)
 	man_bundle(Bundle, ManBundle),
 	% Compose path for module documentation
+	ensure_load_manifest(ManBundle), % TODO: slow?
 	bundle_manual_htmldir(ManBundle, HtmlDir),
 	( Basename = '' ->
 	    html_doc_entry(HtmlDir, Base)
@@ -101,7 +102,7 @@ html_doc_file(Spec, HtmlFile) :-
 man_bundle(Bundle, ManBundle) :-
 	% (nondet)
 	( Bundle = core ->
-	    ( ManBundle = core ; ManBundle = doc )
+	    ( ManBundle = core ; ManBundle = alldocs )
 	; ManBundle = Bundle
 	).
 
