@@ -19,11 +19,11 @@ local_inst_doc_dir := ~bundle_path(core, builddir, 'doc').
       "Define this to be the directory in which you wish the documentation\n"||
       "to be installed."),
     rule_set_value(Value, (
-      flag(ciao:instype(InsType)),
+      flag(builder:instype(InsType)),
       InsType == 'local', local_inst_doc_dir(Value))),
     rule_default(DefValue, (
-      flag(ciao:registration_type(SysregType)),
-      flag(ciao:install_prefix(Prefix)),
+      flag(builder:registration_type(SysregType)),
+      flag(builder:install_prefix(Prefix)),
       get_docdir(SysregType, Prefix, DefValue))),
     %
     interactive
@@ -37,11 +37,11 @@ get_docdir(all, Prefix) := ~path_concat(Prefix, 'share/doc/ciao').
       "Define this to be the directory in which you wish the documentation\n"||
       "in HTML format to be installed."),
     rule_set_value(Value, (
-      flag(ciao:instype(InsType)),
+      flag(builder:instype(InsType)),
       InsType == 'local', local_inst_doc_dir(Value))),
     rule_default(DefValue, (
-      flag(ciao:registration_type(SysregType)),
-      flag(ciao:install_prefix(Prefix)),
+      flag(builder:registration_type(SysregType)),
+      flag(builder:install_prefix(Prefix)),
       get_htmldir(SysregType, Prefix, DefValue))),
     %
     interactive
@@ -54,10 +54,10 @@ get_htmldir(all, Prefix) := ~path_concat(Prefix, 'share/doc/ciao').
       % .....................................................................
       "Define the URL to access the previous directory via WWW."),
     rule_set_value(Value, (
-      flag(ciao:instype(InsType)),
+      flag(builder:instype(InsType)),
       InsType == 'local', local_inst_doc_dir(Value))),
     rule_default(DefValue, (
-      flag(ciao:registration_type(SysregType)),
+      flag(builder:registration_type(SysregType)),
       get_htmlurl(SysregType, DefValue))),
     %
     interactive
@@ -73,11 +73,11 @@ get_htmlurl(user) := ~path_concat(~atom_concat('/~', ~get_pwnam), 'Ciao/').
       "Define this to be the directory in which you wish the man (unix manual\n"||
       "entry) file to be installed.\n"),
     rule_set_value(Value, (
-      flag(ciao:instype(InsType)),
+      flag(builder:instype(InsType)),
       InsType == 'local', local_inst_doc_dir(Value))),
     rule_default(DefValue, (
-      flag(ciao:registration_type(SysregType)),
-      flag(ciao:install_prefix(Prefix)),
+      flag(builder:registration_type(SysregType)),
+      flag(builder:install_prefix(Prefix)),
       get_mandir(SysregType, Prefix, DefValue))),
     %
     interactive
@@ -91,11 +91,11 @@ get_mandir(all, Prefix) := ~path_concat(Prefix, 'share/man').
       "Define this to be the directory in which you wish the info file\n"||
       "installed.  Ideally, this directory should be accesible via emacs.\n"),
     rule_set_value(Value, (
-      flag(ciao:instype(InsType)),
+      flag(builder:instype(InsType)),
       InsType == 'local', local_inst_doc_dir(Value))),
     rule_default(DefValue, (
-      flag(ciao:registration_type(SysregType)),
-      flag(ciao:install_prefix(Prefix)),
+      flag(builder:registration_type(SysregType)),
+      flag(builder:install_prefix(Prefix)),
       get_infodir(SysregType, Prefix, DefValue))),
     %
     interactive
