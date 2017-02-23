@@ -41,13 +41,12 @@ get_docdir(all, Prefix) := ~path_concat(Prefix, 'share/doc/ciao').
       InsType == 'local', local_inst_doc_dir(Value))),
     rule_default(DefValue, (
       flag(ciao:registration_type(SysregType)),
-      get_htmldir(SysregType, DefValue))),
+      flag(ciao:install_prefix(Prefix)),
+      get_htmldir(SysregType, Prefix, DefValue))),
     %
     interactive
 ]).
-% TODO: trailing /?
-get_htmldir(all) := '/var/www/html/ciao'.
-% get_htmldir(user) := ~atom_concat(~path_concat(~get_home, 'public_html/Ciao'), '/').
+get_htmldir(all, Prefix) := ~path_concat(Prefix, 'share/doc/ciao').
 
 :- bundle_flag(htmlurl, [
     comment("URL for installed HTML documents"),
