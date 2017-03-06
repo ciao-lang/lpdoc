@@ -142,7 +142,7 @@ ensure_lpdoclib_defined :-
 :- doc(section, "Checking or Setting Options").
 
 :- use_module(library(system)).
-:- use_module(library(bundle/doc_flags), [docformatdir/2]).
+:- use_module(library(bundle/bundle_paths), [bundle_path/4]).
 
 % (With implicit default value)
 :- export(setting_value_or_default/2).
@@ -160,13 +160,8 @@ setting_value_or_default(Name, Value) :-
 % TODO: Use defaults from doccfg package instead?
 default_val(startpage) := 1.
 default_val(papertype) := afourpaper.
-default_val(perms) := perms(rwX, rX, rX).
-default_val(owner) := ~get_pwnam.
-default_val(group) := G :- ( G = ~get_grnam -> true ; G = 'unknown' ).
-default_val(htmldir) := ~docformatdir(html).
-default_val(docdir) := ~docformatdir(any).
-default_val(infodir) := ~docformatdir(info).
-default_val(mandir) := ~docformatdir(manl).
+% TODO: wrong; only for html backend; use output_name instead?
+default_val(htmldir) := ~bundle_path(core, builddir, 'doc').
 
 :- export(setting_value/2).
 setting_value(Name, Value) :-

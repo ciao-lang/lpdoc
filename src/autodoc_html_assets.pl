@@ -63,7 +63,7 @@ prepare_assets(Dirs) :-
 	; true
 	).
 
-:- use_module(library(source_tree), [copy_file_tree/5]).
+:- use_module(library(source_tree), [copy_file_tree/4]).
 
 %:- export(prepare_asset/1).
 :- pred prepare_asset(+SrcDir)
@@ -71,17 +71,12 @@ prepare_assets(Dirs) :-
 % TODO: Avoid copy if not necessary
 prepare_asset(SrcDir) :-
 	HtmlDir = ~setting_value_or_default(htmldir),
-	Owner = ~setting_value_or_default(owner),
-	Group = ~setting_value_or_default(group),
-	Perms = ~setting_value_or_default(perms),
-	%
 	( file_exists(SrcDir) ->
 	    true
 	; error_message("No asset found at '~w'", [SrcDir]),
 	  fail
 	),
-	copy_file_tree(installable_precomp(full),
-	               SrcDir, HtmlDir, Perms, owner(Owner, Group)).
+	copy_file_tree(installable_precomp(full), SrcDir, HtmlDir, _Perms).
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Math engine (MathJax)").

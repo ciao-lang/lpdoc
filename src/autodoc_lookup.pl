@@ -28,8 +28,6 @@
     bundle_manual_base/2
 ]).
 
-% TODO: doc_flags has implicit initialization (avoid it)
-:- use_module(library(bundle/doc_flags), [docformat/1, docformatdir/2]).
 :- use_module(library(bundle/bundle_paths),
 	[bundle_path/3, bundle_path/4,
 	 reverse_bundle_path/3, ext_find_pl_filename/3]).
@@ -107,12 +105,11 @@ man_bundle(Bundle, ManBundle) :-
 	).
 
 % HtmlDir for specified Bundle manual
-% TODO: Only one manual per bundle is allowed
-% TODO: TargetDir is ignored, does not work for installed docs
+% NOTE: backtracks on available manuals
+% TODO: share code
 bundle_manual_htmldir(Bundle, HtmlDir) :-
 	'$bundle_id'(Bundle),
-	docformat(DocFormat), DocFormat = 'html',
-	docformatdir(DocFormat, _TargetDir), % TODO: TargetDir ignored!
+	DocFormat = 'html',
 	NoExt = ~bundle_manual_base(Bundle),
 	FileName = ~atom_concat([NoExt, '.', DocFormat]),
 	DocDir = ~bundle_path(Bundle, builddir, 'doc'),

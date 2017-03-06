@@ -180,61 +180,6 @@
 ]).
 
 % ---------------------------------------------------------------------------
-% Installation options
-% (You only need to change these if you will be installing the docs somewhere)
-
-% Where documentation will be installed
-
-:- pred htmldir/1 => dirpath 
-# "Directory where the @tt{html} manual will be generated.".
-:- export(htmldir/1).
-:- default_def(htmldir/1, [(htmldir(_) :- fail)]).
-
-:- pred docdir/1 => dirpath
-# "Directory in which you want the document(s) installed.".
-:- export(docdir/1).
-:- default_def(docdir/1, [(docdir(_) :- fail)]).
-
-:- pred infodir/1 => dirpath
-# "Directory in which you want the @tt{info} file installed.".
-:- export(infodir/1).
-:- default_def(infodir/1, [(infodir(_) :- fail)]).
-
-:- pred mandir/1 => dirpath 
-# "Directory in which the @tt{man} file will be installed.".
-:- export(mandir/1).
-:- default_def(mandir/1, [(mandir(_) :- fail)]).
-
-% Permissions
-
-% :- pred datamode(DataPermissions) => permission_term
-% # "Define this to be the mode for automatically generated data
-%    files.".
-% :- export(datamode/1).
-% :- default_def(datamode/1, [(datamode(_) :- fail)]).
-% 
-% :- pred execmode(ExecPermissions) => permission_term
-% # "Define this to be the mode for automatically generated
-%    directories and executable files.".
-% :- export(execmode/1).
-% :- default_def(execmode/1, [(execmode(_) :- fail)]).
-
-:- pred perms(Permissions) => permission_term
-# "Permissions for installation.".
-:- export(perms/1).
-:- default_def(perms/1, [(perms(_) :- fail)]).
-
-:- pred owner(Owner) => term
-# "Owner for installation.".
-:- export(owner/1).
-:- default_def(owner/1, [(owner(_) :- fail)]).
-
-:- pred group(Group) => term
-# "Group for installation.".
-:- export(group/1).
-:- default_def(group/1, [(group(_) :- fail)]).
-
-% ---------------------------------------------------------------------------
 % Settings for texinfo backend
 
 :- pred autogen_warning/1 => yesno
@@ -251,6 +196,12 @@
 # "Layout for html output.".
 :- export(html_layout/1).
 :- default_def(html_layout/1, [(html_layout(_) :- fail)]).
+
+% TODO: strange... why not use output_name?
+:- pred htmldir/1 => dirpath 
+# "Directory where the @tt{html} manual will be generated.".
+:- export(htmldir/1).
+:- default_def(htmldir/1, [(htmldir(_) :- fail)]).
 
 :- pred htmlurl/1 => term
 # "Deploy URL for html output".

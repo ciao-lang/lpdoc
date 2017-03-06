@@ -112,27 +112,3 @@ supported_papertype := afourthesis.
 
 yesno := yes|no.
 
-:- export(permission_term/1).
-:- regtype permission_term/1 # "Permisions: @includedef{permission_term/1}.".
-
-permission_term(perms(User, Group, Others)) :-
-	permission(User),
-	permission(Group),
-	permission(Others).
-
-:- export(permission/1).
-:- regtype permission(P)
-   # "Possible permisions: @includedef{permission/1}.".
-
-permission := x.
-permission := w.
-permission := wx.
-permission := r.
-permission := rx.
-permission := rX.
-permission := rw.
-permission := rwx.
-permission := 'X'.
-permission := wX.
-permission := rwX.
-

@@ -3,7 +3,7 @@
 
 :- doc(filetype, documentation).
 
-:- doc(title,"Generating Installing and Accessing Manuals").
+:- doc(title,"Generating and Accessing Manuals").
 
 :- doc(author,"Manuel Hermenegildo").
 
@@ -12,15 +12,15 @@
 @cindex{generating manuals}
 
 @begin{alert}   
-@bf{Note: significant parts of this are obsolete.  They must be
-updated to describe lpdoc version 2.0.}
+@bf{NOTE: This documentation needs to be updated}: it must include
+references to the Ciao builder (for installing manuals) and revisit
+the @tt{lpdoc} command line options.
 @end{alert}
 
-This section describes how to generate a manual (semi-)automatically from
-a set of source files using @apl{lpdoc}, how to install it in a
-public area, and how to access it on line. It also includes some
-recommendations for improving the layout of manuals, @concept{usage
-tips}, and @concept{troubleshooting} advice.
+This section describes how to generate a manual (semi-)automatically
+from a set of source files using @apl{lpdoc} and how to access it. It
+also includes some recommendations for improving the layout of
+manuals, @concept{usage tips}, and @concept{troubleshooting} advice.
 
 @section{Generating a manual from the Ciao Emacs mode} 
 
@@ -33,7 +33,7 @@ tips}, and @concept{troubleshooting} advice.
 If you use the @apl{Emacs} editor (highly recommended in all
 circumstances), then the simplest way to quickly generate a manual is
 by doing it from the @concept{Ciao Emacs mode} (this mode comes with
-the Ciao Prolog distribution and is automatically installed with
+the Ciao distribution and is automatically installed with
 Ciao). The Ciao Emacs mode provides menu- and keyboard-binding driven
 facilities for generating a standalone document with the
 documentation corresponding to the file in the buffer being visited by
@@ -335,12 +335,12 @@ manuals in the target formats during installation.
 % files must reside in the directory in which the documentation is being
 % generated.
 
-"Several manuals, coming from different @tt{doc} directories, can be
-installed in the same @tt{docdir} directory. In this case, the
-descriptions of and pointers to the different manuals will be
-automatically combined (appearing in alphabetic order) in the
-@tt{index.html} and/or @tt{dir} indices, and a @index{contents area}
-will appear at the beginning of the @index{html index page}." ||
+% "Several manuals, coming from different @tt{doc} directories, can be
+% installed in the same @tt{docdir} directory. In this case, the
+% descriptions of and pointers to the different manuals will be
+% automatically combined (appearing in alphabetic order) in the
+% @tt{index.html} and/or @tt{dir} indices, and a @index{contents area}
+% will appear at the beginning of the @index{html index page}." ||
 
 % NOTE: It should not be a problem nowadays (we do most things in Prolog)
 	
@@ -361,23 +361,23 @@ will appear at the beginning of the @index{html index page}." ||
 % 
 % "||
 
-"Note that, depending on the structure of the manuals being generated,
-some formats are not very suitable for public installation. For
-example, the @tt{.dvi} format has the disadvantage that it is not self
-contained if images are included in the manual."||
+% "Note that, depending on the structure of the manuals being generated,
+% some formats are not very suitable for public installation. For
+% example, the @tt{.dvi} format has the disadvantage that it is not self
+% contained if images are included in the manual."||
 
 % The @file{Makefile} also makes provisions for manual deinstallation from
 % the installation area. 
 
-"Typing @tt{lpdoc uninstall} in a @tt{doc} directory will uninstall
-from @tt{docdir} the manuals corresponding to the @file{Makefile} in
-that @tt{doc} directory.  If a manual is already installed and changes
-in the number of formats being installed are desired, @tt{lpdoc
-uninstall} should be made before changing the @tt{docformats} variable
-and doing @tt{lpdoc install} again. This is needed in order to ensure
-that a complete cleanup is performed.
+% "Typing @tt{lpdoc uninstall} in a @tt{doc} directory will uninstall
+% from @tt{docdir} the manuals corresponding to the @file{Makefile} in
+% that @tt{doc} directory.  If a manual is already installed and changes
+% in the number of formats being installed are desired, @tt{lpdoc
+% uninstall} should be made before changing the @tt{docformats} variable
+% and doing @tt{lpdoc install} again. This is needed in order to ensure
+% that a complete cleanup is performed."||
 
-@section{Enhancing the documentation being generated} 
+"@section{Enhancing the documentation being generated} 
 
 The quality of the documentation generated can be greatly enhanced by
 including within the program text:
@@ -445,12 +445,7 @@ Once generated, the @tt{.html} files can be viewed using any standard
 @apl{WWW} browser, e.g., @apl{Firefox} (a command @tt{lpdoc htmlview}
 is available which, if there is an instance of a web browser running
 in the machine, will make that instance visit the manual in @tt{html}
-format). To make these files publicly readable on the WWW, they
-should be copied into a directory visible by browsers running in other
-machines, such as @tt{/home/clip/public_html/lpdoc_docs},
-@tt{/usr/home/httpd/htmldocs/lpdoc_docs}, etc. As mentioned before,
-this is easily done by setting the @tt{docdir} variable in the
-@file{SETTINGS.pl} file to this directory and typing @tt{lpdoc install}.
+format).
 
 @subsection{Accessing info manuals} 
 
@@ -461,86 +456,86 @@ available from the GNU project sites. To view the a generated
 installed in a common area), type @tt{C-u M-x info}. This will prompt
 for an info file name. @cindex{Emacs, accessing info files} Input the
 name of the info file generated by @apl{lpdoc} (@tt{main}@tt{.info})
-and @apl{Emacs} will open the manual in info mode.
+and @apl{Emacs} will open the manual in info mode."||
 
-There are several possibilities in order to install an @tt{.info} file
-so that it is publicly available, i.e., so that it appears
-automatically with all other @apl{info} manuals when starting
-@apl{info} or typing @tt{C-u M-x info} in Emacs:
+% "There are several possibilities in order to install an @tt{.info} file
+% so that it is publicly available, i.e., so that it appears
+% automatically with all other @apl{info} manuals when starting
+% @apl{info} or typing @tt{C-u M-x info} in Emacs:
+% 
+%   @begin{itemize}
+% 
+%   @item @bf{Installation in the common info directory:} 
+% 
+%         @begin{itemize}
+% 
+%         @item Move the @tt{.info} file to the common info directory
+%         (typically @tt{/usr/info}, @tt{/usr/local/info}, ..). This can
+%         be done automatically by setting the @tt{docdir} variable in
+%         the @file{SETTINGS.pl} file to this directory and typing
+%         @tt{lpdoc install}.
+% 
+%         @bf{Warning:} if you are installing in an @apl{info} directory
+%         that is not maintained automatically by @apl{lpdoc}, make
+%         sure that you have not selected the @tt{infoindex} option in
+%         @tt{docformats}, since this will overwrite the existing
+%         @file{dir} file).
+% 
+%         @item Add an entry to the @apl{info} index in that directory
+%         (normally a file in that directory called @tt{dir}). The
+%         manual should appear as part of the normal set of manuals
+%         available when typing @tt{M-x info} in @apl{Emacs} or
+%         @apl{info} in a shell. See the @apl{Emacs} manual for details.
+% 
+%         @end{itemize}
+% 
+%   @item @bf{Installation in a different info directory:} you may want
+%   to place one or more manuals generated by @tt{lpdoc} in their own
+%   directory. This has the advantage that @tt{lpdoc} will maintain
+%   automatically an index for all the @apl{lpdoc} generated manuals
+%   installed in that directory. In order for such manuals to appear
+%   when typing @tt{M-x info} in @apl{Emacs} or @apl{info} in a shell
+%   there are two requirements:
+% 
+%         @begin{itemize}
+% 
+%         @item This directory must contain a @tt{dir} index. The first
+%         part of the process can all be done automatically by setting
+%         the @tt{docdir} variable in the @file{SETTINGS.pl} file to this
+%         directory, including the @tt{infoindex} option in
+%         @tt{docformats}, and typing @tt{lpdoc install}. This will
+%         install the info manual in directory @tt{docdir} and update
+%         the @tt{dir} file there. @tt{lpdoc uninstall} does the
+%         opposite, eliminating also the manual from the index.
+% 
+%         @item The directory must be added to the @index{info path
+%         list}.  The easiest way to do this is to set the @tt{INFOPATH}
+%         environment variable. For example, assuming that we are
+%         installing the @apl{info} manual in
+%         @tt{/home/clip/public_html/lpdoc_docs} and that @tt{/usr/info} is
+%         the common @tt{info} directory, for @apl{csh} in @tt{.cshrc}:
+% 
+%         @tt{setenv INFOPATH /usr/info:/home/clip/public_html/lpdoc_docs}
+% 
+%         Adding the directory to the info path list can also be done
+%         within Emacs, by including the following line in the
+%         @tt{.Emacs} file:
+% 
+% @begin{verbatim}
+% (defun add-info-path (newpath)
+%   (setq Info-default-directory-list
+% 	(cons (expand-file-name newpath) Info-default-directory-list)))
+% (add-info-path ""/home/clip/public_html/lpdoc_docs"")
+% (add-info-path ""/usr/info/"")
+% @end{verbatim}
+% 
+%         However, this has the disadvantage that it will not be seen by
+%         the standalone @apl{info} command.
+% 
+%         @end{itemize}
+% @end{itemize}"||
 
-  @begin{itemize}
-
-  @item @bf{Installation in the common info directory:} 
-
-        @begin{itemize}
-
-        @item Move the @tt{.info} file to the common info directory
-        (typically @tt{/usr/info}, @tt{/usr/local/info}, ..). This can
-        be done automatically by setting the @tt{docdir} variable in
-        the @file{SETTINGS.pl} file to this directory and typing
-        @tt{lpdoc install}.
-
-        @bf{Warning:} if you are installing in an @apl{info} directory
-        that is not maintained automatically by @apl{lpdoc}, make
-        sure that you have not selected the @tt{infoindex} option in
-        @tt{docformats}, since this will overwrite the existing
-        @file{dir} file).
-
-        @item Add an entry to the @apl{info} index in that directory
-        (normally a file in that directory called @tt{dir}). The
-        manual should appear as part of the normal set of manuals
-        available when typing @tt{M-x info} in @apl{Emacs} or
-        @apl{info} in a shell. See the @apl{Emacs} manual for details.
-
-        @end{itemize}
-
-  @item @bf{Installation in a different info directory:} you may want
-  to place one or more manuals generated by @tt{lpdoc} in their own
-  directory. This has the advantage that @tt{lpdoc} will maintain
-  automatically an index for all the @apl{lpdoc} generated manuals
-  installed in that directory. In order for such manuals to appear
-  when typing @tt{M-x info} in @apl{Emacs} or @apl{info} in a shell
-  there are two requirements:
-
-        @begin{itemize}
-
-        @item This directory must contain a @tt{dir} index. The first
-        part of the process can all be done automatically by setting
-        the @tt{docdir} variable in the @file{SETTINGS.pl} file to this
-        directory, including the @tt{infoindex} option in
-        @tt{docformats}, and typing @tt{lpdoc install}. This will
-        install the info manual in directory @tt{docdir} and update
-        the @tt{dir} file there. @tt{lpdoc uninstall} does the
-        opposite, eliminating also the manual from the index.
-
-        @item The directory must be added to the @index{info path
-        list}.  The easiest way to do this is to set the @tt{INFOPATH}
-        environment variable. For example, assuming that we are
-        installing the @apl{info} manual in
-        @tt{/home/clip/public_html/lpdoc_docs} and that @tt{/usr/info} is
-        the common @tt{info} directory, for @apl{csh} in @tt{.cshrc}:
-
-        @tt{setenv INFOPATH /usr/info:/home/clip/public_html/lpdoc_docs}
-
-        Adding the directory to the info path list can also be done
-        within Emacs, by including the following line in the
-        @tt{.Emacs} file:
-
-@begin{verbatim}
-(defun add-info-path (newpath)
-  (setq Info-default-directory-list
-	(cons (expand-file-name newpath) Info-default-directory-list)))
-(add-info-path ""/home/clip/public_html/lpdoc_docs"")
-(add-info-path ""/usr/info/"")
-@end{verbatim}
-
-        However, this has the disadvantage that it will not be seen by
-        the standalone @apl{info} command.
-
-        @end{itemize}
-@end{itemize}
-
-Automatic, direct on-line access to the information contained in the
+"Automatic, direct on-line access to the information contained in the
 info file (e.g., going automatically to predicate descriptions by
 clicking on predicate names in programs in an @apl{Emacs} buffer) can
 be easily implemented via existing @tt{.el} packages such as
@@ -562,40 +557,43 @@ one of the subdirectories (e.g., @tt{/usr/local/man/manl}) of one of
 the main man directories (in the previous case the main directory
 would be @tt{/usr/local/man}).  As usual, any directory can be used as
 as a man main directory, provided it is included in the environment
-variable @tt{MANPATH}. Again, this process can be performed
-automatically by setting the @tt{docdir} variable in the @file{SETTINGS.pl}
-file to this directory and typing @tt{lpdoc install}.
+variable @tt{MANPATH}.
+"||
 
-@subsection{Putting it all together} 
+% "Again, this process can be performed
+% automatically by setting the @tt{docdir} variable in the @file{SETTINGS.pl}
+% file to this directory and typing @tt{lpdoc install}."||
 
-A simple, powerful, and very convenient way to use the facilities
-provided by @apl{lpdoc} for automatic installation of manuals in
-different formats is to install all manuals in all formats in the same
-directory @tt{docdir}, and to choose a directory which is also
-accessible via @tt{WWW}. After setting @tt{docdir} to this directory
-in the @file{SETTINGS.pl} file, and selecting @tt{infoindex} and
-@tt{htmlindex} for the @tt{docformats} variable, @tt{lpdoc
-install}/@tt{lpdoc uninstall} will install/uninstall all manuals in
-all the selected formats in this directory and create and maintain the
-corresponding @tt{html} and @tt{info} indices. Then, setting the
-environment variables as follows (e.g., for @apl{csh} in @tt{.cshrc}):
+% "@subsection{Putting it all together} 
+% 
+% A simple, powerful, and very convenient way to use the facilities
+% provided by @apl{lpdoc} for automatic installation of manuals in
+% different formats is to install all manuals in all formats in the same
+% directory @tt{docdir}, and to choose a directory which is also
+% accessible via @tt{WWW}. After setting @tt{docdir} to this directory
+% in the @file{SETTINGS.pl} file, and selecting @tt{infoindex} and
+% @tt{htmlindex} for the @tt{docformats} variable, @tt{lpdoc
+% install}/@tt{lpdoc uninstall} will install/uninstall all manuals in
+% all the selected formats in this directory and create and maintain the
+% corresponding @tt{html} and @tt{info} indices. Then, setting the
+% environment variables as follows (e.g., for @apl{csh} in @tt{.cshrc}):
+% 
+% @begin{verbatim}
+% setenv DOCDIR   /home/clip/public_html/lpdoc_docs
+% setenv INFOPATH /usr/local/info:$@{DOCDIR@}
+% setenv MANPATH  $@{DOCDIR@}:$@{MANPATH@}
+% @end{verbatim}
+% 
+% Example files for inclusion in user's or common shell initialization
+% files are included in the @tt{lpdoc} library.
+% 
+% More complex setups can be accommodated, as, for example, installing
+% different types of manuals in different directories. However, this
+% currently requires changing the @tt{docformats} and @tt{docdir}
+% variables and performing @tt{lpdoc install} for each installation
+% format/directory."||
 
-@begin{verbatim}
-setenv DOCDIR   /home/clip/public_html/lpdoc_docs
-setenv INFOPATH /usr/local/info:$@{DOCDIR@}
-setenv MANPATH  $@{DOCDIR@}:$@{MANPATH@}
-@end{verbatim}
-
-Example files for inclusion in user's or common shell initialization
-files are included in the @tt{lpdoc} library.
-
-More complex setups can be accommodated, as, for example, installing
-different types of manuals in different directories. However, this
-currently requires changing the @tt{docformats} and @tt{docdir}
-variables and performing @tt{lpdoc install} for each installation
-format/directory.
-
-@section{Some usage tips}
+"@section{Some usage tips}
 
 This section contains additional suggestions on the use of
 @apl{lpdoc}.
