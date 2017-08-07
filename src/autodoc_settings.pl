@@ -218,7 +218,7 @@ resolved_filepath(InDir, P) :-
 :- export(custom_html_layout/0).
 custom_html_layout :-
 	setting_value(html_layout, Layout),
-	( Layout = website_layout -> true
+	( Layout = website_layout(_) -> true
 	; Layout = tmpl_layout(_, _, _)
 	).
 

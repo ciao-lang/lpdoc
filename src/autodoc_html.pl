@@ -396,7 +396,7 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	%
 	get_css_list(CssList),
 	get_icon(MaybeIcon),
-	( setting_value(html_layout, Layout0), Layout0 = website_layout ->
+	( setting_value(html_layout, Layout0), Layout0 = website_layout(_) ->
 	    SidebarR2 = [PreSect, show_toc(vertical_menu)],
 	    Layout = nav_searchbox_menu_main,
 	    % TODO: Hardwired, fix
@@ -427,8 +427,9 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, R) :-
 	fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, R).
 
-get_icon(MaybeIcon) :- setting_value(html_layout, website_layout), !, % TODO: hardwired!
-	MaybeIcon = yes('ciao-icon16.ico').
+get_icon(MaybeIcon) :- setting_value(html_layout, website_layout(Opts)),
+	member(icon(Icon), Opts), atom(Icon), !, % TODO: document
+	MaybeIcon = yes(Icon).
 get_icon(no).
 
 :- use_module(lpdoc(autodoc_html_assets), [css_file/1]).
@@ -442,10 +443,8 @@ get_css_url(URL) :-
 	% TODO: kludge, do not include lpdoc.css (FIX: add a cleaner version)
 	\+ ( setting_value(html_layout, tmpl_layout(_, _, _)), URL = 'lpdoc.css' ).
 get_css_url(URL) :-
-	( setting_value(html_layout, website_layout) -> % TODO: hardwired!
-	    URL = 'css/website.css'
-	; fail
-	).
+	setting_value(html_layout, website_layout(Opts)),
+	member(css(URL), Opts). % TODO: document
 get_css_url(URL) :-
 	setting_value(html_layout, tmpl_layout(_, _, CssList)),
 	member(URL, CssList).
