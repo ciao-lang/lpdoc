@@ -370,62 +370,49 @@ fmt_html_prop(P, _, _) :-
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	section_prop(file_top_section, SecProps),
 	!,
-	fmt_nav(DocSt, SectPathR, UpPrevNextR),
-	( section_prop(coversec(_,_,_,_,_,_,_), SecProps) ->
-	    IsCover = yes
-	; IsCover = no
-	),
-	( docst_gdata_query(DocSt, main_title(MainTitleR)) ->
-	    true
-	; throw(error(no_main_title, fmt_section_env/6))
-	),
-	( IsCover = yes ->
-	    TitleR2 = MainTitleR
-	; TitleR2 = [TitleR, raw(" &mdash; "), MainTitleR]
-	),
-	%
-	% TODO: remove pragmas, define new comment types instead
-	( section_prop(pragmas(Pragmas), SecProps) -> true ; Pragmas = [] ),
-	%
-	( member(section_image(SectImg), Pragmas) ->
-	    img_url(SectImg, ImgSrc),
-	    PreSect = htmlenv(div, [style="text-align: center;"], 
-                              htmlenv1(img, [src=ImgSrc, class="section_image"]))
-	; PreSect = []
-	),
-	%
-	get_css_list(CssList),
-	get_icon(MaybeIcon),
-	( setting_value(html_layout, Layout0), Layout0 = website_layout(_) ->
-	    SidebarR2 = [PreSect, show_toc(vertical_menu)],
-	    Layout = nav_searchbox_menu_main,
-	    % TODO: Hardwired, fix
-	    %
-            SectR = [htmlenv(h1, TitleR), raw_nl, BodyR]
-	; setting_value(html_layout, Layout0), Layout0 = tmpl_layout(_, _, _) ->
-	    SidebarR2 = [PreSect, show_toc(vertical_menu)],
-	    Layout = Layout0,
-            SectR = BodyR
-	; Layout = nav_sidebar_main,
-	  % Optional logo
-	  ( IsCover = no, docst_gdata_query(DocSt, main_logo(Logo)) ->
-	      atom_codes(Logo, LogoS),
-	      LogoR = image(LogoS)
-	  ; LogoR = []
-	  ),
-	  SidebarR1 = show_toc(toc_view(yes)),
-	  doctree_simplify([LogoR, SidebarR1], SidebarR2),
-	  %
-	  ( IsCover = yes ->
-	      fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR)
-	  ; fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, SectR)
-	  )
-	),
-	%
-	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR2, TitleR, SectR, DocSt, R),
-	fmt_headers(Layout, MaybeIcon, CssList, TitleR2, R, ModR).
+	fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR).
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, R) :-
 	fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, R).
+
+sec_is_cover(SecProps) :-
+	section_prop(coversec(_,_,_,_,_,_,_), SecProps),
+	!.
+
+get_layout(Layout) :-
+	% Get Layout
+	( setting_value(html_layout, Layout0), Layout0 = website_layout(_) ->
+	    Layout = nav_searchbox_menu_main
+	; setting_value(html_layout, Layout0), Layout0 = tmpl_layout(_, _, _) ->
+	    Layout = Layout0
+	; Layout = nav_sidebar_main
+	).
+
+% Title for page (header metadata, for browser window, search results, etc.)
+fmt_page_title(SecProps, TitleR, DocSt, R) :-
+	( docst_gdata_query(DocSt, main_title(MainTitleR)) ->
+	    true
+	; throw(error(no_main_title, fmt_page_title/4))
+	),
+	( sec_is_cover(SecProps) ->
+	    R = MainTitleR
+	; R = [TitleR, raw(" &mdash; "), MainTitleR]
+	).
+
+fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
+	fmt_nav(DocSt, SectPathR, UpPrevNextR),
+	%
+	get_layout(Layout),
+	get_css_list(CssList),
+	get_icon(MaybeIcon),
+	% Title
+	fmt_page_title(SecProps, TitleR, DocSt, PageTitleR),
+	% Sidebar
+	fmt_sidebar(Layout, SecProps, DocSt, SidebarR),
+	% Frame (content holder)
+	fmt_frame(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, FrameR),
+	%
+	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, TitleR, FrameR, DocSt, R),
+	fmt_headers(Layout, MaybeIcon, CssList, PageTitleR, R, ModR).
 
 get_icon(MaybeIcon) :- setting_value(html_layout, website_layout(Opts)),
 	member(icon(Icon), Opts), atom(Icon), !, % TODO: document
@@ -449,8 +436,49 @@ get_css_url(URL) :-
 	setting_value(html_layout, tmpl_layout(_, _, CssList)),
 	member(URL, CssList).
 
+% Format the main logo (if any)
+fmt_main_logo(DocSt, R) :-
+	( docst_gdata_query(DocSt, main_logo(Logo)) ->
+	    atom_codes(Logo, LogoS),
+	    R = image(LogoS)
+	; R = []
+	).
+
+% Format the sidebar
+fmt_sidebar(Layout, SecProps, DocSt, R) :-
+	% Optional image on sidebar
+	% TODO: remove pragmas, define new comment types instead
+	( section_prop(pragmas(Pragmas), SecProps) -> true ; Pragmas = [] ),
+	( member(section_image(SectImg), Pragmas) ->
+	    img_url(SectImg, ImgSrc),
+	    PreSect = htmlenv(div, [style="text-align: center;"], 
+                              htmlenv1(img, [src=ImgSrc, class="section_image"]))
+	; sec_is_cover(SecProps) -> PreSect = []
+	; fmt_main_logo(DocSt, PreSect)
+	),
+	( Layout = nav_searchbox_menu_main ->
+	    TocR = show_toc(vertical_menu)
+	; Layout = tmpl_layout(_, _, _) ->
+	    TocR = show_toc(vertical_menu)
+	; TocR = show_toc(toc_view(yes))
+	),
+	doctree_simplify([PreSect, TocR], R).
+
+% Format a frame (content holder)
+fmt_frame(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, FrameR) :-
+	( Layout = nav_searchbox_menu_main ->
+	    % TODO: Hardwired, fix
+            FrameR = [htmlenv(h1, TitleR), raw_nl, BodyR]
+	; Layout = tmpl_layout(_, _, _) ->
+            FrameR = BodyR
+	; ( sec_is_cover(SecProps) ->
+	      fmt_cover(SecProps, TitleR, BodyR, DocSt, FrameR)
+	  ; fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, FrameR)
+	  )
+	).
+
 % Format a module as a cover
-fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
+fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
 	section_prop(coversec(SubtitleRs,
 	                      SubtitleExtraRs,
 	                      AuthorRs,
@@ -471,12 +499,8 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
 	  AddressRs2 = htmlenv(div, [class="cover_address"], AddressRs1)
 	),
 	% Document skeleton
-	( docst_gdata_query(DocSt, main_logo(Logo)) ->
-	    atom_codes(Logo, LogoS),
-	    MainLogoR = image(LogoS)
-	; MainLogoR = []
-	),
-	SectR = [
+	fmt_main_logo(DocSt, MainLogoR),
+	R = [
 	  htmlenv(div, [
             linebreak, % add some margin here
 	    MainLogoR,
@@ -496,7 +520,7 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
         ].
 
 % Navigation, sidebar, and main contents
-fmt_layout(nav_sidebar_main, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :- !,
+fmt_layout(nav_sidebar_main, SectPathR, UpPrevNextR, SidebarR, _TitleR, FrameR, DocSt, R) :- !,
 	colophon(DocSt, Colophon),
 	R = [%htmlenv(div, [class="header"], [
              %  htmlenv(h1, [raw("HEADER")])
@@ -505,7 +529,7 @@ fmt_layout(nav_sidebar_main, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, D
 	     htmlenv(div, [class="documentwrapper"], [
 	       htmlenv(div, [class="document"], [
 	         htmlenv(div, [class="mainwrapper"], 
-	           htmlenv(div, [class="main"], MainR)
+	           htmlenv(div, [class="main"], FrameR)
                  )
                ]),
 	       htmlenv(div, [class="sidebarwrapper"], 
@@ -558,45 +582,43 @@ fmt_layout(tmpl_layout(_, LayoutTmpl, _), _SectPathR, _UpPrevNextR, SidebarR, Ti
 % notes relevant to the edition"
 % (this is standard also for Web pages)
 colophon(DocSt, R) :-
-	(  docst_opt(no_lpdocack, DocSt)
-	-> Ack = ""
-        ;  Ack = "Generated with LPdoc using Ciao" ),
+	( docst_opt(no_lpdocack, DocSt) ->
+	    Ack = ""
+        ; Ack = "Generated with LPdoc using Ciao"
+	),
 	R = htmlenv(div, [class="footer"], [string_esc(Ack)]).
 
-% TODO: Fill metadata
-% <!DOCTYPE html>
-% <html lang=en>
-% <head>
-% <meta charset=utf-8>
-% <meta http-equiv=X-UA-Compatible content="IE=edge">
-% <meta name=viewport content="width=device-width,initial-scale=1">
-% <meta name=description content="...">
-% <meta name=keywords content="...">
-% <meta name=author content="..."> 
+% TODO: Missing meta for website?
+%   <meta charset="utf-8">
+%   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+%   <meta name="keywords" content="prolog, compiler, constraint programming, declarative language, logic programming, programming-language, ciao">
+%   <meta name="description" content="A general-purpose programming
+%     language which supports logic, constraint, functional, higher-order,
+%     and imperative programming styles. Additinally it offers a complete
+%     Prolog system, supporting ISO-Prolog.">
 
-fmt_headers(tmpl_layout(DocTmpl, _, _), MaybeIcon, CssList, Title, Body, R) :- !,
+fmt_headers(Layout, MaybeIcon, CssList, PageTitleR, BodyR, R) :- !,
 	fmt_icon(MaybeIcon, IconR),
 	fmt_css(CssList, CssR),
 	fmt_mathjax(MathJaxR),
-	Head = [CssR, IconR, MathJaxR, htmlenv(title, Title)],
-	R = [html_template_internal(DocTmpl, [head = Head, body = Body])].
-%	
-fmt_headers(_, MaybeIcon, CssList, Title, Body, R) :-
-	MetaR = htmlenv1(meta, ['http-equiv'="Content-Type", content="text/html; charset=iso-8859-1"]),
-	fmt_icon(MaybeIcon, IconR),
-	fmt_css(CssList, CssR),
-	fmt_mathjax(MathJaxR),
+	MetaR = [CssR, IconR, MathJaxR, htmlenv(title, PageTitleR)],
+	fmt_headers_(Layout, MetaR, BodyR, R).
+
+fmt_headers_(Layout, MetaR, BodyR, R) :-
+	Layout = tmpl_layout(DocTmpl, _, _),
+	!,
+	R = [html_template_internal(DocTmpl, [head = MetaR, body = BodyR])].
+fmt_headers_(_, MetaR, BodyR, R) :-
+	MetaR2 = [
+	  htmlenv1(meta, ['http-equiv'="Content-Type", content="text/html; charset=utf-8"]),
+	  htmlenv1(meta, ['name'="viewport", content="width=device-width, initial-scale=1"]),
+	  htmlenv1(meta, ['name'="theme-color", content="#273f79"])|MetaR
+        ],
 	R = [
-	  raw("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"),
+	  raw("<!DOCTYPE HTML>"),
           htmlenv(html, [
-            htmlenv(head, [
-	      MetaR,
-	      CssR,
-	      IconR,
-	      MathJaxR,
-              htmlenv(title, Title)
-            ]),
-	    htmlenv(body, Body)
+            htmlenv(head, MetaR2),
+	    htmlenv(body, BodyR)
 	  ])
 	].
 
@@ -615,8 +637,8 @@ fmt_css([X|Xs], [R|Rs]) :-
 
 fmt_section(SecProps, SectLabel, TitleR, Body, _DocSt, R) :-
 	doclabel_to_html_id(SectLabel, Id),
-	fmt_structuring(SecProps, TitleR, SectR),
-	R = htmlenv(div, [id=Id], [SectR, Body]).
+	fmt_structuring(SecProps, TitleR, StrR),
+	R = htmlenv(div, [id=Id], [StrR, Body]).
 
 fmt_structuring(SecProps, TitleR, R) :-
 	( section_prop(level(Level), SecProps) ->
@@ -778,5 +800,6 @@ autodoc_gen_alternative_hook(html, _) :- fail.
 :- doc(bug, "hfill is not treated correctly.").
 
 :- doc(bug, "Needed a better way to define new LaTex commands than
-this: @@begin@{displaymath@} @@newcommand@{@@neck@}@{@@textbf@{:-@}@}
-@@end@{displaymath@} (JFMC)").
+   this: @@begin@{displaymath@}
+   @@newcommand@{@@neck@}@{@@textbf@{:-@}@} @@end@{displaymath@}
+   (JFMC)").
