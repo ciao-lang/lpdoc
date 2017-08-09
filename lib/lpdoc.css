@@ -155,7 +155,31 @@ div.twocolumns {
 }
 
 /* --------------------------------------------------------------------------- */
-/* Layout */
+/* Menu at sidebar */
+
+div.lpdoc-sidebar h2 {
+    font-size: 100%;
+}
+
+div.lpdoc-sidebar p {
+    margin-left: 0px;
+}
+
+div.lpdoc-sidebar ul {
+    margin-left: 0px;
+    list-style-type: none;
+    padding-left: 0px;
+    margin: 0px;
+}
+
+div.lpdoc-sidebar li {
+    list-style-type: none;
+    padding-left: 8px;
+    margin: 0px;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Page elements */
 
 html {
     /* Force a vertical scrollbar to avoid centering jumps */
@@ -169,14 +193,18 @@ body, html {
     color:#000;
     background:#a7a09a;
     font-family: arial, helvetica, sans-serif;
-    font-size: 13px;
+    font-size: 16px;
+    line-height: 1.3em;
 }
+
 div.header {
     margin-top: 0px;
     margin-bottom: 0px;
     padding:5px 10px;
     background:#ddd;
 }
+div.header h1 { margin-top: 0; margin-bottom: 0; font-size: 200%; }
+
 div.nav {
     padding:5px 20px;
     background:#f6f6f6;
@@ -192,19 +220,7 @@ div.nav li {
     padding:0;
 }
 
-div.documentwrapper {
-    background-color: #f6f6f6;
-}
-div.document {
-    float: left;
-    width: 100%;
-}
-
-div.mainwrapper {
-    margin: 0 0 0 230px; /* left-sidebar */
-    /* margin: 0 230px 0 0px; */ /* right-sidebar */
-}
-div.main {
+div.lpdoc-main {
     background-color:#fff;
     color: #000000;
     border-left: 1px solid #a7d7f9; /* left-sidebar */
@@ -213,21 +229,31 @@ div.main {
     border-bottom: 1px solid #a7d7f9;
     padding: 1px 20px 30px 20px;
 }
-div.sidebarwrapper {
-    float:left; /* left-sidebar */
-    /* float:right; */ /* right-sidebar */
-    width:230px;
-    margin-left: -100%;
-}
-div.sidebar {
+
+/*
+div.lpdoc-main h1 { font-size: 200%; }
+div.lpdoc-main h2 { font-size: 160%; }
+div.lpdoc-main h3 { font-size: 140%; }
+div.lpdoc-main h4 { font-size: 120%; }
+div.lpdoc-main h5 { font-size: 110%; }
+div.lpdoc-main h6 { font-size: 100%; }
+*/
+
+div.lpdoc-sidebar {
     padding:10px 10px 10px 20px;
+    font-size: 14px;
+    line-height: 1.3em;
 }
 
-div.clearer {
+div.lpdoc-sidebar h2 {
+    margin-top: 1ex;
+}
+
+div.lpdoc-clearer {
     clear: both;
 }
 
-div.footer {
+div.lpdoc-footer {
     color: #ffffff;
     width: 100%;
     padding: 9px 0 9px 0;
@@ -235,25 +261,49 @@ div.footer {
 /*    font-size: 75%;*/
 }
 
-div.footer a {
+div.lpdoc-footer a {
     color: #ffffff;
     text-decoration: underline;
 }
 
-div.header h1 { margin-top: 0; margin-bottom: 0; font-size: 200%; }
-div.main h1 { font-size: 200%; }
-div.main h2 { font-size: 160%; }
-div.main h3 { font-size: 140%; }
-div.main h4 { font-size: 120%; }
-div.main h5 { font-size: 110%; }
-div.main h6 { font-size: 100%; }
-
-div.sidebar h2 {
-    margin-top: 1ex;
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Source Sans Pro', sans-serif;
+    line-height: 1.3em;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: trebuchet MS, helvetica, arial, sans-serif;
+/* --------------------------------------------------------------------------- */
+/* Page layout */
+
+div.lpdoc-page {
+    background-color: #f6f6f6;
+}
+
+/* Document with left sidebar */
+.leftbar {
+}
+.leftbar > div.lpdoc-main {
+    margin-left: 230px;
+}
+.leftbar > div.lpdoc-sidebar {
+    box-sizing: border-box; /* include padding in width */
+    float: left;
+    width: 230px;
+    height: 100%;
+    position: relative;
+}
+
+/* Document with right sidebar */
+.rightbar {
+}
+.rightbar > div.lpdoc-main {
+    margin-right: 230px;
+}
+.rightbar > div.lpdoc-sidebar {
+    box-sizing: border-box; /* include padding in width */
+    float: right;
+    width: 230px;
+    height: 100%;
+    position: relative;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -281,7 +331,8 @@ div.cover_title {
 }
 
 div.cover_subtitle_extra {
-    font-size: 8pt;
+    font-size: 14px;
+    line-height: 1.3em;
     padding: 16px;
 }
 
@@ -383,3 +434,23 @@ span.predtag_on_right {
     border: 1px solid #D8D8D8;
     background-image: -webkit-linear-gradient(top, #E6E6E6, rgb(247, 247, 247));
 }
+
+/* --------------------------------------------------------------------------- */
+/* Mobile-friendly */
+
+@media (max-width: 700px) {
+    /* Reset sidebar position */
+    .leftbar > div.lpdoc-main {
+	margin-left: 0;
+    }
+    .rightbar > div.lpdoc-main {
+	margin-right: 0;
+    }
+    .leftbar > div.lpdoc-sidebar,
+    .rightbar > div.lpdoc-sidebar {
+	float: none;
+	width: auto;
+	position: relative;
+    }
+}
+

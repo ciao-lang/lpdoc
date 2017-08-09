@@ -378,6 +378,8 @@ sec_is_cover(SecProps) :-
 	section_prop(coversec(_,_,_,_,_,_,_), SecProps),
 	!.
 
+% ---------------------------------------------------------------------------
+
 get_layout(Layout) :-
 	% Get Layout
 	( setting_value(html_layout, Layout0), Layout0 = website_layout(_) ->
@@ -386,6 +388,20 @@ get_layout(Layout) :-
 	    Layout = Layout0
 	; Layout = nav_sidebar_main
 	).
+
+layout_toc(nav_searchbox_menu_main, R) :- !, R = show_toc(vertical_menu).
+layout_toc(tmpl_layout(_, _, _), R) :- !, R = show_toc(vertical_menu).
+layout_toc(_, R) :- R = show_toc(toc_view(yes)).
+
+layout_has_colophon(nav_sidebar_main).
+layout_has_colophon(nav_searchbox_menu_main).
+
+layout_has_navbars(nav_sidebar_main).
+
+layout_sidebar_pos(nav_searchbox_menu_main, right).
+layout_sidebar_pos(nav_sidebar_main, left).
+
+% ---------------------------------------------------------------------------
 
 % Title for page (header metadata, for browser window, search results, etc.)
 fmt_page_title(SecProps, TitleR, DocSt, R) :-
@@ -408,10 +424,10 @@ fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	fmt_page_title(SecProps, TitleR, DocSt, PageTitleR),
 	% Sidebar
 	fmt_sidebar(Layout, SecProps, DocSt, SidebarR),
-	% Frame (content holder)
-	fmt_frame(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, FrameR),
+	% Main content holder
+	fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR),
 	%
-	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, TitleR, FrameR, DocSt, R),
+	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, TitleR, MainR, DocSt, R),
 	fmt_headers(Layout, MaybeIcon, CssList, PageTitleR, R, ModR).
 
 get_icon(MaybeIcon) :- setting_value(html_layout, website_layout(Opts)),
@@ -456,24 +472,21 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 	; sec_is_cover(SecProps) -> PreSect = []
 	; fmt_main_logo(DocSt, PreSect)
 	),
-	( Layout = nav_searchbox_menu_main ->
-	    TocR = show_toc(vertical_menu)
-	; Layout = tmpl_layout(_, _, _) ->
-	    TocR = show_toc(vertical_menu)
-	; TocR = show_toc(toc_view(yes))
-	),
+	%
+	layout_toc(Layout, TocR),
+	%
 	doctree_simplify([PreSect, TocR], R).
 
-% Format a frame (content holder)
-fmt_frame(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, FrameR) :-
+% Format main content holder
+fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR) :-
 	( Layout = nav_searchbox_menu_main ->
 	    % TODO: Hardwired, fix
-            FrameR = [htmlenv(h1, TitleR), raw_nl, BodyR]
+            MainR = [htmlenv(h1, TitleR), raw_nl, BodyR]
 	; Layout = tmpl_layout(_, _, _) ->
-            FrameR = BodyR
+            MainR = BodyR
 	; ( sec_is_cover(SecProps) ->
-	      fmt_cover(SecProps, TitleR, BodyR, DocSt, FrameR)
-	  ; fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, FrameR)
+	      fmt_cover(SecProps, TitleR, BodyR, DocSt, MainR)
+	  ; fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, MainR)
 	  )
 	).
 
@@ -513,70 +526,64 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
 	      cover_subtitle_extra(SubtitleExtraRs),
 	      cover_subtitle_extra(GVersShortRs)
             ]),
-	    htmlenv(div, [class="clearer"], [])
+	    htmlenv(div, [class="lpdoc-clearer"], [])
 	  ]),
 	  raw_nl,
 	  BodyR
         ].
 
 % Navigation, sidebar, and main contents
-fmt_layout(nav_sidebar_main, SectPathR, UpPrevNextR, SidebarR, _TitleR, FrameR, DocSt, R) :- !,
-	colophon(DocSt, Colophon),
-	R = [%htmlenv(div, [class="header"], [
-             %  htmlenv(h1, [raw("HEADER")])
-             %]),
-	     navigation_env(SectPathR, UpPrevNextR),
-	     htmlenv(div, [class="documentwrapper"], [
-	       htmlenv(div, [class="document"], [
-	         htmlenv(div, [class="mainwrapper"], 
-	           htmlenv(div, [class="main"], FrameR)
-                 )
-               ]),
-	       htmlenv(div, [class="sidebarwrapper"], 
-	         htmlenv(div, [class="sidebar"], SidebarR)
-               ),
-	       htmlenv(div, [class="clearer"], [])
+fmt_layout(tmpl_layout(_, LayoutTmpl, _), _SectPathR, _UpPrevNextR, SidebarR, TitleR, MainR, _DocSt, R) :- !,
+	R = [html_template_internal(LayoutTmpl, [
+               sidebar = SidebarR,
+	       title = TitleR,
+	       content = MainR])].
+fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :-
+	fmt_topbar(Layout, DocSt, TopBarR),
+	( layout_has_colophon(Layout) -> colophon(DocSt, ColophonR)
+	; ColophonR = []
+	),
+	( layout_has_navbars(Layout) ->
+	    NavTopR = navigation_env(SectPathR, UpPrevNextR),
+	    NavBottomR = navigation_env(raw("&nbsp;"), UpPrevNextR) % (same without SectPathR)
+	; NavTopR = [],
+	  NavBottomR = []
+	),
+	( layout_sidebar_pos(Layout, SidebarPos),
+	  ( SidebarPos = left -> PageClass = "lpdoc-page leftbar"
+	  ; SidebarPos = right -> PageClass = "lpdoc-page rightbar"
+	  ; fail
+	  ) -> true
+	; PageClass = "lpdoc-page"
+	),
+	doctree_simplify([%
+	     TopBarR, % top bar
+	     NavTopR, % navigation at top
+	     htmlenv(div, [class=PageClass], [
+	       htmlenv(div, [class="lpdoc-sidebar"], SidebarR),
+	       htmlenv(div, [class="lpdoc-main"], MainR),
+	       htmlenv(div, [class="lpdoc-clearer"], [])
              ]),
-	     % repeat navigation here too
-	     navigation_env(raw("&nbsp;"), UpPrevNextR),
-	     % the footer
-	     Colophon
-            ].
-fmt_layout(nav_searchbox_menu_main, _SectPathR, _UpPrevNextR, SidebarR, _TitleR, FrameR, DocSt, R) :- !,
-	% TODO: Generalize, this contains many definitions that are only valid
-	%   for the Ciao website. They should be defined externally.
+	     NavBottomR, % navigation at bottom
+	     ColophonR % footer
+            ], R).
+
+% Top bar (optional, for logo, search box, etc.)
+fmt_topbar(nav_searchbox_menu_main, _DocSt, R) :- !,
+	% TODO: Generalize
 %	LogoImg = 'ciao2-96-shadow-reduced.png',
 	LogoImg = 'ciao2-small-shadow-reduced.png',
 	img_url(LogoImg, LogoSrc),
 	fmt_html_template('google_search.html', [], SearchBoxR),
-	colophon(DocSt, Colophon),
-	R = [%
-	     htmlenv(div, [class="documentwrapper"], [
-	       htmlenv(div, [class="title"], [
-	         SearchBoxR, % must precede the image (due to float:right)
-                 htmlenv(a, [href="index.html"], [
-                   htmlenv1(img, [src=LogoSrc,
-                                  'ALT'="Ciao",
-                                  class="logo"])
-                 ])
-               ]),
-	       htmlenv(div, [class="document"], [
-	         htmlenv(div, [class="mainwrapper"], [
-                   htmlenv(div, [class="main"], FrameR)
-                 ])
-               ]),
-	       htmlenv(div, [class="sidebarwrapper"], [
-	         htmlenv(div, [class="sidebar"], [SidebarR])
-               ]),
-	       htmlenv(div, [class="clearer"], [])
-             ]),
-             Colophon
-            ].
-fmt_layout(tmpl_layout(_, LayoutTmpl, _), _SectPathR, _UpPrevNextR, SidebarR, TitleR, FrameR, _DocSt, R) :- !,
-	R = [html_template_internal(LayoutTmpl, [
-               sidebar = SidebarR,
-	       title = TitleR,
-	       content = FrameR])].
+	R = htmlenv(div, [class="lpdoc-title"], [
+	  SearchBoxR, % must precede the image (due to float:right)
+	  htmlenv(a, [href="index.html"], [
+	    htmlenv1(img, [src=LogoSrc,
+	                   'ALT'="Ciao",
+			   class="logo"])
+	    ])
+	]).
+fmt_topbar(_, _DocSt, []).
 
 % colophon: "a the brief description of the publication or production
 % notes relevant to the edition"
@@ -586,7 +593,7 @@ colophon(DocSt, R) :-
 	    Ack = ""
         ; Ack = "Generated with LPdoc using Ciao"
 	),
-	R = htmlenv(div, [class="footer"], [string_esc(Ack)]).
+	R = htmlenv(div, [class="lpdoc-footer"], [string_esc(Ack)]).
 
 % TODO: Missing meta for website?
 %   <meta charset="utf-8">
@@ -677,6 +684,8 @@ doctree_to_href(Link, DocSt, HRef) :-
 	; HRef0 = "#"||SectId
 	).
 doctree_to_href(no_link, _DocSt, "#").
+
+% ---------------------------------------------------------------------------
 
 html_blank_lines(0, "") :- !.
 html_blank_lines(N, "<BR>"||R) :-
