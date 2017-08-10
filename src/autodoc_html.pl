@@ -336,7 +336,9 @@ fmt_link(Style, IdLabel, Link, DocSt, Text, R) :-
 	    % no link, use a span env
 	    R = htmlenv(span, Props, Text)
 	; % The outcoming link from this element (i.e. when clicking)
-	  doctree_to_href(Link, DocSt, HRef),
+	  doctree_to_href(Link, DocSt, HRef0),
+	  atom_codes(HRef1, HRef0),
+	  HRef = ~atom_codes(~prefix_htmlurl(HRef1)),
 	  Props1 = [href=HRef],
 	  R = htmlenv(a, Props, Text)
 	).
@@ -466,7 +468,7 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 	% TODO: remove pragmas, define new comment types instead
 	( section_prop(pragmas(Pragmas), SecProps) -> true ; Pragmas = [] ),
 	( member(section_image(SectImg), Pragmas) ->
-	    img_url(SectImg, ImgSrc),
+	    ImgSrc = ~atom_codes(~img_url(SectImg)),
 	    PreSect = htmlenv(div, [style="text-align: center;"], 
                               htmlenv1(img, [src=ImgSrc, class="lpdoc-section-image"]))
 	; sec_is_cover(SecProps) -> PreSect = []
@@ -573,11 +575,14 @@ fmt_topbar(nav_searchbox_menu_main, _DocSt, R) :- !,
 	% TODO: Generalize
 %	LogoImg = 'ciao2-96-shadow-reduced.png',
 	LogoImg = 'ciao2-small-shadow-reduced.png',
-	img_url(LogoImg, LogoSrc),
+	LogoSrc = ~atom_codes(~img_url(LogoImg)),
+	IndexHRef = ~atom_codes(~prefix_htmlurl('index.html')),
+	%
 	fmt_html_template('google_search.html', [], SearchBoxR),
+	%
 	R = htmlenv(div, [class="lpdoc-title"], [
 	  SearchBoxR, % must precede the image (due to float:right)
-	  htmlenv(a, [href="index.html"], [
+	  htmlenv(a, [href=IndexHRef], [
 	    htmlenv1(img, [src=LogoSrc,
 	                   'ALT'="Ciao",
 			   class="lpdoc-logo"])
@@ -631,14 +636,14 @@ fmt_headers_(_, MetaR, BodyR, R) :-
 
 fmt_icon(MaybeIcon, R) :-
 	( MaybeIcon = [IconImg] ->
-	    img_url(IconImg, IconHRef),
+	    IconHRef = ~atom_codes(~img_url(IconImg)),
 	    R = htmlenv1(link, [rel="shortcut icon", href=IconHRef])
 	; R = nop
 	).
 
 fmt_css([], []).
 fmt_css([X|Xs], [R|Rs]) :-
-	atom_codes(X, HRef),
+	HRef = ~atom_codes(~prefix_htmlurl(X)),
 	R = htmlenv1(link, [rel="stylesheet", href=HRef, type="text/css"]),
 	fmt_css(Xs, Rs).
 

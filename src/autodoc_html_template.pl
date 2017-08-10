@@ -14,21 +14,24 @@
 :- use_module(lpdoc(autodoc_settings), [setting_value/2]).
 
 % ---------------------------------------------------------------------------
+% TODO: move somewhere else?
 
-% URL to an image
-% TODO: Generalize, so that we can obtain the filesystem paths, relative URLs,
-%       etc., for any file or resource.
-:- export(img_url/2). % TODO: temporary?
+:- export(prefix_htmlurl/2).
+:- pred prefix_htmlurl(Path, Path2) :: atm * atm
+   # "Prefix @var{Path} with value of @tt{htmlurl} (if needed)".
+prefix_htmlurl(Path) := Path2 :-
+	HtmlURL = ~setting_value(htmlurl),
+	!,
+	( HtmlURL = '' -> Path2 = Path
+	; path_concat(HtmlURL, Path, Path2)
+	).
+prefix_htmlurl(Path) := Path. % no htmlurl value
+
+% TODO: remove?
+:- export(img_url/2).
 :- pred img_url(Name, Url) :: atm * string
    # "Obtain the @var{URL} where image @var{Name} is or will be found.".
-img_url(Name) := Url :-
-	% TODO: Use relative URLs if htmlurl is '' (search uses of htmlurl)
-	WebURL = ~setting_value(htmlurl),
-	( WebURL = '' -> P0 = 'images'
-	; path_concat(WebURL, 'images', P0)
-	),
-	path_concat(P0, Name, P1),
-	atom_codes(P1, Url).
+img_url(Name) := ~prefix_htmlurl(~path_concat('images', Name)).
 
 % ---------------------------------------------------------------------------
 
