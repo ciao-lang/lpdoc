@@ -248,8 +248,8 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
 autodoc_gen_doctree(_, FileBase, _, _, _) :-
 	error_message("formatting ~w could not be completed", [FileBase]).
 
+% Scan the references, save them, and save the doctree.
 doctree_scan_and_save(R, Mod, DocSt) :-
-	% Scan the references, save them, and save the doctree.
 	doctree_scan_and_save_refs(R, DocSt),
 	docst_backend(DocSt, Backend),
 	absfile_for_subtarget(Mod, Backend, dr, RFile),

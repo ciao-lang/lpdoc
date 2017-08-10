@@ -107,14 +107,17 @@ get_secttree_([sect(Props,Link,T)|Ss], Ss0, BaseLevel, BaseName, Rs) :-
 	Link = link_to(N, _),
 	% Determine if it is a subsection based on level or parent relationship
 	section_prop(level(L), Props),
-	( \+ doclink_is_local(Link), docstr_node(N, _, Parent, Mode) -> Parent = BaseName, NextN = N
+	( \+ doclink_is_local(Link), docstr_node(N, _, Parent, Mode) ->
+	    Parent = BaseName, NextN = N
 	; L > BaseLevel, NextN = '__local__', Mode = normal
 	),
 	!,
 	% Get the subsections
 %	display(user_error, foundsub(L, N, Parent, BaseName)), nl(user_error),
 	get_secttree_(Ss, Ss1, L, NextN, SubRs),
-	( Mode = normal -> Link2 = Link ; Link2 = no_link ),
+	( Mode = normal -> Link2 = Link 
+	; Link2 = no_link % (phony)
+	),
 	R = toc_node(Link2,T,Props,SubRs),
 	Rs = [R|Rs1],
 	% Continue with the sibling sections

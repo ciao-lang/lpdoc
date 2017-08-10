@@ -535,6 +535,14 @@ doctree_scan_refs(L0, DocSt) :-
 	DocR = section_env([file_top_section|PrevSecProps], SectLabel, TitleR, Body),
 	scan_subfile(SubName, DocR, DocSt, SubBase),
 	doctree_scan_refs(component_link(SubBase), DocSt).
+doctree_scan_refs(A, _DocSt) :-
+	A = section_env(SecProps, _SectLabel, _Title, _Body),
+	member(pragmas(Pragmas), SecProps),
+	member(is_html_template, Pragmas),
+	!,
+	% Do not scan further, this is a template that should not appear
+	% in the indices
+	true.
 doctree_scan_refs(A, DocSt) :-
 	A = section_env(SecProps, SectLabel, Title, Body),
 	!,
