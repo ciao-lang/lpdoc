@@ -7,20 +7,20 @@
 /* --------------------------------------------------------------------------- */
 /* Links */
 
-a.missing:link { color: #aa0000; text-decoration: none; }
-a.missing:visited { color: #aa0000; text-decoration: none; }
-a.missing:hover { color: #aa0000; text-decoration: underline; }
-a.missing:active { color: #FA0000; text-decoration: underline; }
+a.lpdoc-missing:link { color: #aa0000; text-decoration: none; }
+a.lpdoc-missing:visited { color: #aa0000; text-decoration: none; }
+a.lpdoc-missing:hover { color: #aa0000; text-decoration: underline; }
+a.lpdoc-missing:active { color: #FA0000; text-decoration: underline; }
 
-a.idx_anchor:link { color: #4263ab; text-decoration: none; }
-a.idx_anchor:visited { color: #0645AD; text-decoration: none; }
-a.idx_anchor:hover { color: #4263ab; text-decoration: underline; }
-a.idx_anchor:active { color: #FAA700; text-decoration: underline; }
+a.lpdoc-idx-anchor:link { color: #4263ab; text-decoration: none; }
+a.lpdoc-idx-anchor:visited { color: #0645AD; text-decoration: none; }
+a.lpdoc-idx-anchor:hover { color: #4263ab; text-decoration: underline; }
+a.lpdoc-idx-anchor:active { color: #FAA700; text-decoration: underline; }
 
-div.defname a.idx_anchor:link { color: #000; text-decoration: none; }
-div.defname a.idx_anchor:visited { color: #000; text-decoration: none; }
-div.defname a.idx_anchor:hover { color: #000; text-decoration: underline; }
-div.defname a.idx_anchor:active { color: #000; text-decoration: underline; }
+div.lpdoc-defname a.lpdoc-idx-anchor:link { color: #000; text-decoration: none; }
+div.lpdoc-defname a.lpdoc-idx-anchor:visited { color: #000; text-decoration: none; }
+div.lpdoc-defname a.lpdoc-idx-anchor:hover { color: #000; text-decoration: underline; }
+div.lpdoc-defname a.lpdoc-idx-anchor:active { color: #000; text-decoration: underline; }
 
 a:link { color: #4263ab; text-decoration: none; }
 a:visited { color: #0645AD; text-decoration: none; }
@@ -30,7 +30,7 @@ a:active { color: #FAA700; text-decoration: underline; }
 /* --------------------------------------------------------------------------- */
 /* Navigation buttons (special links) */
 
-.navbutton {
+.lpdoc-navbutton {
     font-size: 80%;
     border-radius: 2px;
     background-color: #4263ab;
@@ -39,11 +39,11 @@ a:active { color: #FAA700; text-decoration: underline; }
     margin-left: 1px;
     margin-right: 1px;
 }
-a.navbutton:link { color: white; background-color: #4263ab; text-decoration: none; }
-a.navbutton:visited { color: white; background-color: #4263ab; text-decoration: none; }
-a.navbutton:hover { color: white; background-color: #0645AD; text-decoration: none; }
-a.navbutton:active { color: white; background-color: #FAA700; text-decoration: none; }
-.navbutton_disabled {
+a.lpdoc-navbutton:link { color: white; background-color: #4263ab; text-decoration: none; }
+a.lpdoc-navbutton:visited { color: white; background-color: #4263ab; text-decoration: none; }
+a.lpdoc-navbutton:hover { color: white; background-color: #0645AD; text-decoration: none; }
+a.lpdoc-navbutton:active { color: white; background-color: #FAA700; text-decoration: none; }
+.lpdoc-navbutton-disabled {
     font-size: 80%;
     border-radius: 2px;
     color: white;
@@ -55,21 +55,21 @@ a.navbutton:active { color: white; background-color: #FAA700; text-decoration: n
 
 /* --------------------------------------------------------------------------- */
 
-.defname {
+.lpdoc-defname {
     font-size: 105%;
     font-weight:bold;
 }
 
-.deftext {
+.lpdoc-deftext {
     margin-left: 3em;
     margin-right: 1.5em;
 }
 
-.on_right {
+.lpdoc-on-right {
     float: right;
 }
 
-.iso {
+.lpdoc-iso {
     color: white;
     background-color: #48d;
     text-shadow: 0px 1px 2px #000;
@@ -78,7 +78,7 @@ a.navbutton:active { color: white; background-color: #FAA700; text-decoration: n
     border-radius: 4px;
 }
 
-.emacskey {
+.lpdoc-emacskey {
     border-radius: 4px;
 /*    border-bottom: 1px solid #666;*/
 /*    border-left: 1px solid #666;*/
@@ -95,16 +95,16 @@ a.navbutton:active { color: white; background-color: #FAA700; text-decoration: n
     padding-right: 4px;
 }
 
-.itemize_none {
+.lpdoc-itemize-none {
     list-style-type: none;
 }
 
-.itemize_plain {
+.lpdoc-itemize-plain {
     list-style-type: none;
     padding-left: 0px;
 }
 
-.itemize_minus {
+.lpdoc-itemize-minus {
     list-style-type: circle;
 }
 
@@ -120,15 +120,10 @@ pre {
 }
 
 .var, pre, tt {
-    font-family: monospace;
+    font-family: "Source Code Pro", monospace;
 }
 
-div.sidebar ul {
-    padding-left:3ex;
-    list-style-type: square;
-}
-
-div.twocolumns {
+div.lpdoc-twocolumns {
     -moz-column-count: 2;
     -moz-column-gap: 20px;
     -webkit-column-count: 2;
@@ -140,7 +135,7 @@ div.twocolumns {
 /* --------------------------------------------------------------------------- */
 /* Special cartouche blocks */
 
-.cartouche {
+.lpdoc-cartouche {
     border: 1px solid #C8E2F0;
     border-radius: 6px;
     padding: 8px;
@@ -148,7 +143,7 @@ div.twocolumns {
     background-image: -webkit-linear-gradient(top, #FAFBFC 0px, #EFF6FC 32px);
 }
 
-.alert {
+.lpdoc-alert {
     border: 1px solid #aaa;
     border-left: 10px solid #ab4263;
     padding: 8px;
@@ -170,6 +165,8 @@ div.lpdoc-sidebar ul {
     list-style-type: none;
     padding-left: 0px;
     margin: 0px;
+    /* padding-left:3ex; */
+    /* list-style-type: square; */
 }
 
 div.lpdoc-sidebar li {
@@ -192,29 +189,21 @@ body, html {
     padding:0;
     color:#000;
     background:#a7a09a;
-    font-family: arial, helvetica, sans-serif;
+    font-family: "Source Sans Pro", arial, helvetica, sans-serif;
     font-size: 16px;
     line-height: 1.3em;
 }
 
-div.header {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding:5px 10px;
-    background:#ddd;
-}
-div.header h1 { margin-top: 0; margin-bottom: 0; font-size: 200%; }
-
-div.nav {
+div.lpdoc-nav {
     padding:5px 20px;
     background:#f6f6f6;
 }
-div.nav ul {
+div.lpdoc-nav ul {
     margin:0;
     padding:0;
     list-style:none;
 }
-div.nav li {
+div.lpdoc-nav li {
     display:inline;
     margin:0;
     padding:0;
@@ -229,15 +218,6 @@ div.lpdoc-main {
     border-bottom: 1px solid #a7d7f9;
     padding: 1px 20px 30px 20px;
 }
-
-/*
-div.lpdoc-main h1 { font-size: 200%; }
-div.lpdoc-main h2 { font-size: 160%; }
-div.lpdoc-main h3 { font-size: 140%; }
-div.lpdoc-main h4 { font-size: 120%; }
-div.lpdoc-main h5 { font-size: 110%; }
-div.lpdoc-main h6 { font-size: 100%; }
-*/
 
 div.lpdoc-sidebar {
     padding:10px 10px 10px 20px;
@@ -309,20 +289,20 @@ div.lpdoc-page {
 /* --------------------------------------------------------------------------- */
 /* Cover */
 
-div.cover_address {
+div.lpdoc-cover-address {
     float:right;
     font-size:8pt;
     background: #d2e3ec;
     padding: 16px;
 }
 
-div.cover_authors {
+div.lpdoc-cover-authors {
     padding: 16px;
     float:right;
     text-align:right;
 }
 
-div.cover_title {
+div.lpdoc-cover-title {
     padding: 16px;
     margin: 0px;
     background:#46a;
@@ -330,13 +310,13 @@ div.cover_title {
     text-shadow: 1px 1px 2px #000;
 }
 
-div.cover_subtitle_extra {
+div.lpdoc-cover-subtitle-extra {
     font-size: 14px;
     line-height: 1.3em;
     padding: 16px;
 }
 
-div.cover_h1 {
+div.lpdoc-cover-h1 {
     margin-top:0px;
     margin-bottom:0px;
 }
@@ -345,7 +325,7 @@ div.cover_h1 {
 /* Assertions */
 
 /* Name tag for test assertions (E.g., Test) */
-span.test_header {
+span.lpdoc-test-header {
     color: white;
     background: #AD62FF;
     padding: 4px;
@@ -356,7 +336,7 @@ span.test_header {
 }
 
 /* Name tag for true assertions (in green) */
-span.true_header {
+span.lpdoc-true-header {
     color: white;
     background: #7FCC4C;
     padding: 4px;
@@ -366,7 +346,7 @@ span.true_header {
     background-image: -webkit-linear-gradient(top, #A2CE6B, #78AC2B);
 }
 /* Name tag for false assertions (in red) */
-span.false_header {
+span.lpdoc-false-header {
     color: white;
     background: #FF6262;
     padding: 4px;
@@ -376,7 +356,7 @@ span.false_header {
     background-image: -webkit-linear-gradient(top, #F88181, #D63939);
 }
 /* Name tag for check assertions (including Usage) (in blue) */
-span.check_header {
+span.lpdoc-check-header {
     color: white;
     background: rgb(98, 180, 255);
     padding: 4px;
@@ -386,7 +366,7 @@ span.check_header {
     background-image: -webkit-linear-gradient(top, #81BFF8, #398BD6);
 }
 /* Name tag for checked assertions (in lightest green) */
-span.checked_header {
+span.lpdoc-checked-header {
     color: white;
     background: #6EB88C;
     padding: 4px;
@@ -396,7 +376,7 @@ span.checked_header {
     background-image: -webkit-linear-gradient(top, #BBEEC9, #5FAD7C);
 }
 /* Name tag for trust assertions (in orange) */
-span.trust_header {
+span.lpdoc-trust-header {
     color: white;
     background: #FFA162;
     padding: 4px;
@@ -407,7 +387,7 @@ span.trust_header {
 }
 
 /* E.g., foo(+,-,+) */
-span.usagedecl {
+span.lpdoc-usagedecl {
     padding: 4px;
     background: #eee;
     border-radius: 0px 3px 3px 0px;
@@ -415,7 +395,7 @@ span.usagedecl {
 }
 
 /* Tag for predicates (PREDICATE, REGTYPE, etc.) */
-span.predtag {
+span.lpdoc-predtag {
     color: rgb(143, 143, 143);
     background: #003374;
     padding: 2px;
@@ -425,7 +405,7 @@ span.predtag {
 }
 
 /* Tag for predicates (PREDICATE, REGTYPE, etc.) -- on the right */
-span.predtag_on_right {
+span.lpdoc-predtag-on-right {
     float: right;
     color: rgb(143, 143, 143);
     background: #003374;

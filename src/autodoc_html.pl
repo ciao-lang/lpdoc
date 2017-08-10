@@ -1,6 +1,9 @@
 :- module(autodoc_html, [], [assertions, regtypes, fsyntax]).
 % (Nothing is exported, because everything works using hooks)
 
+:- doc(title, "HTML Backend").
+:- doc(author, "Jose F. Morales").
+
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_structure)).
 :- use_module(lpdoc(autodoc_filesystem)).
@@ -21,9 +24,6 @@
 
 % (Web-site extensions)
 :- use_module(lpdoc(autodoc_html_template)).
-
-:- doc(title, "HTML Backend").
-:- doc(author, "Jose F. Morales").
 
 % ======================================================================
 
@@ -47,7 +47,7 @@ autodoc_rw_command_hook(html, DocSt, Command, NewCommand) :- !,
 rw_command(ref_link(Link, Text), DocSt, R) :- !,
 	fmt_link(default, no_label, Link, DocSt, string_esc(Text), R).
 rw_command(missing_link(Text), DocSt, R) :- !,
-	fmt_link(missing, no_label, no_link, DocSt, string_esc(Text), R).
+	fmt_link('lpdoc-missing', no_label, no_link, DocSt, string_esc(Text), R).
 rw_command(cite_link(Link, Text), DocSt, R) :- !,
 	fmt_link(default, no_label, Link, DocSt, string_esc(Text), R).
 % TODO: 'sp' replaced by just 'p', which yield better documents
@@ -149,7 +149,7 @@ rw_command('!'(""),               _, raw("&iexcl;")) :- !.
 rw_command('i'(""),               _, raw("i")) :- !.
 rw_command('j'(""),               _, raw("j")) :- !.
 rw_command(copyright(""),         _, raw("&#169;")) :- !.
-rw_command(iso(""), _, htmlenv(span, [class="iso"], [raw("ISO")])) :- !.
+rw_command(iso(""), _, R) :- !, R = htmlenv(span, [class="lpdoc-iso"], [raw("ISO")]).
 rw_command(bullet(""), _,       raw("&#186;")) :- !.
 rw_command(result(""), _,       raw("&rArr;")) :- !. % =>
 rw_command(href(URL), _DocSt, NBody) :- !,
@@ -171,8 +171,8 @@ rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
 rw_command(bf(Body),  _DocSt, R) :- !, R = htmlenv(strong, Body).
 rw_command(em(Body),  _DocSt, R) :- !, R = htmlenv(em, Body).
 rw_command(tt(Body),  _DocSt, R) :- !, R = htmlenv(tt, Body).
-rw_command(key(Body), _DocSt, R) :- !, R = htmlenv(span, [class="emacskey"], Body).
-rw_command(var(Body), _DocSt, R) :- !, R = htmlenv(span, [class="var"], Body).
+rw_command(key(Body), _DocSt, R) :- !, R = htmlenv(span, [class="lpdoc-emacskey"], Body).
+rw_command(var(Body), _DocSt, R) :- !, R = htmlenv(span, [class="lpdoc-var"], Body).
 %
 % TODO: Move to a doc_module?
 rw_command(html_template(FileC), _DocSt, R) :- !,
@@ -218,33 +218,33 @@ rw_command(linebreak, _DocSt, R) :- !,
 rw_command(subsection_title(X), _DocSt, R) :- !,
 	R = htmlenv(h2, X).
 rw_command(twocolumns(X), _DocSt, R) :- !,
-	R = htmlenv(div, [class="twocolumns"], X).
+	R = htmlenv(div, [class="lpdoc-twocolumns"], X).
 rw_command(itemize_env(menu, Xs), _DocSt, R) :- setting_value(html_layout, tmpl_layout(_, _, _)), !,
-	R = htmlenv(ul, [class="nav nav-pills nav-stacked"], Xs).
+	R = htmlenv(ul, [class="nav nav-pills nav-stacked"], Xs). % TODO: only for bootstrap framework CSS
 rw_command(itemize_env(none, Xs), _DocSt, R) :- !,
-	R = htmlenv(ul, [class="itemize_none"], Xs).
+	R = htmlenv(ul, [class="lpdoc-itemize-none"], Xs).
 rw_command(itemize_env(plain, Xs), _DocSt, R) :- !,
-	R = htmlenv(ul, [class="itemize_plain"], Xs).
+	R = htmlenv(ul, [class="lpdoc-itemize-plain"], Xs).
 rw_command(itemize_env(minus, Xs), _DocSt, R) :- !,
-	R = htmlenv(ul, [class="itemize_minus"], Xs).
+	R = htmlenv(ul, [class="lpdoc-itemize-minus"], Xs).
 rw_command(itemize_env(_, Xs), _DocSt, R) :- !,
 	R = htmlenv(ul, Xs).
 rw_command(description_env(Xs), _DocSt, R) :- !,
 	R = htmlenv(dl, Xs).
 rw_command(cartouche(X), _DocSt, R) :- !,
-	R = htmlenv(div, [class="cartouche"], X).
+	R = htmlenv(div, [class="lpdoc-cartouche"], X).
 rw_command(optional_cartouche(X), _DocSt, R) :- !,
 	R = cartouche(X).
 rw_command(alert(X), _DocSt, R) :- !,
-	R = htmlenv(div, [class="alert"], X).
+	R = htmlenv(div, [class="lpdoc-alert"], X).
 rw_command(bibitem(Label,Ref), _DocSt, R) :- !,
 	R0 = [string_esc("["), string_esc(Label), string_esc("]")],
 	R = [item(htmlenv(strong, [id=Ref], R0))]. % TODO: use item_env?
 rw_command(idx_anchor(_Indices, IdxLabel, _Key, OutLink, Text), DocSt, R) :- !,
-	fmt_link(idx_anchor, IdxLabel, OutLink, DocSt, Text, R).
+	fmt_link('lpdoc-idx-anchor', IdxLabel, OutLink, DocSt, Text, R).
 rw_command(cover_title(TitleR, SubtitleRs), _DocSt, R) :- !,
-	R = htmlenv(div, [class="cover_title"], [
-              htmlenv(h1, [class="cover_h1"], TitleR)
+	R = htmlenv(div, [class="lpdoc-cover-title"], [
+              htmlenv(h1, [class="lpdoc-cover-h1"], TitleR)
               |Rs]),
 	sep_nl(SubtitleRs, Rs).
 rw_command(cover_subtitle_extra(Rs), _DocSt, R) :- !,
@@ -256,11 +256,11 @@ rw_command(backend_comment(_String), _DocSt, R) :- !,
 rw_command(quotation(X), _DocSt, R) :- !,
 	R = htmlenv(div, X).
 rw_command(left_and_right(Left, Right), _DocSt, R) :- !,
-	R = [htmlenv(span, [class="on_right"], Right),
+	R = [htmlenv(span, [class="lpdoc-on-right"], Right),
              htmlenv(span, Left)].
 rw_command(navigation_env(Left, Right), _DocSt, R) :- !,
-	R = [htmlenv(div, [class="nav"], [
-               htmlenv(span, [class="on_right"], Right),
+	R = [htmlenv(div, [class="lpdoc-nav"], [
+               htmlenv(span, [class="lpdoc-on-right"], Right),
                htmlenv(span, Left)])].
 rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
 	PN = F/A, format_to_string("~w/~w", [F, A], S),
@@ -271,23 +271,23 @@ rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
 	),
 	idx_get_indices(def, Type, Indices),
 	R = [htmlenv(div, [
-               htmlenv(span, [class="predtag_on_right"], [raw(Text)]),
-               htmlenv(div, [class="defname"], [
+               htmlenv(span, [class="lpdoc-predtag-on-right"], [raw(Text)]),
+               htmlenv(div, [class="lpdoc-defname"], [
 		 idx_anchor(Indices, IdxLabel, string_esc(S), OutLink, string_esc(S)),
 %	         string_esc(S),
 		 raw(":")
                ]),
 %	       linebreak,
-               htmlenv(div, [class="deftext"], [Body])
+               htmlenv(div, [class="lpdoc-deftext"], [Body])
              ])
             ].
 rw_command(defassrt(Status, AType, HeaderStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
-	( AType = test -> HeaderStyle = "test_header" % TODO: Status ignored
-	; Status = true -> HeaderStyle = "true_header"
-	; Status = false -> HeaderStyle = "false_header"
-	; Status = check -> HeaderStyle = "check_header"
-	; Status = checked -> HeaderStyle = "checked_header"
-	; Status = trust -> HeaderStyle = "trust_header"
+	( AType = test -> HeaderStyle = "lpdoc-test-header" % TODO: Status ignored
+	; Status = true -> HeaderStyle = "lpdoc-true-header"
+	; Status = false -> HeaderStyle = "lpdoc-false-header"
+	; Status = check -> HeaderStyle = "lpdoc-check-header"
+	; Status = checked -> HeaderStyle = "lpdoc-checked-header"
+	; Status = trust -> HeaderStyle = "lpdoc-trust-header"
 	; throw(error(unknown_assrt_status(Status), rw_command/3))
 	),
 	( HeaderStr = "" -> HeaderR = []
@@ -296,7 +296,7 @@ rw_command(defassrt(Status, AType, HeaderStr, HeadR, DescR, UsageProps), _DocSt,
 	     htmlenv(span, [class=HeaderStyle], [bf(string_esc(HeaderStr))])]
         ),
 	R = [HeaderR,
-	     htmlenv(span, [class="usagedecl"], HeadR),
+	     htmlenv(span, [class="lpdoc-usagedecl"], HeadR),
 	     htmlenv(p, DescR),
 	     UsageProps].
 rw_command(assrtprops(DPR, CPR, APR, NGPR), _DocSt, R) :- !,
@@ -468,7 +468,7 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 	( member(section_image(SectImg), Pragmas) ->
 	    img_url(SectImg, ImgSrc),
 	    PreSect = htmlenv(div, [style="text-align: center;"], 
-                              htmlenv1(img, [src=ImgSrc, class="section_image"]))
+                              htmlenv1(img, [src=ImgSrc, class="lpdoc-section-image"]))
 	; sec_is_cover(SecProps) -> PreSect = []
 	; fmt_main_logo(DocSt, PreSect)
 	),
@@ -509,7 +509,7 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
 	( AddressRs = [] ->
 	    AddressRs2 = []
 	; sep_nl(AddressRs, AddressRs1),
-	  AddressRs2 = htmlenv(div, [class="cover_address"], AddressRs1)
+	  AddressRs2 = htmlenv(div, [class="lpdoc-cover-address"], AddressRs1)
 	),
 	% Document skeleton
 	fmt_main_logo(DocSt, MainLogoR),
@@ -519,10 +519,10 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
 	    MainLogoR,
 	    cover_title(TitleR, SubtitleRs),
 	    AddressRs2,
-	    htmlenv(div, [class="cover_authors"], [
+	    htmlenv(div, [class="lpdoc-cover-authors"], [
 	      authors(AuthorRs)
             ]),
-	    htmlenv(div, [class="cover_subtitle_extra"], [
+	    htmlenv(div, [class="lpdoc-cover-subtitle-extra"], [
 	      cover_subtitle_extra(SubtitleExtraRs),
 	      cover_subtitle_extra(GVersShortRs)
             ]),
@@ -580,7 +580,7 @@ fmt_topbar(nav_searchbox_menu_main, _DocSt, R) :- !,
 	  htmlenv(a, [href="index.html"], [
 	    htmlenv1(img, [src=LogoSrc,
 	                   'ALT'="Ciao",
-			   class="logo"])
+			   class="lpdoc-logo"])
 	    ])
 	]).
 fmt_topbar(_, _DocSt, []).
@@ -737,8 +737,8 @@ navlink(Link, Text, R) :-
 	navlink_style(Link, Style),
 	R = simple_link(Style, no_label, Link, Text).
 
-navlink_style(no_link, Style) :- !, Style = 'navbutton_disabled'. % deactivated link
-navlink_style(_, 'navbutton').
+navlink_style(no_link, Style) :- !, Style = 'lpdoc-navbutton-disabled'. % deactivated link
+navlink_style(_, 'lpdoc-navbutton').
 
 % sep_list(As, Sep, Bs): Bs contains the elements of As separarted with Sep
 sep_list([], _, []) :- !.

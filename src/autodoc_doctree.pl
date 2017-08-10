@@ -1409,13 +1409,19 @@ fmt_toc_link(texinfo, _Style, Link, Title, SubRs, R) :- !,
 	; throw(nested_texinfo_toc_not_implemented) % (not allowed, need flatten)
 	).
 fmt_toc_link(_, Style, Link, Title, SubRs, R) :- !,
-	R = [item_env(Style, simple_link(Style, no_label, Link, Title))|R0], % TODO: to item_env?
+	html_menustyle(Style, HtmlStyle), % TODO: ugly (should not be here)
+	R = [item_env(Style, simple_link(HtmlStyle, no_label, Link, Title))|R0], % TODO: to item_env?
 	( SubRs = [] ->
 	    R0 = []
 	; menustyle(Style) ->
 	    R0 = [itemize_env(menu, SubRs)]
 	; R0 = [itemize_env(bullet, SubRs)]
 	).
+
+html_menustyle(default, default). % (no style)
+html_menustyle(selmenu, 'lpdoc-selmenu').
+html_menustyle(unselmenu, 'lpdoc-unselmenu').
+html_menustyle(phonymenu, 'lpdoc-phonymenu').
 
 menustyle(selmenu).
 menustyle(unselmenu).
