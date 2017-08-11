@@ -13,8 +13,8 @@
 }
 
 .lpdoc-deftext {
-    margin-left: 3em;
-    margin-right: 1.5em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .lpdoc-on-right {
@@ -31,18 +31,19 @@
 }
 
 .lpdoc-emacskey {
-    border-radius: 4px;
+    border-radius: 3px;
 /*    border-bottom: 1px solid #666;*/
 /*    border-left: 1px solid #666;*/
 /*    border-right: 1px solid #666;*/
 /*    border-top: 1px solid #888;*/
     background-color: #444;
+    font-size: 14px;
     font-family: arial, helvetica;
     font-weight: normal;
     color: #fff;
-    text-shadow: 0px 0px 3px #000;
-    padding-top: 0px;
-    padding-bottom: 0px;
+    text-shadow: 0px 0px 2px #000;
+    padding-top: 1px;
+    padding-bottom: 1px;
     padding-left: 4px;
     padding-right: 4px;
 }
@@ -61,11 +62,12 @@
 }
 
 pre {
+    font-size: 14px;
+    line-height:1.0em;
     padding: 8px;
     background: #fff8dd;
     border: 1px solid #fbe89d;
     border-radius: 3px;
-    line-height:1.0em;
 }
 
 .lpdoc-var {
@@ -334,20 +336,20 @@ div.lpdoc-sidebar li {
 /* Cover */
 
 div.lpdoc-cover-address {
+    line-height:1.3em;
+    font-size:12px;
     float:right;
-    font-size:8pt;
-    background: #d2e3ec;
     padding: 16px;
+    color: #888;
 }
 
 div.lpdoc-cover-authors {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.3em;
     padding: 16px;
     float:right;
     text-align:right;
     color: #888;
-    background: #f8f8f8;
 }
 
 div.lpdoc-cover-logo {
@@ -362,12 +364,11 @@ div.lpdoc-cover-title {
 }
 
 div.lpdoc-cover-subtitle-extra {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.3em;
     padding: 16px;
     border-radius: 8px;
     color: #888;
-    background: #f8f8f8;
 }
 
 div.lpdoc-cover-h1 {
