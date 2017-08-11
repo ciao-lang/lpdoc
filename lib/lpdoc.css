@@ -5,55 +5,7 @@
  */
 
 /* --------------------------------------------------------------------------- */
-/* Links */
-
-a.lpdoc-missing:link { color: #aa0000; text-decoration: none; }
-a.lpdoc-missing:visited { color: #aa0000; text-decoration: none; }
-a.lpdoc-missing:hover { color: #aa0000; text-decoration: underline; }
-a.lpdoc-missing:active { color: #FA0000; text-decoration: underline; }
-
-a.lpdoc-idx-anchor:link { color: #4263ab; text-decoration: none; }
-a.lpdoc-idx-anchor:visited { color: #0645AD; text-decoration: none; }
-a.lpdoc-idx-anchor:hover { color: #4263ab; text-decoration: underline; }
-a.lpdoc-idx-anchor:active { color: #FAA700; text-decoration: underline; }
-
-div.lpdoc-defname a.lpdoc-idx-anchor:link { color: #000; text-decoration: none; }
-div.lpdoc-defname a.lpdoc-idx-anchor:visited { color: #000; text-decoration: none; }
-div.lpdoc-defname a.lpdoc-idx-anchor:hover { color: #000; text-decoration: underline; }
-div.lpdoc-defname a.lpdoc-idx-anchor:active { color: #000; text-decoration: underline; }
-
-a:link { color: #4263ab; text-decoration: none; }
-a:visited { color: #0645AD; text-decoration: none; }
-a:hover { color: #4263ab; text-decoration: underline; }
-a:active { color: #FAA700; text-decoration: underline; }
-
-/* --------------------------------------------------------------------------- */
-/* Navigation buttons (special links) */
-
-.lpdoc-navbutton {
-    font-size: 80%;
-    border-radius: 2px;
-    background-color: #4263ab;
-    color: white;
-    padding: 2px 8px 2px 8px;
-    margin-left: 1px;
-    margin-right: 1px;
-}
-a.lpdoc-navbutton:link { color: white; background-color: #4263ab; text-decoration: none; }
-a.lpdoc-navbutton:visited { color: white; background-color: #4263ab; text-decoration: none; }
-a.lpdoc-navbutton:hover { color: white; background-color: #0645AD; text-decoration: none; }
-a.lpdoc-navbutton:active { color: white; background-color: #FAA700; text-decoration: none; }
-.lpdoc-navbutton-disabled {
-    font-size: 80%;
-    border-radius: 2px;
-    color: white;
-    background-color: #ccc;
-    padding: 2px 8px 2px 8px;
-    margin-left: 1px;
-    margin-right: 1px;
-}
-
-/* --------------------------------------------------------------------------- */
+/* Language and documentation elements */
 
 .lpdoc-defname {
     font-size: 105%;
@@ -110,17 +62,78 @@ a.lpdoc-navbutton:active { color: white; background-color: #FAA700; text-decorat
 
 pre {
     padding: 8px;
-    background: #eeffdd;
-    border: 1px solid #aadd99;
+    background: #fff8dd;
+    border: 1px solid #fbe89d;
+    border-radius: 3px;
     line-height:1.0em;
 }
 
-.var {
+.lpdoc-var {
     color: #e06000;
 }
 
-.var, pre, tt {
+.lpdoc-var, pre, tt {
     font-family: "Source Code Pro", monospace;
+}
+
+/* Assertion status tags */
+span.lpdoc-test-header,
+span.lpdoc-true-header,
+span.lpdoc-false-header,
+span.lpdoc-check-header,
+span.lpdoc-checked-header,
+span.lpdoc-trust-header {
+    color: white;
+    padding: 3px 8px 3px 8px;
+    border-radius: 3px 0px 0px 3px;
+}
+
+/* Name tag for test assertions (E.g., Test) */
+span.lpdoc-test-header { background: #ad62ff; }
+/* Name tag for true assertions (in green) */
+span.lpdoc-true-header { background: #78ac2b; }
+/* Name tag for false assertions (in red) */
+span.lpdoc-false-header { background: #ff6262; }
+/* Name tag for check assertions (including Usage) (in blue) */
+span.lpdoc-check-header { background: #3f8cdc; }
+/* Name tag for checked assertions (in lightest green) */
+span.lpdoc-checked-header { background: #6eb88c; }
+/* Name tag for trust assertions (in orange) */
+span.lpdoc-trust-header { background: #ffa162; }
+
+/* E.g., foo(+,-,+) */
+span.lpdoc-usagedecl {
+    background: #eee;
+    padding: 3px 8px 3px 8px;
+    border-radius: 0px 3px 3px 0px;
+}
+
+/* Tag for predicates (PREDICATE, REGTYPE, etc.) */
+span.lpdoc-predtag,
+span.lpdoc-predtag-on-right {
+    font-size: 14px;
+    color: #888;
+    background: #eee;
+    padding: 3px 8px 3px 8px;
+    border-radius: 3px;
+}
+
+span.lpdoc-predtag-on-right { float: right; } /* on the right */
+
+/* --------------------------------------------------------------------------- */
+/* Special blocks */
+
+.lpdoc-cartouche {
+    border: 1px solid #C8E2F0;
+    border-radius: 3px;
+    padding: 8px;
+    background: #EFF6FC;
+}
+
+.lpdoc-alert {
+    border: 1px solid #aaa;
+    border-left: 10px solid #ab4263;
+    padding: 8px;
 }
 
 div.lpdoc-twocolumns {
@@ -130,49 +143,6 @@ div.lpdoc-twocolumns {
     -webkit-column-gap: 20px;
     column-count: 2;
     column-gap: 20px;
-}
-
-/* --------------------------------------------------------------------------- */
-/* Special cartouche blocks */
-
-.lpdoc-cartouche {
-    border: 1px solid #C8E2F0;
-    border-radius: 6px;
-    padding: 8px;
-    background: #EFF6FC;
-    background-image: -webkit-linear-gradient(top, #FAFBFC 0px, #EFF6FC 32px);
-}
-
-.lpdoc-alert {
-    border: 1px solid #aaa;
-    border-left: 10px solid #ab4263;
-    padding: 8px;
-}
-
-/* --------------------------------------------------------------------------- */
-/* Menu at sidebar */
-
-div.lpdoc-sidebar h2 {
-    font-size: 100%;
-}
-
-div.lpdoc-sidebar p {
-    margin-left: 0px;
-}
-
-div.lpdoc-sidebar ul {
-    margin-left: 0px;
-    list-style-type: none;
-    padding-left: 0px;
-    margin: 0px;
-    /* padding-left:3ex; */
-    /* list-style-type: square; */
-}
-
-div.lpdoc-sidebar li {
-    list-style-type: none;
-    padding-left: 8px;
-    margin: 0px;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -195,8 +165,8 @@ body, html {
 }
 
 div.lpdoc-nav {
-    padding:5px 20px;
-    background:#f6f6f6;
+    padding: 5px 0px 5px 0px;
+    background: #fff;
 }
 div.lpdoc-nav ul {
     margin:0;
@@ -212,14 +182,12 @@ div.lpdoc-nav li {
 div.lpdoc-main {
     background-color:#fff;
     color: #000000;
-    border-left: 1px solid #a7d7f9; /* left-sidebar */
-    /* border-right: 1px solid #a7d7f9; */ /* right-sidebar */
-    border-top: 1px solid #a7d7f9;
-    border-bottom: 1px solid #a7d7f9;
-    padding: 1px 20px 30px 20px;
+    padding: 1px 40px 30px 40px;
+    border-right: 1px solid #dedede; /* right-sidebar */
 }
 
 div.lpdoc-sidebar {
+    background-color:#fff;
     padding:10px 10px 10px 20px;
     font-size: 14px;
     line-height: 1.3em;
@@ -234,15 +202,17 @@ div.lpdoc-clearer {
 }
 
 div.lpdoc-footer {
-    color: #ffffff;
+    font-size: 12px;
+    color: #888;
+    background: #f8f8f8;
     width: 100%;
-    padding: 9px 0 9px 0;
+    padding: 3px 0 3px 0;
     text-align: center;
 /*    font-size: 75%;*/
 }
 
 div.lpdoc-footer a {
-    color: #ffffff;
+    color: black;
     text-decoration: underline;
 }
 
@@ -255,7 +225,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Page layout */
 
 div.lpdoc-page {
-    background-color: #f6f6f6;
+    background-color: #fff;
 }
 
 /* Document with left sidebar */
@@ -287,6 +257,80 @@ div.lpdoc-page {
 }
 
 /* --------------------------------------------------------------------------- */
+/* Links */
+
+a.lpdoc-missing:link { color: #aa0000; text-decoration: none; }
+a.lpdoc-missing:visited { color: #aa0000; text-decoration: none; }
+a.lpdoc-missing:hover { color: #aa0000; text-decoration: underline; }
+a.lpdoc-missing:active { color: #FA0000; text-decoration: underline; }
+
+a.lpdoc-idx-anchor:link { color: #4263ab; text-decoration: none; }
+a.lpdoc-idx-anchor:visited { color: #0645AD; text-decoration: none; }
+a.lpdoc-idx-anchor:hover { color: #4263ab; text-decoration: underline; }
+a.lpdoc-idx-anchor:active { color: #FAA700; text-decoration: underline; }
+
+div.lpdoc-defname a.lpdoc-idx-anchor:link { color: #000; text-decoration: none; }
+div.lpdoc-defname a.lpdoc-idx-anchor:visited { color: #000; text-decoration: none; }
+div.lpdoc-defname a.lpdoc-idx-anchor:hover { color: #000; text-decoration: underline; }
+div.lpdoc-defname a.lpdoc-idx-anchor:active { color: #000; text-decoration: underline; }
+
+a:link { color: #4263ab; text-decoration: none; }
+a:visited { color: #0645AD; text-decoration: none; }
+a:hover { color: #4263ab; text-decoration: underline; }
+a:active { color: #FAA700; text-decoration: underline; }
+
+/* --------------------------------------------------------------------------- */
+/* Navigation buttons (special links) */
+
+.lpdoc-navbutton {
+    font-size: 80%;
+    border-radius: 2px;
+    color: #4263ab;
+    padding: 2px 8px 2px 8px;
+    margin-left: 1px;
+    margin-right: 1px;
+}
+a.lpdoc-navbutton:link { color: #4263ab; text-decoration: none; }
+a.lpdoc-navbutton:visited { color: #4263ab; text-decoration: none; }
+a.lpdoc-navbutton:hover { color: #0645AD; text-decoration: none; }
+a.lpdoc-navbutton:active { color: #FAA700; text-decoration: none; }
+
+.lpdoc-navbutton-disabled {
+    font-size: 80%;
+    border-radius: 2px;
+    color: #ccc;
+    padding: 2px 8px 2px 8px;
+    margin-left: 1px;
+    margin-right: 1px;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Menu at sidebar */
+
+div.lpdoc-sidebar h2 {
+    font-size: 100%;
+}
+
+div.lpdoc-sidebar p {
+    margin-left: 0px;
+}
+
+div.lpdoc-sidebar ul {
+    margin-left: 0px;
+    list-style-type: none;
+    padding-left: 0px;
+    margin: 0px;
+    /* padding-left:3ex; */
+    /* list-style-type: square; */
+}
+
+div.lpdoc-sidebar li {
+    list-style-type: none;
+    padding-left: 8px;
+    margin: 0px;
+}
+
+/* --------------------------------------------------------------------------- */
 /* Cover */
 
 div.lpdoc-cover-address {
@@ -297,122 +341,38 @@ div.lpdoc-cover-address {
 }
 
 div.lpdoc-cover-authors {
+    font-size: 14px;
+    line-height: 1.3em;
     padding: 16px;
     float:right;
     text-align:right;
+    color: #888;
+    background: #f8f8f8;
+}
+
+div.lpdoc-cover-logo {
+    float: right;
 }
 
 div.lpdoc-cover-title {
     padding: 16px;
     margin: 0px;
-    background:#46a;
-    color:white;
-    text-shadow: 1px 1px 2px #000;
+    background: white;
+    color: #4263ab;
 }
 
 div.lpdoc-cover-subtitle-extra {
     font-size: 14px;
     line-height: 1.3em;
     padding: 16px;
+    border-radius: 8px;
+    color: #888;
+    background: #f8f8f8;
 }
 
 div.lpdoc-cover-h1 {
     margin-top:0px;
     margin-bottom:0px;
-}
-
-/* --------------------------------------------------------------------------- */
-/* Assertions */
-
-/* Name tag for test assertions (E.g., Test) */
-span.lpdoc-test-header {
-    color: white;
-    background: #AD62FF;
-    padding: 4px;
-    text-shadow: -1px -1px 0px #552185;
-    border-radius: 3px 0px 0px 3px;
-    border: 1px solid #7C4FCC;
-    background-image: -webkit-linear-gradient(top, #B181F8, #7839D6);
-}
-
-/* Name tag for true assertions (in green) */
-span.lpdoc-true-header {
-    color: white;
-    background: #7FCC4C;
-    padding: 4px;
-    text-shadow: -1px -1px 0px #2D8521;
-    border-radius: 3px 0px 0px 3px;
-    border: 1px solid #90CC4F;
-    background-image: -webkit-linear-gradient(top, #A2CE6B, #78AC2B);
-}
-/* Name tag for false assertions (in red) */
-span.lpdoc-false-header {
-    color: white;
-    background: #FF6262;
-    padding: 4px;
-    text-shadow: -1px -1px 0px #852121;
-    border-radius: 3px 0px 0px 3px;
-    border: 1px solid #CC4F4F;
-    background-image: -webkit-linear-gradient(top, #F88181, #D63939);
-}
-/* Name tag for check assertions (including Usage) (in blue) */
-span.lpdoc-check-header {
-    color: white;
-    background: rgb(98, 180, 255);
-    padding: 4px;
-    text-shadow: -1px -1px 0px #215985;
-    border-radius: 3px 0px 0px 3px;
-    border: 1px solid #4F90CC;
-    background-image: -webkit-linear-gradient(top, #81BFF8, #398BD6);
-}
-/* Name tag for checked assertions (in lightest green) */
-span.lpdoc-checked-header {
-    color: white;
-    background: #6EB88C;
-    padding: 4px;
-    text-shadow: -1px -1px 0px #218555;
-    border-radius: 3px 0px 0px 3px;
-    border: 1px solid #4FCC7C;
-    background-image: -webkit-linear-gradient(top, #BBEEC9, #5FAD7C);
-}
-/* Name tag for trust assertions (in orange) */
-span.lpdoc-trust-header {
-    color: white;
-    background: #FFA162;
-    padding: 4px;
-    text-shadow: -1px -1px 0px #855121;
-    border-radius: 3px 0px 0px 3px;
-    border: 1px solid #CC864F;
-    background-image: -webkit-linear-gradient(top, #F8B581, #D67E39);
-}
-
-/* E.g., foo(+,-,+) */
-span.lpdoc-usagedecl {
-    padding: 4px;
-    background: #eee;
-    border-radius: 0px 3px 3px 0px;
-    border: 1px solid #d8d8d8;
-}
-
-/* Tag for predicates (PREDICATE, REGTYPE, etc.) */
-span.lpdoc-predtag {
-    color: rgb(143, 143, 143);
-    background: #003374;
-    padding: 2px;
-    border-radius: 3px;
-    border: 1px solid #D8D8D8;
-    background-image: -webkit-linear-gradient(top, #E6E6E6, rgb(247, 247, 247));
-}
-
-/* Tag for predicates (PREDICATE, REGTYPE, etc.) -- on the right */
-span.lpdoc-predtag-on-right {
-    float: right;
-    color: rgb(143, 143, 143);
-    background: #003374;
-    padding: 2px 8px 2px 8px;
-    border-radius: 3px;
-    border: 1px solid #D8D8D8;
-    background-image: -webkit-linear-gradient(top, #E6E6E6, rgb(247, 247, 247));
 }
 
 /* --------------------------------------------------------------------------- */

@@ -293,7 +293,7 @@ rw_command(defassrt(Status, AType, HeaderStr, HeadR, DescR, UsageProps), _DocSt,
 	( HeaderStr = "" -> HeaderR = []
 	; HeaderR =
             [p(""),
-	     htmlenv(span, [class=HeaderStyle], [bf(string_esc(HeaderStr))])]
+	     htmlenv(span, [class=HeaderStyle], [string_esc(HeaderStr)])]
         ),
 	R = [HeaderR,
 	     htmlenv(span, [class="lpdoc-usagedecl"], HeadR),
@@ -401,7 +401,8 @@ layout_has_colophon(nav_searchbox_menu_main).
 layout_has_navbars(nav_sidebar_main).
 
 layout_sidebar_pos(nav_searchbox_menu_main, right).
-layout_sidebar_pos(nav_sidebar_main, left).
+%layout_sidebar_pos(nav_sidebar_main, left).
+layout_sidebar_pos(nav_sidebar_main, right). % TODO: make it customizable
 
 % ---------------------------------------------------------------------------
 
@@ -518,7 +519,9 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
 	R = [
 	  htmlenv(div, [
             linebreak, % add some margin here
-	    MainLogoR,
+	    htmlenv(div, [class="lpdoc-cover-logo"], [
+	      MainLogoR
+            ]),
 	    cover_title(TitleR, SubtitleRs),
 	    AddressRs2,
 	    htmlenv(div, [class="lpdoc-cover-authors"], [
@@ -560,13 +563,16 @@ fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :
 	),
 	doctree_simplify([%
 	     TopBarR, % top bar
-	     NavTopR, % navigation at top
+	     % NavTopR, % navigation at top
 	     htmlenv(div, [class=PageClass], [
 	       htmlenv(div, [class="lpdoc-sidebar"], SidebarR),
-	       htmlenv(div, [class="lpdoc-main"], MainR),
+	       htmlenv(div, [class="lpdoc-main"], [
+	         NavTopR, % navigation before main
+                 MainR
+               ]),
 	       htmlenv(div, [class="lpdoc-clearer"], [])
              ]),
-	     NavBottomR, % navigation at bottom
+	     % NavBottomR, % navigation at bottom
 	     ColophonR % footer
             ], R).
 
