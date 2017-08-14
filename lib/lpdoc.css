@@ -68,6 +68,7 @@ pre {
     background: #fff8dd;
     border: 1px solid #fbe89d;
     border-radius: 3px;
+    overflow-x: auto;
 }
 
 .lpdoc-var {
@@ -108,6 +109,7 @@ span.lpdoc-usagedecl {
     background: #eee;
     padding: 3px 8px 3px 8px;
     border-radius: 0px 3px 3px 0px;
+    line-height: 1.6em; /* TODO: better way? (avoid some overlap in narrow windows) */
 }
 
 /* Tag for predicates (PREDICATE, REGTYPE, etc.) */
@@ -166,7 +168,7 @@ body, html {
 }
 
 div.lpdoc-nav {
-    padding: 5px 10px 5px 0px;
+    padding: 5px 0px 5px 0px;
     background: #fff;
 }
 div.lpdoc-nav ul {
@@ -399,6 +401,9 @@ div.lpdoc-cover-h1 {
 	position: relative;
     }
 
+    div.lpdoc-nav {
+	padding-right: 20px; /* some space for toggle button */
+    }
     a#sidebar-toggle-button {
 	z-index: 1;
 	display: block;
