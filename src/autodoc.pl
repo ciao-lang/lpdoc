@@ -136,7 +136,7 @@ reset_output_dir_db :-
 :- pred ensure_output_dir_prepared(Backend, Opts) # "Ensure that the
    output directories for backend @var{Backend} are prepared.".
 % Prepare the output directory (computes the output directory, makes
-% sure it exists, and calls @pred{prepare_auxfiles/2}).
+% sure it exists, and calls @pred{prepare_assets/2}).
 ensure_output_dir_prepared(Backend, _) :-
 	current_fact(output_dir_prepared(Backend)),
 	!.
@@ -145,17 +145,17 @@ ensure_output_dir_prepared(Backend, Opts) :-
 	% Make sure that the output directory exists
 	ensure_output_dir(Backend),
 	%
-	prepare_auxfiles(Backend, Opts).
+	prepare_assets(Backend, Opts).
 
-% TODO: Add multifile for prepare_auxfiles?
-:- use_module(lpdoc(autodoc_html_assets), [prepare_auxfiles_html/2]).
+% TODO: Add multifile for prepare_assets?
+:- use_module(lpdoc(autodoc_html_assets), [prepare_html_assets/2]).
 
-% Copy the auxiliary files required for this output. This is specific
-% to each backend (e.g. HTML assets)
+% Copy the assets required for this output. This is specific to each
+% backend (e.g. HTML assets)
 %
-prepare_auxfiles(Backend, Opts) :- Backend = html, !,
-	prepare_auxfiles_html(Backend, Opts).
-prepare_auxfiles(_, _) :- !.
+prepare_assets(Backend, Opts) :- Backend = html, !,
+	prepare_html_assets(Backend, Opts).
+prepare_assets(_, _) :- !.
 
 % ===========================================================================
 

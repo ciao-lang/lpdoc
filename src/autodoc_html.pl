@@ -421,8 +421,9 @@ fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	fmt_nav(DocSt, SectPathR, UpPrevNextR),
 	%
 	get_layout(Layout),
+	get_icon_list(IconList),
 	get_css_list(CssList),
-	get_icon(MaybeIcon),
+	get_script_list(ScriptList),
 	% Title
 	fmt_page_title(SecProps, TitleR, DocSt, PageTitleR),
 	% Sidebar
@@ -431,29 +432,7 @@ fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR),
 	%
 	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, TitleR, MainR, DocSt, R),
-	fmt_headers(Layout, MaybeIcon, CssList, PageTitleR, R, ModR).
-
-get_icon(MaybeIcon) :- setting_value(html_layout, website_layout(Opts)),
-	member(icon(Icon), Opts), atom(Icon), !, % TODO: document
-	MaybeIcon = yes(Icon).
-get_icon(no).
-
-:- use_module(lpdoc(autodoc_html_assets), [css_file/1]).
-
-get_css_list(CssList) :-
-	findall(Base, get_css_url(Base), CssList).
-
-% (nondet)
-get_css_url(URL) :-
-	css_file(F), path_basename(F, URL),
-	% TODO: kludge, do not include lpdoc.css (FIX: add a cleaner version)
-	\+ ( setting_value(html_layout, tmpl_layout(_, _, _)), URL = 'lpdoc.css' ).
-get_css_url(URL) :-
-	setting_value(html_layout, website_layout(Opts)),
-	member(css(URL), Opts). % TODO: document
-get_css_url(URL) :-
-	setting_value(html_layout, tmpl_layout(_, _, CssList)),
-	member(URL, CssList).
+	fmt_headers(Layout, IconList, CssList, ScriptList, PageTitleR, R, ModR).
 
 % Format the main logo (if any)
 fmt_main_logo(DocSt, R) :-
@@ -561,11 +540,13 @@ fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :
 	  ) -> true
 	; PageClass = "lpdoc-page"
 	),
+	sidebar_toogle(SidebarToogleR),
 	doctree_simplify([%
 	     TopBarR, % top bar
 	     % NavTopR, % navigation at top
 	     htmlenv(div, [class=PageClass], [
-	       htmlenv(div, [class="lpdoc-sidebar"], SidebarR),
+               SidebarToogleR,
+	       htmlenv(div, [id="sidebar", class="lpdoc-sidebar"], SidebarR),
 	       htmlenv(div, [class="lpdoc-main"], [
 	         NavTopR, % navigation before main
                  MainR
@@ -615,11 +596,11 @@ colophon(DocSt, R) :-
 %     and imperative programming styles. Additinally it offers a complete
 %     Prolog system, supporting ISO-Prolog.">
 
-fmt_headers(Layout, MaybeIcon, CssList, PageTitleR, BodyR, R) :- !,
-	fmt_icon(MaybeIcon, IconR),
+fmt_headers(Layout, IconList, CssList, ScriptList, PageTitleR, BodyR, R) :- !,
+	fmt_icon(IconList, IconR),
 	fmt_css(CssList, CssR),
-	fmt_mathjax(MathJaxR),
-	MetaR = [CssR, IconR, MathJaxR, htmlenv(title, PageTitleR)],
+	fmt_script(ScriptList, ScriptR),
+	MetaR = [IconR, CssR, ScriptR, htmlenv(title, PageTitleR)],
 	fmt_headers_(Layout, MetaR, BodyR, R).
 
 fmt_headers_(Layout, MetaR, BodyR, R) :-
@@ -639,19 +620,6 @@ fmt_headers_(_, MetaR, BodyR, R) :-
 	    htmlenv(body, BodyR)
 	  ])
 	].
-
-fmt_icon(MaybeIcon, R) :-
-	( MaybeIcon = [IconImg] ->
-	    IconHRef = ~atom_codes(~img_url(IconImg)),
-	    R = htmlenv1(link, [rel="shortcut icon", href=IconHRef])
-	; R = nop
-	).
-
-fmt_css([], []).
-fmt_css([X|Xs], [R|Rs]) :-
-	HRef = ~atom_codes(~prefix_htmlurl(X)),
-	R = htmlenv1(link, [rel="stylesheet", href=HRef, type="text/css"]),
-	fmt_css(Xs, Rs).
 
 fmt_section(SecProps, SectLabel, TitleR, Body, _DocSt, R) :-
 	doclabel_to_html_id(SectLabel, Id),
@@ -728,9 +696,15 @@ fmt_nav(DocSt, PathR, UpPrevNextR):-
 	navpath_links(Path, Path2),
 	sep_list(Path2, raw(" &raquo; "), PathR0),
 	( PathR0 = [] -> PathR = raw("&nbsp;") ; PathR = [PathR0, raw(" &raquo; ")] ),
-	UpUnicode = raw("&#x25B2;"),
-	LeftUnicode = raw("&#x25C4;"),
-	RightUnicode = raw("&#x25BA;"),
+	% % Triangles as arrows (it does not look nice in some devices)
+	% UpUnicode = raw("&#x25B2;"),
+	% LeftUnicode = raw("&#x25C4;"),
+	% RightUnicode = raw("&#x25BA;"),
+	%
+	% Arrows (it looks nicer in most devices)
+	UpUnicode = raw("&#x2191;"),
+	LeftUnicode = raw("&#x2190;"),
+	RightUnicode = raw("&#x2192;"),
 	navlink(Up, UpUnicode, UpR),
 	navlink(Prev, LeftUnicode, PrevR),
 	navlink(Next, RightUnicode, NextR),
@@ -757,6 +731,13 @@ sep_list([A], _, [A]) :- !.
 sep_list([A|As], Sep, [A,Sep|Bs]) :-
 	sep_list(As, Sep, Bs).
 
+% Toogle button for sidebar
+% TODO: use fmt_link?
+sidebar_toogle(R) :-
+	R = htmlenv(a, [href="#", id="sidebar-toggle-button", class="lpdoc-navbutton"], [
+            htmlenv(span, [id="sidebar-button-arrow"], [raw("&#9776;")])
+        ]).
+
 % ===========================================================================
 % Obtain the current date (for '@today' command)
 
@@ -770,25 +751,89 @@ fmt_date(R) :-
 	R = string_esc(S).
 
 % ===========================================================================
-% Mathematical notation
+% Format some meta entries: icon, css, scripts
+
+fmt_icon(IconList, R) :-
+	( IconList = [IconImg] ->
+	    IconHRef = ~atom_codes(~img_url(IconImg)),
+	    R = htmlenv1(link, [rel="shortcut icon", href=IconHRef])
+	; R = nop
+	).
+
+fmt_css([], []).
+fmt_css([X|Xs], [R|Rs]) :-
+	HRef = ~atom_codes(~prefix_htmlurl(X)),
+	R = htmlenv1(link, [rel="stylesheet", href=HRef, type="text/css"]),
+	fmt_css(Xs, Rs).
+
+fmt_script([], []).
+fmt_script([S|Ss], [R|Rs]) :- fmt_script_(S, R), fmt_script(Ss, Rs).
+
+fmt_script_(script(Type, url(URL)), R) :- !,
+	Type2 = ~atom_codes(Type),
+	URL2 = ~atom_codes(~prefix_htmlurl(URL)),
+	R = htmlenv(script, [type=Type2, src=URL2], []).
+fmt_script_(script(Type, inline(Src)), R) :- !,
+	Type2 = ~atom_codes(Type),
+	R = htmlenv(script, [type=Type2], [raw(Src)]).
+
+% ===========================================================================
+% Icons, CSS, JS
 %
-% Note: currently, only MathJax is supported
+% TODO: asset_file/2 defines files that needs to be copied; the
+%   following predicates does not necessarily mean that the files are
+%   copied. Cleanup this code.
+
+:- use_module(lpdoc(autodoc_html_assets), [asset_file/2]).
+
+get_icon_list(IconList) :-
+	findall(Base, get_icon(Base), IconList).
+
+get_css_list(CssList) :-
+	findall(Base, get_css_url(Base), CssList).
+
+get_script_list(ScriptList) :-
+	findall(X, get_script(X), ScriptList).
+
+% (nondet)
+get_icon(X) :-
+	setting_value(html_layout, website_layout(Opts)),
+	member(icon(Icon), Opts), atom(Icon), % TODO: document (max 1)
+	!,
+	X = Icon.
+
+% (nondet)
+get_css_url(URL) :-
+	asset_file(css, F), path_basename(F, URL).
+get_css_url(URL) :-
+	setting_value(html_layout, website_layout(Opts)),
+	member(css(URL), Opts). % TODO: document
+get_css_url(URL) :-
+	setting_value(html_layout, tmpl_layout(_, _, CssList)),
+	member(URL, CssList).
+
+% (nondet)
+get_script(script('text/javascript', url(URL))) :-
+	asset_file(js, F), path_basename(F, URL).
+get_script(X) :-
+	% Mathematical notation
+	% Note: currently, only MathJax is supported
+	script_mathjax(X).
 
 :- use_module(lpdoc(autodoc_html_assets), [using_mathjax/1]).
 
 % Include mathjax, if available (for TeX output in HTML)
-fmt_mathjax(R) :-
-	using_mathjax(MathJaxJS0),
+% (enum on nondet)
+script_mathjax(X) :-
+	using_mathjax(MathJaxJS),
 	!,
-	atom_codes(MathJaxJS0, MathJaxJS),
-	R = [htmlenv(script, [type="text/x-mathjax-config"], [
-               raw("MathJax.Hub.Config({"),
-               raw(" jax: [\"input/TeX\",\"output/HTML-CSS\"],"),
-               raw(" TeX: {extensions: [\"AMSmath.js\",\"AMSsymbols.js\"]}"),
-               raw("});")
-             ]),
-	     htmlenv(script, [type="text/javascript", src=MathJaxJS], [])].
-fmt_mathjax([]).
+	( X = script('text/x-mathjax-config', inline(
+                "MathJax.Hub.Config({"||
+                " jax: [\"input/TeX\",\"output/HTML-CSS\"],"||
+                " TeX: {extensions: [\"AMSmath.js\",\"AMSsymbols.js\"]}"||
+                "});"))
+        ; X = script('text/javascript', url(MathJaxJS))
+	).
 
 % ===========================================================================
 

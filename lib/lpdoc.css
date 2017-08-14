@@ -156,7 +156,6 @@ html {
 }
 
 body, html {
-    min-width:600px;
     margin:0;
     padding:0;
     color:#000;
@@ -167,7 +166,7 @@ body, html {
 }
 
 div.lpdoc-nav {
-    padding: 5px 0px 5px 0px;
+    padding: 5px 10px 5px 0px;
     background: #fff;
 }
 div.lpdoc-nav ul {
@@ -184,7 +183,7 @@ div.lpdoc-nav li {
 div.lpdoc-main {
     background-color:#fff;
     color: #000000;
-    padding: 1px 40px 30px 40px;
+    padding: 1px 20px 30px 20px;
     border-right: 1px solid #dedede; /* right-sidebar */
 }
 
@@ -284,26 +283,32 @@ a:active { color: #FAA700; text-decoration: underline; }
 /* --------------------------------------------------------------------------- */
 /* Navigation buttons (special links) */
 
-.lpdoc-navbutton {
-    font-size: 80%;
+.lpdoc-navbutton,
+.lpdoc-navbutton-disabled {
+    font-size: 20px;
     border-radius: 2px;
-    color: #4263ab;
     padding: 2px 8px 2px 8px;
     margin-left: 1px;
     margin-right: 1px;
 }
+
+.lpdoc-navbutton { color: #4263ab; }
 a.lpdoc-navbutton:link { color: #4263ab; text-decoration: none; }
 a.lpdoc-navbutton:visited { color: #4263ab; text-decoration: none; }
 a.lpdoc-navbutton:hover { color: #0645AD; text-decoration: none; }
 a.lpdoc-navbutton:active { color: #FAA700; text-decoration: none; }
 
-.lpdoc-navbutton-disabled {
-    font-size: 80%;
-    border-radius: 2px;
-    color: #ccc;
-    padding: 2px 8px 2px 8px;
-    margin-left: 1px;
-    margin-right: 1px;
+.lpdoc-navbutton-disabled { color: #ccc; }
+
+/* --------------------------------------------------------------------------- */
+/* Toggleable sidebar (for small screens) */
+
+div#sidebar {
+    display: block;
+}
+
+a#sidebar-toggle-button {
+    display:none;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -392,6 +397,24 @@ div.lpdoc-cover-h1 {
 	float: none;
 	width: auto;
 	position: relative;
+    }
+
+    a#sidebar-toggle-button {
+	z-index: 1;
+	display: block;
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding:7px 10px 7px 10px;
+    }
+    div#sidebar {
+	display: none;
+    }
+    div#sidebar.sidebar-toggled {
+	display: block;
+	border-bottom: 1px solid #dedede;
+	font-size: 16px;
+	z-index: 0;
     }
 }
 

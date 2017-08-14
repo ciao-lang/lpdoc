@@ -15,61 +15,66 @@
 :- use_module(lpdoc(autodoc_filesystem)).
 
 % ---------------------------------------------------------------------------
-:- doc(section, "CSS files").
+:- doc(section, "Individual asset files (CSS and JS)").
 
 :- use_module(library(bundle/bundle_paths), [bundle_path/3]).
 
-:- export(prepare_auxfiles_html/2).
-prepare_auxfiles_html(Backend, Opts) :-
+:- export(prepare_html_assets/2).
+prepare_html_assets(Backend, Opts) :-
 	( all_setting_values(html_asset, AssetDirs) ->
-	    prepare_assets(AssetDirs)
+	    prepare_asset_dirs(AssetDirs)
 	; true
 	),
 	( member(no_math, Opts) ->
 	    true
 	; prepare_mathjax
 	),
-	% Copy CSS files
+	% Copy asset files files
 	( % (failure-driven loop)
-	  css_file(CSSPath),
-	    path_basename(CSSPath, CSSBase),
-	    absfile_for_aux(CSSBase, Backend, OutCSS),
-	    copy_file(CSSPath, OutCSS, [overwrite]),
+	  asset_file(_, Path),
+	    path_basename(Path, Base),
+	    absfile_for_aux(Base, Backend, OutBase),
+	    copy_file(Path, OutBase, [overwrite]),
 	    fail
 	; true
 	).
 
-:- export(css_file/1).
-% Enumerate CSS files (absolute path) for the current settings
-css_file(Path) :-
+:- export(asset_file/2).
+% Asset files (absolute path) for the current settings
+asset_file(css, Path) :-
+	\+ setting_value(html_layout, tmpl_layout(_, _, _)), % TODO: better way?
 	F = 'lpdoc.css',
 	setting_value(lpdoclib, Dir),
 	path_concat(Dir, F, Path).
-css_file(Path) :-
+asset_file(css, Path) :-
 	\+ setting_value(syntax_highlight, no),
 	F = 'ciao-htmlfontify.css',
 	bundle_path(core, 'library/syntax_highlight/css', Dir),
 	path_concat(Dir, F, Path).
+asset_file(js, Path) :-
+	F = 'lpdoc-aux.js',
+	setting_value(lpdoclib, Dir),
+	path_concat(Dir, F, Path).
 
 % ---------------------------------------------------------------------------
-:- doc(section, "Custom HTML assets").
-% (images, css, etc.)
+:- doc(section, "Other custom HTML assets").
+% (directories, for images, css, etc.)
 
-prepare_assets(Dirs) :-
+prepare_asset_dirs(Dirs) :-
 	( % (failure-driven loop)
 	  member(D, Dirs),
-	    prepare_asset(D),
+	    prepare_asset_dir(D),
 	    fail
 	; true
 	).
 
 :- use_module(library(source_tree), [copy_file_tree/4]).
 
-%:- export(prepare_asset/1).
-:- pred prepare_asset(+SrcDir)
+%:- export(prepare_asset_dir/1).
+:- pred prepare_asset_dir(+SrcDir)
    # "Copy contents (recursively) of @var{SrcDir} into @tt{htmldir}.".
 % TODO: Avoid copy if not necessary
-prepare_asset(SrcDir) :-
+prepare_asset_dir(SrcDir) :-
 	HtmlDir = ~setting_value_or_default(htmldir),
 	( file_exists(SrcDir) ->
 	    true
@@ -80,6 +85,7 @@ prepare_asset(SrcDir) :-
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Math engine (MathJax)").
+% TODO: Generalize using assets, bundle externals, etc.
 % TODO: Add support for much faster KaTeX?
 
 :- use_module(library(pathnames), [path_concat/3, path_split/3]).
