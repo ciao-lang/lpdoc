@@ -181,6 +181,10 @@ rw_command(html_template(FileC), _DocSt, R) :- !,
 % TODO: Move to a doc_module?
 rw_command(html_template_internal(File, Params), _DocSt, R) :- !,
 	fmt_html_template(File, Params, R).
+% LPdoc command @tmplvar{Name} (for <v>Name</v> Ciao html templates)
+% TODO: Move to a doc_module?
+rw_command(tmplvar(Name), _DocSt, R) :- !,
+	R = [raw_string("<v>"), raw_string(Name), raw_string("</v>")].
 % .......... (icmd) ..........
 % TODO: Share common definitions with autodoc_texinfo
 rw_command(htmlenv(Cmd, Body), _, NewCommand) :- !, % <cmd>BODY</cmd>
