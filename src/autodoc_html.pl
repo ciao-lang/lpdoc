@@ -841,22 +841,39 @@ script_mathjax(X) :-
 
 % ===========================================================================
 
+:- use_module(library(system), [file_exists/1]).
+:- use_module(library(system_extra), [create_link/2]).
+
 :- multifile autodoc_finish_hook/1.
 autodoc_finish_hook(html) :- finish_html.
 
-% TODO: Move to autodoc_html
 finish_html :-
-	% Note: I added 'htmlmeta' so that there exist a node in
-	% the dependency graph (a directed graph) that is
-	% connected to all the files in the document. The 'cr'
-	% files are directly generated in '.html' format. That
-	% could be generalized to more backends. (JFMC)
+	write_htmlmeta,
+	index_symlink.
+
+% Note: I added 'htmlmeta' so that there exist a node in
+% the dependency graph (a directed graph) that is
+% connected to all the files in the document. The 'cr'
+% files are directly generated in '.html' format. That
+% could be generalized to more backends. (JFMC)
+write_htmlmeta :-
 	Mod = ~get_mainmod,
 	get_mainmod(Mod),
 	format_get_file(htmlmeta, Mod, Out),
 	%
 	atom_codes(Mod, ModS),
 	string_to_file(ModS, Out).
+
+% Create a symlink from mainmod to index.html, if index does not
+% exist.
+index_symlink :-
+	Mod = ~get_mainmod,
+	get_mainmod(Mod),
+	From = ~atom_concat(Mod, '.html'),
+	To = ~absfile_for_aux('index.html', html),
+	( file_exists(To) -> true % TODO: Check if there is any module called 'index' instead?
+	; create_link(From, To)
+	).
 
 :- use_module(library(file_utils), [string_to_file/2]).
 
