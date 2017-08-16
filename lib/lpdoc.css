@@ -75,7 +75,7 @@ pre {
     color: #e06000;
 }
 
-.lpdoc-var, pre, tt {
+.lpdoc-var, pre, tt, code {
     font-family: "Source Code Pro", monospace;
 }
 
