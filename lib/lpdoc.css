@@ -61,7 +61,7 @@
     list-style-type: circle;
 }
 
-pre {
+pre.lpdoc-codeblock {
     font-size: 14px;
     line-height:1.0em;
     padding: 8px;
@@ -160,8 +160,6 @@ html {
 body, html {
     margin:0;
     padding:0;
-    color:#000;
-    background:#a7a09a;
     font-family: "Source Sans Pro", arial, helvetica, sans-serif;
     font-size: 16px;
     line-height: 1.3em;

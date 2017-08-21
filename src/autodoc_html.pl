@@ -84,7 +84,7 @@ rw_command(env_('enumerate', X),   _, htmlenv(ol, X)) :- !.
 rw_command(env_('description', X), _, htmlenv(dl, X)) :- !.
 rw_command(env_('cartouche', X),   _, cartouche(X)) :- !.
 rw_command(env_('alert', X), _, alert(X)) :- !.
-rw_command(env_('verbatim', X),     _, htmlenv(pre, X)) :- !.
+rw_command(env_('verbatim', X),     _, htmlenv(pre, [class="lpdoc-codeblock"], X)) :- !.
 rw_command(item(S), _DocSt, NBody) :- !, % (items for lists and descriptions)
 	% TODO: use item_env
 	( doctree_is_empty(S) ->
@@ -380,18 +380,28 @@ sec_is_cover(SecProps) :-
 
 % ---------------------------------------------------------------------------
 
+:- use_module(library(format), [format/2]).
+
 fmt_codeblock(Lang, Text, R) :-
 	( atom_codes(LangAtm, Lang),
 	  \+ LangAtm = 'text',
 	  can_highlight(LangAtm),
 	  \+ setting_value(syntax_highlight, no) -> % (default is 'yes')
 	    ( highlight_to_html_string(LangAtm, Text, Raw) ->
-	        R = raw(Raw)
+	        TextR = raw(~remove_pre(Raw))
 	    ; error_message("could not highlight code block for ~w syntax", [LangAtm]),
-	      R = htmlenv(pre, raw_string(Text))
+	      TextR = raw_string(Text)
 	    )
-	; R = htmlenv(pre, raw_string(Text))
-	).
+	; TextR = raw_string(Text)
+	),
+	R = htmlenv(pre, [class="lpdoc-codeblock"], TextR).
+
+% TODO: really weak
+% Try remove <pre></pre> (we add ours)
+remove_pre(X, Y) :-
+	append("\n<pre>"||Y0, "</pre>\n", X), !,
+	Y = Y0.
+remove_pre(X, X).
 
 % ---------------------------------------------------------------------------
 
