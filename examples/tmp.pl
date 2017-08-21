@@ -11,9 +11,6 @@
 
 :- doc(doinclude, [op/3, new_declaration/2]).
 
-%% We import a number of properties to use in assertions
-:- use_module(library(basicprops)).
-
 %% We import two types: list/1 and list/2 (now in basic_props, which is 
 %% exported by default from assertions). 
 %% :- use_module(library(lists),[list/1,list/2]).

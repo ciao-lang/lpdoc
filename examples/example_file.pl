@@ -5,9 +5,6 @@
 %% We declare the type of file (needed for 'user'-type files)
 %% :- doc(filetype,user).
 
-%% We import a number of properties to use in assertions
-:- use_module(library(basicprops)).
-
 %% "doc" declarations provide additional information
 :- doc(title,"An Example of a Simple File").  
 :- doc(author,"Bob Kowalski").  

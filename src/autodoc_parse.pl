@@ -546,22 +546,24 @@ handle_incl_file(Mode, RelFile, DocSt, Verb, RContent) :-
 % Auxiliary predicate to output to string
 % TODO: Find a better way to implement it
 
-:- use_module(library(dec10_io)).
 :- use_module(library(pretty_print), [pretty_print/3]).
-:- use_module(library(vndict),       [complete_dict/3, varnamesl2dict/2]).
+:- use_module(library(vndict), [complete_dict/3, varnamesl2dict/2]).
+:- use_module(library(io_port_reify), [io_once_port_reify/3]).
+:- use_module(library(port_reify), [port_call/1]).
 
 portray_to_string(Functor, Arity, Content) :-
 	Functor \== 0,
-	functor(Pattern, Functor, Arity),
-	copy_term(Pattern, TmpPattern),
+	functor(TmpPattern, Functor, Arity),
 	clause_read(_, TmpPattern, _, _, _, _, _),
 	!,
-	telling(Old),
-	mktemp(autodocXXXXXX, Tmp),
-	tell(Tmp),
+	io_once_port_reify(portray_to_string_(Functor, Arity), Port, Content),
+	port_call(Port).
+
+portray_to_string_(Functor, Arity) :-
 	current_prolog_flag(write_strings, X),
 	set_prolog_flag(write_strings, on),
-	( clause_read(_, Pattern, Body, Dict, _, _, _),
+	( functor(Pattern, Functor, Arity),
+	  clause_read(_, Pattern, Body, Dict, _, _, _),
 	    Clause = clause(Pattern, Body),
 	    varnamesl2dict(Dict, ICiaoDict),
 	    complete_dict(ICiaoDict, Clause, CiaoDict),
@@ -569,11 +571,5 @@ portray_to_string(Functor, Arity, Content) :-
 	    fail
 	; true
 	),
-	set_prolog_flag(write_strings, X),
-	told,
-	tell(Old),
-	read_file(Tmp, Content),
-	delete_file(Tmp).
+	set_prolog_flag(write_strings, X).
 
-:- use_module(lpdoc(autodoc_aux), [read_file/2]).
-:- use_module(library(system), [delete_file/1, mktemp/2]).
