@@ -18,6 +18,7 @@
 :- use_module(library(pathnames), [path_basename/2]).
 :- use_module(lpdoc(comments), [stringcommand/1]).
 :- use_module(library(format_to_string), [format_to_string/3]).
+:- use_module(library(messages), [error_message/2]).
 %
 :- use_module(library(syntax_highlight),
 	[can_highlight/1, highlight_to_html_string/3]).
@@ -59,14 +60,7 @@ rw_command(sp(_), _, R) :- !, R = raw("<p>").
 %	R = raw(NewCommand).
 rw_command(p(""),                _, raw("<p>")) :- !.
 rw_command(codeblock(Lang, Text), _, R) :- !,
-	( atom_codes(LangAtm, Lang),
-	  \+ LangAtm = 'text',
-	  can_highlight(LangAtm),
-	  \+ setting_value(syntax_highlight, no) -> % (default is 'yes')
-	    highlight_to_html_string(LangAtm, Text, Raw),
-	    R = raw(Raw)
-	; R = htmlenv(pre, raw_string(Text))
-	).
+	fmt_codeblock(Lang, Text, R).
 rw_command(mathenv(S),           _, R) :- !,
 	% environment using MathJax (in-line formula)
 	R = htmlenv(script, [type="math/tex"], raw(S)).
@@ -386,15 +380,33 @@ sec_is_cover(SecProps) :-
 
 % ---------------------------------------------------------------------------
 
+fmt_codeblock(Lang, Text, R) :-
+	( atom_codes(LangAtm, Lang),
+	  \+ LangAtm = 'text',
+	  can_highlight(LangAtm),
+	  \+ setting_value(syntax_highlight, no) -> % (default is 'yes')
+	    ( highlight_to_html_string(LangAtm, Text, Raw) ->
+	        R = raw(Raw)
+	    ; error_message("could not highlight code block for ~w syntax", [LangAtm]),
+	      R = htmlenv(pre, raw_string(Text))
+	    )
+	; R = htmlenv(pre, raw_string(Text))
+	).
+
+% ---------------------------------------------------------------------------
+
 get_layout(Layout) :-
 	% Get Layout
-	( setting_value(html_layout, Layout0), Layout0 = website_layout(_) ->
-	    Layout = nav_searchbox_menu_main
-	; setting_value(html_layout, Layout0), Layout0 = tmpl_layout(_, _, _) ->
-	    Layout = Layout0
+	( setting_value(html_layout, Layout0) ->
+	    get_layout_(Layout0, Layout)
 	; Layout = nav_sidebar_main
 	).
 
+get_layout_(website_layout(_), nav_searchbox_menu_main).
+get_layout_(Layout, Layout) :- Layout = tmpl_layout(_, _, _), !.
+get_layout_(Layout, Layout) :- Layout = embedded, !.
+
+layout_toc(embedded, R) :- !, R = []. % no toc
 layout_toc(nav_searchbox_menu_main, R) :- !, R = show_toc(vertical_menu).
 layout_toc(tmpl_layout(_, _, _), R) :- !, R = show_toc(vertical_menu).
 layout_toc(_, R) :- R = show_toc(toc_view(yes)).
@@ -404,6 +416,7 @@ layout_has_colophon(nav_searchbox_menu_main).
 
 layout_has_navbars(nav_sidebar_main).
 
+% (fail if no sidebar)
 layout_sidebar_pos(nav_searchbox_menu_main, right).
 %layout_sidebar_pos(nav_sidebar_main, left).
 layout_sidebar_pos(nav_sidebar_main, right). % TODO: make it customizable
@@ -425,9 +438,6 @@ fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	fmt_nav(DocSt, SectPathR, UpPrevNextR),
 	%
 	get_layout(Layout),
-	get_icon_list(IconList),
-	get_css_list(CssList),
-	get_script_list(ScriptList),
 	% Title
 	fmt_page_title(SecProps, TitleR, DocSt, PageTitleR),
 	% Sidebar
@@ -436,7 +446,7 @@ fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR),
 	%
 	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, TitleR, MainR, DocSt, R),
-	fmt_headers(Layout, IconList, CssList, ScriptList, PageTitleR, R, ModR).
+	fmt_headers(Layout, PageTitleR, R, ModR).
 
 % Format the main logo (if any)
 fmt_main_logo(DocSt, R) :-
@@ -466,8 +476,9 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 % Format main content holder
 fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR) :-
 	( Layout = nav_searchbox_menu_main ->
-	    % TODO: Hardwired, fix
-            MainR = [htmlenv(h1, TitleR), raw_nl, BodyR]
+            MainR = [htmlenv(h1, TitleR), raw_nl, BodyR] % TODO: Hardwired, fix
+	; Layout = embedded ->
+            MainR = [htmlenv(h1, TitleR), raw_nl, BodyR] % TODO: good?
 	; Layout = tmpl_layout(_, _, _) ->
             MainR = BodyR
 	; ( sec_is_cover(SecProps) ->
@@ -541,10 +552,11 @@ fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :
 	  ( SidebarPos = left -> PageClass = "lpdoc-page leftbar"
 	  ; SidebarPos = right -> PageClass = "lpdoc-page rightbar"
 	  ; fail
-	  ) -> true
-	; PageClass = "lpdoc-page"
+	  ) ->
+	    sidebar_toogle(SidebarToogleR)
+	; PageClass = "lpdoc-page",
+	  SidebarToogleR = []
 	),
-	sidebar_toogle(SidebarToogleR),
 	doctree_simplify([%
 	     TopBarR, % top bar
 	     % NavTopR, % navigation at top
@@ -600,10 +612,13 @@ colophon(DocSt, R) :-
 %     and imperative programming styles. Additinally it offers a complete
 %     Prolog system, supporting ISO-Prolog.">
 
-fmt_headers(Layout, IconList, CssList, ScriptList, PageTitleR, BodyR, R) :- !,
-	fmt_icon(IconList, IconR),
-	fmt_css(CssList, CssR),
-	fmt_script(ScriptList, ScriptR),
+fmt_headers(Layout, _PageTitleR, BodyR, R) :- Layout = embedded, % No headers
+	!,
+	R = BodyR.
+fmt_headers(Layout, PageTitleR, BodyR, R) :- !,
+	fmt_icon(~get_icon_list, IconR),
+	fmt_css(~get_css_list, CssR),
+	fmt_script(~get_script_list, ScriptR),
 	MetaR = [IconR, CssR, ScriptR, htmlenv(title, PageTitleR)],
 	fmt_headers_(Layout, MetaR, BodyR, R).
 
