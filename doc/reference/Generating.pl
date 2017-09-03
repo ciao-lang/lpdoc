@@ -58,12 +58,12 @@ application / library evolves.
 
 In order to make @apl{lpdoc} generate quickly the documentation of a
 single file it suffices to execute the command @tt{lpdoc -d
-doc_structure=modulename dvi}, where @tt{modulename} is the module to be
-documented (without extension) and (in this example) @tt{dvi} is the
+doc_structure=modulename pdf}, where @tt{modulename} is the module to be
+documented (without extension) and (in this example) @tt{pdf} is the
 desired format of the manual (other accepted formats include html,
 pfd, ps, etc. -- see later). @apl{lpdoc} will generate a manual with
 the name of the module and the format extension (in the example it
-would be modulename.dvi) in the same directory where it is executed.
+would be modulename.pdf) in the same directory where it is executed.
 
 For the second scenario, the @apl{lpdoc} library directory includes a
 generic file which is quite useful for the generation of complete
