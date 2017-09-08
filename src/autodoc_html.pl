@@ -88,8 +88,8 @@ rw_command(env_('verbatim', X),     _, htmlenv(pre, [class="lpdoc-codeblock"], X
 rw_command(item(S), _DocSt, NBody) :- !, % (items for lists and descriptions)
 	% TODO: use item_env
 	( doctree_is_empty(S) ->
-	    NBody = raw("<LI>")
-	; NBody = [raw("<DT>"), S, raw("<dd>")]
+	    NBody = raw("<li>")
+	; NBody = [raw("<dt>"), S, raw("<dd>")]
 	).
 rw_command(item_env(Style, X), _DocSt, NBody) :- !, % (items for lists)
 	( Style = selmenu ->
@@ -102,7 +102,7 @@ rw_command(item_num(S), _,   NBody) :- !, % (items for enumerations)
 	( S = "" -> Props = [] ; Props = [value=S] ),
 	NBody = htmlenv0(li, Props).
 rw_command(footnote(Text), _DocSt, NBody) :- !,
-	NBody = [raw("<P>"), htmlenv(b, raw("Note:")), raw(" "), Text, raw("<P>")].
+	NBody = [raw("<p>"), htmlenv(b, raw("Note:")), raw(" "), Text, raw("<p>")].
 rw_command('}',                   _, raw("}")) :- !.
 rw_command('{',                   _, raw("{")) :- !.
 rw_command('@',                   _, raw("@")) :- !.
@@ -151,16 +151,16 @@ rw_command(href(URL), _DocSt, NBody) :- !,
 rw_command(href(URL, Text), _DocSt, NBody) :- !,
 	NBody = htmlenv(a, [href=URL], Text).
 rw_command(email(Address), _DocSt, NBody) :- !,
-	NBody = [raw("<A HREF=""mailto:"), Address, raw(""">&lt;"), Address, raw("&gt;</A>")].
+	NBody = [raw("<a href=""mailto:"), Address, raw(""">&lt;"), Address, raw("&gt;</a>")].
 rw_command(email(Text, Address), _DocSt, NBody) :- !,
-	NBody = [raw("<A HREF=""mailto:"), Address, raw(""">"), Text, raw("</A>")].
+	NBody = [raw("<a href=""mailto:"), Address, raw(""">"), Text, raw("</a>")].
 rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
 	locate_and_convert_image(IFile0, ['.png', '.jpg'], DocSt, IFile),
 	( Opts = [] ->
-	    NBody = [raw("<IMG SRC="""), raw(IFile), raw(""">")]
+	    NBody = [raw("<img src="""), raw(IFile), raw(""">")]
 	; Opts = [Width, Height] ->
-	    NBody = [raw("<IMG SRC="""), raw(IFile), raw(""" WIDTH="), raw(Width),
-		     raw(" HEIGHT="), raw(Height), raw(">")]
+	    NBody = [raw("<img src="""), raw(IFile), raw(""" width="), raw(Width),
+		     raw(" height="), raw(Height), raw(">")]
         ).
 rw_command(bf(Body),  _DocSt, R) :- !, R = htmlenv(strong, Body).
 rw_command(em(Body),  _DocSt, R) :- !, R = htmlenv(em, Body).
@@ -696,7 +696,7 @@ doctree_to_href(no_link, _DocSt, "#").
 % ---------------------------------------------------------------------------
 
 html_blank_lines(0, "") :- !.
-html_blank_lines(N, "<BR>"||R) :-
+html_blank_lines(N, "<br>"||R) :-
 	N1 is N-1,
 	html_blank_lines(N1, R).
 
