@@ -21,7 +21,7 @@
 :- use_module(library(messages), [error_message/2]).
 %
 :- use_module(library(syntax_highlight),
-	[can_highlight/1, highlight_to_html_string/3]).
+	[can_highlight/1, highlight_string_to_html_string/3]).
 
 % (Web-site extensions)
 :- use_module(lpdoc(autodoc_html_template)).
@@ -387,21 +387,14 @@ fmt_codeblock(Lang, Text, R) :-
 	  \+ LangAtm = 'text',
 	  can_highlight(LangAtm),
 	  \+ setting_value(syntax_highlight, no) -> % (default is 'yes')
-	    ( highlight_to_html_string(LangAtm, Text, Raw) ->
-	        TextR = raw(~remove_pre(Raw))
+	    ( highlight_string_to_html_string(LangAtm, Text, HtmlStr) ->
+	        TextR = raw(HtmlStr)
 	    ; error_message("could not highlight code block for ~w syntax", [LangAtm]),
 	      TextR = raw_string(Text)
 	    )
 	; TextR = raw_string(Text)
 	),
 	R = htmlenv(pre, [class="lpdoc-codeblock"], TextR).
-
-% TODO: really weak
-% Try remove <pre></pre> (we add ours)
-remove_pre(X, Y) :-
-	append("\n<pre>"||Y0, "</pre>\n", X), !,
-	Y = Y0.
-remove_pre(X, X).
 
 % ---------------------------------------------------------------------------
 
@@ -488,7 +481,7 @@ fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR) :-
 	( Layout = nav_searchbox_menu_main ->
             MainR = [htmlenv(h1, TitleR), raw_nl, BodyR] % TODO: Hardwired, fix
 	; Layout = embedded ->
-            MainR = [htmlenv(h1, TitleR), raw_nl, BodyR] % TODO: good?
+            MainR = [/*htmlenv(h1, TitleR), raw_nl, */BodyR] % No title
 	; Layout = tmpl_layout(_, _, _) ->
             MainR = BodyR
 	; ( sec_is_cover(SecProps) ->
