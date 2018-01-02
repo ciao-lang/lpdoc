@@ -241,16 +241,6 @@ generic_viewer('cygstart') :- get_os('Win32'), !.
 %viewer('start') :- get_os('Win32'), !.
 generic_viewer('xdg-open') :- get_os('LINUX'), !.
 
-%% The command that views dvi files in your system
-:- export(xdvi/1).
-xdvi := 'xdvi'.
-
-%% The default size at which manuals are viewed This
-%% is typically an integer (1-10 usually) and unfortunately changes
-%% depending on the version of xdvi used.
-:- export(xdvisize/1).
-xdvisize := '8'.
-
 :- doc(subsection, "Bibliography Generation").
 
 %% The command that builds .bbl files from .bib bibliography
