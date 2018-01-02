@@ -7,13 +7,11 @@
 :- doc(module, "This library drives the documentation generation from
    a @index{SETTINGS.pl} file").
 
-%% ISO Prolog-like modules
 :- use_module(library(format)).
 :- use_module(library(aggregates)).
 :- use_module(library(compiler), [use_module/1]).
 
 %% Ciao packages and libraries
-:- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(messages)).
 :- use_module(library(lists), [list_concat/2, append/3]).
 :- use_module(library(file_utils)).
@@ -286,42 +284,15 @@ targets([FileBase|FileBases], Backend, Subtarget) := [X|Xs] :-
 % ===========================================================================
 :- doc(section, "Visualization").
 
+:- use_module(library(opendoc), [opendoc/1]).
+
 view(Format) :-
 	get_mainmod(Mod),
 	format_get_file(Format, Mod, File),
-	view_document(Format, File).
-
-:- use_module(library(process), [process_call/3]).
-
-view_document(Format, File) :-
-	( view_in_emacs(Format, EmacsFun) ->
-	    % TODO: Use absolute file name instead?
-	    % Escape file name (for elisp expression)
-	    File0 = ~atom_concat('./', File),
-	    atom_codes(File0, File1),
-	    esc_codes(File1, File2, []),
-	    atom_codes(File3, File2),
-	    Code = ~atom_concat(['(', EmacsFun, ' \"', File3, '\")']),
-	    %
-	    process_call(path(emacsclient), ['-n', '--eval', Code], [])
-	; generic_viewer(Viewer),
-	  process_call(path(Viewer), [File], [])
-	).
-
-% view_in_emacs(Format, Fun): 
-%   view Format document with elisp function Fun
-view_in_emacs(info, info).
-view_in_emacs(manl, man).
-
-% TODO: merge esc_codes/3 with elisp_interface.pl
-
-% string-escaped codes
-esc_codes([]) --> [].
-esc_codes([X|Xs]) --> esc_code(X), esc_codes(Xs).
-
-esc_code(0'") --> !, "\\\"".
-esc_code(0'\\) --> !, "\\\\".
-esc_code(X) --> [X].
+	( Format = html -> Target = ~atom_concat('file://', File) % TODO: use localhost and ciao-serve?
+	; Target = File
+	),
+	opendoc(File).
 
 % ===========================================================================
 :- doc(section, "Cleaning up").

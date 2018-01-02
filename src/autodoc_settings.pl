@@ -226,21 +226,6 @@ custom_html_layout :-
 :- doc(section, "External Commands").
 % TODO: Ideally, each backend should specify this part.
 
-:- doc(subsection, "Visualization of Documents").
-% TODO: These commands were originally customizable by the
-%       user. Nowadays, configuration files are not easy to find... It
-%       is lpdoc task to determine what application to use
-%       automatically based on the operating system.
-
-:- use_module(engine(system_info), [get_os/1]).
-
-:- export(generic_viewer/1).
-% Generic document viewer
-generic_viewer('open') :- get_os('DARWIN'), !.
-generic_viewer('cygstart') :- get_os('Win32'), !.
-%viewer('start') :- get_os('Win32'), !.
-generic_viewer('xdg-open') :- get_os('LINUX'), !.
-
 :- doc(subsection, "Bibliography Generation").
 
 %% The command that builds .bbl files from .bib bibliography
