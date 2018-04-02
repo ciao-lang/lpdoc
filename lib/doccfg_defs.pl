@@ -3,7 +3,7 @@
 % \title Base Configuration Definitions for LPdoc
 % 
 % \module This file provides the base configuration definitions and
-%   documentation for an \apl{lpdoc} settings file.
+%   documentation for a \apl{lpdoc} settings file.
 % 
 % \author Manuel Hermenegildo
 % \author Jose F. Morales
@@ -43,11 +43,11 @@
 
 :- pred doc_structure(Term)
 # "Defines the document structure as a tree. The tree is defined as
-   a root node with optional children. Nodes can be atoms or pairs
+   a root node with optional childs. Nodes can be atoms or pairs
    (@tt{N-Cs}), where @tt{Cs} is a list of nodes. The root of the
    tree is the main file of the manual, i.e., the file which
-   determines the manual's cover page, and first chapter. The children
-   files are used as components, i.e., they will constitute the
+   determines the manual's cover page, and first chapter. The child
+   files are used as components, i.e., which will constitute the
    subsequent chapters of the manual.".
 :- export(doc_structure/1).
 % (no default, must be defined)

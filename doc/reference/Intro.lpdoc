@@ -141,15 +141,15 @@ component file.
 As mentioned before, @apl{lpdoc} typically generates directly
 @apl{HTML} or @apl{texinfo} files.  From the @apl{texinfo} files,
 @apl{lpdoc} also generates printed and on-line manuals in several
-other formats (@tt{pdf}, @tt{info}, @tt{ascii}, etc.)  automatically,
-by calling different (publicly available) packages.  Documentation in
-some other formats (e.g., @tt{manl} pages) can be generated directly
-by @apl{lpdoc}, selecting the appropriate options (see below).
-@apl{lpdoc} can also generate directly includes generating (parts of)
-a @concept{master index} of documents which can be placed in an
-installation directory and which will provide pointers to the
-individual manuals generated. Using this feature, @tt{lpdoc} can
-maintain global @apl{html} and/or @apl{info} documentation sites
+other formats (@tt{pdf}, @tt{info}, @tt{ascii}, @tt{dvi}, @tt{ps},
+etc.)  automatically, by calling different (publicly available)
+packages.  Documentation in some other formats (e.g., @tt{manl} pages)
+can be generated directly by @apl{lpdoc}, selecting the appropriate
+options (see below).  @apl{lpdoc} can also generate directly includes
+generating (parts of) a @concept{master index} of documents which can
+be placed in an installation directory and which will provide pointers
+to the individual manuals generated. Using this feature, @tt{lpdoc}
+can maintain global @apl{html} and/or @apl{info} documentation sites
 automatically (see @ref{Installing a generated manual in a public
 area}).
 

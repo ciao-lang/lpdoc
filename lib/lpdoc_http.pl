@@ -1,5 +1,5 @@
- :- package(lpdoc_http). % TODO: :- trait lpdoc_http.
-:- use_package(library(http/http_service)). % TODO: :- extends http_service.
+:- package(lpdoc_http). % TODO: trait
+:- use_package(library(http/http_service)). % TODO: deriv
 
 % Trait for HTTP-based interface for LPdoc templates
 % NOTE: currently it just instantiates holes in a .html template

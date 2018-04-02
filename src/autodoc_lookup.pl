@@ -25,9 +25,13 @@
     ensure_load_manifest/1,
     manifest_call/2,
     get_bundle_readme/2, 
-    bundle_manual_base/2,
-    main_file_path/3
+    bundle_manual_base/2
 ]).
+
+:- use_module(library(bundle/bundle_paths),
+	[bundle_path/3, bundle_path/4,
+	 reverse_bundle_path/3, ext_find_pl_filename/3]).
+:- use_module(engine(internals), ['$bundle_id'/1]).
 
 :- export(get_bundle_readme/2).
 get_bundle_readme(Bundle, R) :-
@@ -39,7 +43,11 @@ get_bundle_readme(Bundle, R) :-
 get_bundle_readme_source(Bundle, R) :-
 	ensure_load_manifest(Bundle),
 	manifest_call(Bundle, readme(_OutName, Props)), % (nondet)
-	R = ~main_file_path(Bundle, Props),
+	( member(main=SrcPath, Props) -> true
+	; fail % ill-formed
+	),
+	R0 = ~bundle_path(Bundle, SrcPath),
+	atom_concat(R0, '.lpdoc', R),
 	file_exists(R).
 
 :- export(get_bundle_manual_source/2).
@@ -47,7 +55,10 @@ get_bundle_readme_source(Bundle, R) :-
 get_bundle_manual_source(Bundle, R) :-
 	ensure_load_manifest(Bundle),
 	manifest_call(Bundle, manual(_, Props)), % (nondet)
-	R = ~main_file_path(Bundle, Props),
+	( member(main=Path, Props) -> true
+	; fail % ill-formed
+	),
+	R = ~bundle_path(Bundle, Path),
 	file_exists(R).
 
 % TODO: when using a Manifest the 'SETTINGS':output_name/1 is not needed
@@ -56,10 +67,6 @@ get_bundle_manual_source(Bundle, R) :-
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Lookup generated documentation files").
-
-:- use_module(library(bundle/bundle_paths),
-	[bundle_path/4, reverse_bundle_path/3, ext_find_pl_filename/3]).
-:- use_module(engine(internals), ['$bundle_id'/1]).
 
 :- export(html_doc_file/2).
 % Documentation (in HTML) for a bundle, module, or package. Note that
@@ -100,7 +107,6 @@ man_bundle(Bundle, ManBundle) :-
 % HtmlDir for specified Bundle manual
 % NOTE: backtracks on available manuals
 % TODO: share code
-:- export(bundle_manual_htmldir/2).
 bundle_manual_htmldir(Bundle, HtmlDir) :-
 	'$bundle_id'(Bundle),
 	DocFormat = 'html',
@@ -111,7 +117,6 @@ bundle_manual_htmldir(Bundle, HtmlDir) :-
 	file_exists(HtmlDir).
 
 % Entry point (initial module) for lpdoc html documentation at HtmlDir
-% TODO: Not needed with index.html symlink link
 html_doc_entry(HtmlDir, Entry) :-
 	path_split(HtmlDir, _, Base),
 	path_splitext(Base, BaseNoExt, _),

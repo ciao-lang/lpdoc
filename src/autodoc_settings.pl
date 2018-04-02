@@ -226,6 +226,31 @@ custom_html_layout :-
 :- doc(section, "External Commands").
 % TODO: Ideally, each backend should specify this part.
 
+:- doc(subsection, "Visualization of Documents").
+% TODO: These commands were originally customizable by the
+%       user. Nowadays, configuration files are not easy to find... It
+%       is lpdoc task to determine what application to use
+%       automatically based on the operating system.
+
+:- use_module(engine(system_info), [get_os/1]).
+
+:- export(generic_viewer/1).
+% Generic document viewer
+generic_viewer('open') :- get_os('DARWIN'), !.
+generic_viewer('cygstart') :- get_os('Win32'), !.
+%viewer('start') :- get_os('Win32'), !.
+generic_viewer('xdg-open') :- get_os('LINUX'), !.
+
+%% The command that views dvi files in your system
+:- export(xdvi/1).
+xdvi := 'xdvi'.
+
+%% The default size at which manuals are viewed This
+%% is typically an integer (1-10 usually) and unfortunately changes
+%% depending on the version of xdvi used.
+:- export(xdvisize/1).
+xdvisize := '8'.
+
 :- doc(subsection, "Bibliography Generation").
 
 %% The command that builds .bbl files from .bib bibliography
