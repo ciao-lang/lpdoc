@@ -65,14 +65,14 @@ find_file(File, PathFile) :-
 	!.
 
 :- export(find_doc_source/2).
-% Find the first source that exists (e.g., .pl or .lpdoc). See @pred{find_file/2}
+% Find the first source that exists (see srcext/1). See @pred{find_file/2}
 find_doc_source(Name, Path) :-
 	Ext = ~srcext,
 	NameExt = ~atom_concat(Name, Ext),
 	find_file(NameExt, Path).
 
 % TODO: I am not sure if here is the place to define this.
-srcext := '.pl' | '.lpdoc'.
+srcext := '.pl' | '.lpdoc' | '.md'.
 
 % ---------------------------------------------------------------------------
 

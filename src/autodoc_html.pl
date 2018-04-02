@@ -21,7 +21,7 @@
 :- use_module(library(messages), [error_message/2]).
 %
 :- use_module(library(syntax_highlight),
-	[can_highlight/1, highlight_to_html_string/3]).
+	[can_highlight/1, highlight_string_to_html_string/3]).
 
 % (Web-site extensions)
 :- use_module(lpdoc(autodoc_html_template)).
@@ -217,7 +217,7 @@ rw_command(subsection_title(X), _DocSt, R) :- !,
 	R = htmlenv(h2, X).
 rw_command(twocolumns(X), _DocSt, R) :- !,
 	R = htmlenv(div, [class="lpdoc-twocolumns"], X).
-rw_command(itemize_env(menu, Xs), _DocSt, R) :- setting_value(html_layout, tmpl_layout(_, _, _)), !,
+rw_command(itemize_env(menu, Xs), _DocSt, R) :- get_layout(tmpl_layout(_, _, _)), !,
 	R = htmlenv(ul, [class="nav nav-pills nav-stacked"], Xs). % TODO: only for bootstrap framework CSS
 rw_command(itemize_env(none, Xs), _DocSt, R) :- !,
 	R = htmlenv(ul, [class="lpdoc-itemize-none"], Xs).
@@ -387,8 +387,8 @@ fmt_codeblock(Lang, Text, R) :-
 	  \+ LangAtm = 'text',
 	  can_highlight(LangAtm),
 	  \+ setting_value(syntax_highlight, no) -> % (default is 'yes')
-	    ( highlight_to_html_string(LangAtm, Text, Raw) ->
-	        TextR = raw(~remove_pre(Raw))
+	    ( highlight_string_to_html_string(LangAtm, Text, HtmlStr) ->
+	        TextR = raw(HtmlStr)
 	    ; error_message("could not highlight code block for ~w syntax", [LangAtm]),
 	      TextR = raw_string(Text)
 	    )
@@ -396,40 +396,63 @@ fmt_codeblock(Lang, Text, R) :-
 	),
 	R = htmlenv(pre, [class="lpdoc-codeblock"], TextR).
 
-% TODO: really weak
-% Try remove <pre></pre> (we add ours)
-remove_pre(X, Y) :-
-	append("\n<pre>"||Y0, "</pre>\n", X), !,
-	Y = Y0.
-remove_pre(X, X).
+% ---------------------------------------------------------------------------
+
+% Get Layout
+get_layout(Layout) :-
+	( setting_value(html_layout, Layout0) -> Layout = Layout0
+	; Layout = nav_sidebar_main
+	),
+	valid_layout(Layout).
+
+valid_layout(embedded).
+valid_layout(nav_sidebar_main).
+valid_layout(website_layout(_)).
+valid_layout(tmpl_layout(_, _, _)).
 
 % ---------------------------------------------------------------------------
 
-get_layout(Layout) :-
-	% Get Layout
-	( setting_value(html_layout, Layout0) ->
-	    get_layout_(Layout0, Layout)
-	; Layout = nav_sidebar_main
-	).
-
-get_layout_(website_layout(_), nav_searchbox_menu_main).
-get_layout_(Layout, Layout) :- Layout = tmpl_layout(_, _, _), !.
-get_layout_(Layout, Layout) :- Layout = embedded, !.
+% :- trait doclayout.
+:- discontiguous layout_toc/2.
+:- discontiguous layout_has_colophon/2.
+:- discontiguous layout_has_navbars/2.
+:- discontiguous layout_sidebar_pos/2. % (fail if no sidebar)
+:- discontiguous layout_icon/2.
+:- discontiguous layout_css_url/2.
 
 layout_toc(embedded, R) :- !, R = []. % no toc
-layout_toc(nav_searchbox_menu_main, R) :- !, R = show_toc(vertical_menu).
+layout_toc(nav_sidebar_main, R) :- R = show_toc(toc_view(yes)).
+layout_toc(website_layout(_), R) :- !, R = show_toc(vertical_menu).
 layout_toc(tmpl_layout(_, _, _), R) :- !, R = show_toc(vertical_menu).
-layout_toc(_, R) :- R = show_toc(toc_view(yes)).
 
+layout_has_colophon(embedded) :- fail.
 layout_has_colophon(nav_sidebar_main).
-layout_has_colophon(nav_searchbox_menu_main).
+layout_has_colophon(website_layout(_)).
+layout_has_colophon(tmpl_layout(_,_,_)) :- fail.
 
+layout_has_navbars(embedded) :- fail.
 layout_has_navbars(nav_sidebar_main).
+layout_has_navbars(website_layout(_)) :- fail.
+layout_has_navbars(tmpl_layout(_,_,_)) :- fail.
 
-% (fail if no sidebar)
-layout_sidebar_pos(nav_searchbox_menu_main, right).
+layout_sidebar_pos(embedded, _) :- fail.
 %layout_sidebar_pos(nav_sidebar_main, left).
 layout_sidebar_pos(nav_sidebar_main, right). % TODO: make it customizable
+layout_sidebar_pos(website_layout(_), right).
+layout_sidebar_pos(tmpl_layout(_,_,_), _) :- fail.
+
+% (nondet)
+layout_icon(website_layout(Opts), X) :-
+	( member(icon(Icon), Opts), atom(Icon) -> % TODO: document (max 1)
+	    X = Icon
+	; fail
+	).
+
+% (nondet)
+layout_css_url(website_layout(Opts), URL) :-
+	member(css(URL), Opts). % TODO: document
+layout_css_url(tmpl_layout(_, _, CssList), URL) :-
+	member(URL, CssList).
 
 % ---------------------------------------------------------------------------
 
@@ -485,10 +508,10 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 
 % Format main content holder
 fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR) :-
-	( Layout = nav_searchbox_menu_main ->
+	( Layout = website_layout(_) ->
             MainR = [htmlenv(h1, TitleR), raw_nl, BodyR] % TODO: Hardwired, fix
 	; Layout = embedded ->
-            MainR = [htmlenv(h1, TitleR), raw_nl, BodyR] % TODO: good?
+            MainR = [/*htmlenv(h1, TitleR), raw_nl, */BodyR] % No title
 	; Layout = tmpl_layout(_, _, _) ->
             MainR = BodyR
 	; ( sec_is_cover(SecProps) ->
@@ -547,6 +570,8 @@ fmt_layout(tmpl_layout(_, LayoutTmpl, _), _SectPathR, _UpPrevNextR, SidebarR, Ti
                sidebar = SidebarR,
 	       title = TitleR,
 	       content = MainR])].
+fmt_layout(embedded, _SectPathR, _UpPrevNextR, _SidebarR, _TitleR, MainR, _DocSt, R) :- !,
+	R = MainR.
 fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :-
 	fmt_topbar(Layout, DocSt, TopBarR),
 	( layout_has_colophon(Layout) -> colophon(DocSt, ColophonR)
@@ -584,7 +609,7 @@ fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :
             ], R).
 
 % Top bar (optional, for logo, search box, etc.)
-fmt_topbar(nav_searchbox_menu_main, _DocSt, R) :- !,
+fmt_topbar(website_layout(_), _DocSt, R) :- !,
 	% TODO: Generalize
 %	LogoImg = 'ciao2-96-shadow-reduced.png',
 	LogoImg = 'ciao2-small-shadow-reduced.png',
@@ -626,8 +651,8 @@ fmt_headers(Layout, _PageTitleR, BodyR, R) :- Layout = embedded, % No headers
 	!,
 	R = BodyR.
 fmt_headers(Layout, PageTitleR, BodyR, R) :- !,
-	fmt_icon(~get_icon_list, IconR),
-	fmt_css(~get_css_list, CssR),
+	fmt_icon(~get_icon_list(Layout), IconR),
+	fmt_css(~get_css_list(Layout), CssR),
 	fmt_script(~get_script_list, ScriptR),
 	MetaR = [IconR, CssR, ScriptR, htmlenv(title, PageTitleR)],
 	fmt_headers_(Layout, MetaR, BodyR, R).
@@ -815,31 +840,18 @@ fmt_script_(script(Type, inline(Src)), R) :- !,
 
 :- use_module(lpdoc(autodoc_html_assets), [asset_file/2]).
 
-get_icon_list(IconList) :-
-	findall(Base, get_icon(Base), IconList).
+get_icon_list(Layout) := ~findall(Base, layout_icon(Layout, Base)).
 
-get_css_list(CssList) :-
-	findall(Base, get_css_url(Base), CssList).
+get_css_list(Layout) := ~findall(Base, get_css_url(Layout, Base)).
 
 get_script_list(ScriptList) :-
 	findall(X, get_script(X), ScriptList).
 
 % (nondet)
-get_icon(X) :-
-	setting_value(html_layout, website_layout(Opts)),
-	member(icon(Icon), Opts), atom(Icon), % TODO: document (max 1)
-	!,
-	X = Icon.
-
-% (nondet)
-get_css_url(URL) :-
+get_css_url(_Layout, URL) :-
 	asset_file(css, F), path_basename(F, URL).
-get_css_url(URL) :-
-	setting_value(html_layout, website_layout(Opts)),
-	member(css(URL), Opts). % TODO: document
-get_css_url(URL) :-
-	setting_value(html_layout, tmpl_layout(_, _, CssList)),
-	member(URL, CssList).
+get_css_url(Layout, URL) :-
+	layout_css_url(Layout, URL).
 
 % (nondet)
 get_script(script('text/javascript', url(URL))) :-

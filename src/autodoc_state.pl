@@ -247,7 +247,7 @@ docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt) :-
 	%
 	atom_concat(FileBase, FileExt, FExt),
 	find_file(FExt, I),
-	( FileExt = '.lpdoc' ->
+	( source_is_doc(FileExt) ->
 	    load_source_lpdoc(I, M, Base, Dir, Text),
 	    docst_mvar_lookup(DocSt, plain_content, Text)
 	; load_source_pl_assrt(I, Opts, M, Base, Dir)
@@ -262,6 +262,9 @@ docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt) :-
 	),
 	docst_mdata_assertz(modtype(ModuleType), DocSt),
 	docst_mvar_lookup(DocSt, modtype, ModuleType). % TODO: redundant
+
+source_is_doc('.lpdoc').
+source_is_doc('.md').
 
 % TODO: This does not actually read the file, just gets an "@include{...}" to it
 % TODO: Probably this could be extended (literate programming?)
