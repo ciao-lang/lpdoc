@@ -1,7 +1,7 @@
 :- module(_, [], [lpdoclib(doccfg)]).
 
-%! \title Default configuration file for LPdoc
-%  \author Ciao Development Team
+%! \title  Default configuration file for LPdoc
+%  \author The Ciao Development Team
 %
 %  \module This is a default configuration file for \apl{lpdoc},
 %    typically used in the generation of documentation for single
