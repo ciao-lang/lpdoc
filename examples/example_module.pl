@@ -21,6 +21,22 @@
 :- doc(author,"Anonymous Author 1").  
 :- doc(author,"Anonymous Author 2").  
 
+%%% These use a predefined message.
+% :- doc(stability,devel). 
+:- doc(stability,alpha).
+% :- doc(stability,beta).
+% :- doc(stability,prod).
+%%% These use a custom message.
+% :- doc(stability,devel("This is a custom message...")).
+% :- doc(stability,alpha("This is a @bf{custom message}...")).
+% :- doc(stability,beta("This is a custom message...")).
+% :- doc(stability,prod("This is a custom message...")).
+%%% These produce an error:
+% :- doc(stability,"").
+% :- doc(stability,prod("@include{DevelWarning.lpdoc}")).
+% :- doc(stability,foo).
+% :- doc(stability,foo("This is a custom message...")).
+
 :- doc(summary,"This is a brief summary description of the module
    or file. In this case the file is a library.").
  

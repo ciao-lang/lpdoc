@@ -206,7 +206,7 @@ icmd_type(htmlenv0(t,t)). % html environment
 icmd_type(htmldecl(t)). % html decl
 icmd_type(htmlcomment(t)). % html comment
 % ** Commands for 'manl' **
-icmd_type(man_page(td,t,t,t,td,td,td)). % html environment
+icmd_type(man_page(td,t,t,t,td,td,td,td)). % html environment
 % ** Shared internal commands **
 icmd_type(section_env(t,t,td,td)).
 % a link to a component (makes module-scope references available in

@@ -515,10 +515,11 @@ fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
 	get_doc(title, warning, DocSt, TitleR),
 	get_authors(DocSt, AuthorRs),
 	get_doc(address, ignore, DocSt, AddressRs),
-	% TODO: 'stability' is ignored for man pages. Good idea?
 	get_mod_doc(copyright, DocSt, CopyrightR),
 	get_mod_doc(summary,   DocSt, SummaryR),
-	ModuleR = man_page(TitleR, GlobalVers, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR).
+	fmt_stability(DocSt, StabilityR0),
+        add_lines(StabilityR0, StabilityR1),
+	ModuleR = man_page(TitleR, GlobalVers, AuthorRs, AddressRs, StabilityR1, SummaryR, UsageR, CopyrightR).
 fmt_module(DocSt, Version, GlobalVers, ModR) :-
         docst_currmod_is_main(DocSt),
 	!,
@@ -569,11 +570,14 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	get_authors(DocSt, AuthorRs),
 	fmt_authors(AuthorRs, AuthorR2),
 	fmt_version(Version, GlobalVers, VerR),
+	% 
+	fmt_stability(DocSt, StabilityR0),
+        add_lines(StabilityR0, StabilityR1),
 	%
 	get_doc(module, note, DocSt, CommentR0),
 	add_lines(CommentR0, CommentR1),
 	%
-	CommentR2 = [AuthorR2, VerR, CommentR1],
+	CommentR2 = [AuthorR2, VerR, StabilityR1, CommentR1],
 	%
 	docst_modtype(DocSt, ModuleType),
 	( docst_backend(DocSt, texinfo), ModuleType = part ->
@@ -646,12 +650,15 @@ cover_prop(CopyrightR, GlobalVers, DocSt, CoverProp) :-
 			     CopyrightR).
 
 fmt_introduction(IntroExtra, DocSt, IntroR, AfterIntroR) :-
+	fmt_stability(DocSt, StabilityR0),
+        add_lines(StabilityR0, StabilityR1),
+        % 
 	doc_interface(DocSt, InterfaceR),
 	get_doc(module, note, DocSt, CommentR),
 	add_lines(CommentR, CommentR2),
 	%
 	IntroProps0 = [level(1),subfile('intro')],
-	IntroR0 = [CommentR2, InterfaceR|IntroRest],
+	IntroR0 = [StabilityR1, CommentR2, InterfaceR|IntroRest],
 	( custom_html_layout ->
 	    % TODO: generalize
 	    % Do not emit a section for the introduction
@@ -920,13 +927,88 @@ fmt_appendix(DocSt, AppendixR) :-
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Acknowledges").
-% TODO: Support big/small acknowledgement sections?
+:- doc(subsection, "Acknowledgments").
+% TODO: Support big/small acknowledgment sections?
 
 fmt_acknowledges(DocSt, AckR) :-
 	get_doc(ack, ignore, DocSt, AckR0),
 	add_lines(AckR0, AckR1),
 	nonbody_section(no, 'ack', "Acknowledgments", AckR1, DocSt, AckR).
+
+% ---------------------------------------------------------------------------
+
+:- doc(subsection, "Stability"). 
+
+fmt_stability(DocSt, RText) :-
+	( docst_opt(no_stability, DocSt) ->
+	  RText=[] % Stability documentation turned off
+        ; ( get_doc(stability, ignore, DocSt, Stability) -> 
+	    ( fmt_stability_(DocSt, Stability, RText) ->
+	      true
+	    ;
+		% MH: Is there a better way? (I had to export it...)
+		get_docdecl(stability, _, _, Loc), 
+		error_message(Loc,
+		"Unrecognized stability level '~w'.", [Stability]),
+		RText = []
+	    )
+          ; RText = [] % No stability assertion
+          )
+        ).
+
+fmt_stability_(_DocSt, Stability, RText) :-
+	atom(Stability), Stability \== [], 
+	stability_text(Stability,Level,Text),
+	stability_text_wrapper(Level,Stability,string_esc(Text),RText).
+fmt_stability_(DocSt, Stability, RText) :-
+	functor(Stability,F,1),
+	stability_text(Stability,Level,Text),
+	parse_docstring0(DocSt, Text, PText),
+	stability_text_wrapper(Level,F,PText,RText).
+
+:- pred stability_text(+,-,-).
+
+stability_text(devel(Text), warning, Text).
+stability_text(devel, warning, "Currently the subject of active \ 
+  development and/or research. Functionality may be limited and API \ 
+  and/or functionality may change without warning or deprecation \
+  period. Not recommended yet for use in production." ).
+
+stability_text(pre_alpha(Text), W, T) :- stability_text(devel(Text), W, T).
+stability_text(pre_alpha, W, T) :- stability_text(devel, W, T).
+
+stability_text(alpha(Text), warning, Text).
+stability_text(alpha, warning, "A good part of the functionality is \
+  there but has not been the subject of significant testing and/or \
+  verification." ).
+
+stability_text(beta(Text), normal, Text).
+stability_text(beta, normal,  "Most of the functionality is there but \
+  it is still missing some testing and/or verification." ).
+
+stability_text(prod(Text), normal, Text).
+stability_text(prod, normal, "Apt for production use (but please report any bugs)." ).
+
+
+
+:- pred stability_text_wrapper(+,+,+,-).
+
+stability_text_wrapper(normal,Stability,Text,[raw_nl,
+                          noindent(""),
+	                  bf(string_esc("Stability: [")),
+			  bf(string_esc(StabilityS)),
+			  bf(string_esc("] ")),
+			  Text,
+                          p("")])
+                        :- atom_codes(Stability, StabilityS).
+stability_text_wrapper(warning,Stability,Text,[raw_nl,
+	                alert([ noindent(""),
+			        bf(string_esc("Stability: [")),
+				bf(string_esc(StabilityS)),
+				bf(string_esc("] ")),
+				Text ]),
+                        p("")])
+                        :- atom_codes(Stability, StabilityS).
 
 % ---------------------------------------------------------------------------
 

@@ -615,9 +615,14 @@ enum_indices(IdxName, DocSt) :-
 % Obtain the value of document property Id.
 % If the value is not defined, the action specified by MessageType is carried out.
 get_doc(Id, MessageType, DocSt, Value) :-
-	doc_id_type(Id, Type, ValueType),
-	get_doc_(Id, Type, ValueType, MessageType, DocSt, Value).
+	( doc_id_type(Id, Type, ValueType) -> 
+ 	     get_doc_(Id, Type, ValueType, MessageType, DocSt, Value)
+	; 
+	    error_message("Unrecognized doc/comment declaration type '~w'.",[Id]),
+	    fail % TODO: recover from this error?
+	). 
 
+	
 get_doc_(Id, single, ValueType, _MessageType, DocSt, Value) :-
 	get_docdecl(Id, RContent, Dict, Loc),
 	!,
@@ -735,7 +740,7 @@ doc_assertion_read(P, M, Status, Type, NAss2, Dict2, S, LB, LE) :-
 	  Dict2 = Dict
 	).
 
-% :- export(get_docdecl/4).
+:- export(get_docdecl/4).
 % Query a `:- doc(Cmd, Val)` declaration in the source, with variable
 % names `Dict` and location `Loc`.
 get_docdecl(Id0, Field, Dict, Loc) :-

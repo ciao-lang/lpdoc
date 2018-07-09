@@ -1,7 +1,8 @@
 :- module(comments,
 	[
 	    %% doc/2,
-            docstring/1,stringcommand/1,version_descriptor/1,filetype/1
+            docstring/1,stringcommand/1,version_descriptor/1,
+	    filetype/1,stability_level/1
 	],
 	[dcg,assertions,regtypes,fsyntax]).
 
@@ -40,10 +41,10 @@
 
 :- doc(usage,"It is not necessary to use this library in user
    programs.  The recommended procedure in order to make use of the
-   @decl{doc/2} declarations that this library defines is to
-   include instead the @lib{assertions} package, which provides
-   efficient support for all assertion- and comment-related
-   declarations, using one of the following declarations, as appropriate:
+   @decl{doc/2} declarations that this library defines is to include
+   instead the @lib{assertions} package, which provides efficient
+   support for all assertion- and comment-related declarations, using
+   one of the following declarations, as appropriate:
 
 @begin{verbatim}
    :- module(...,...,[assertions]).
@@ -121,7 +122,7 @@ doc_id_type(subtitle_extra, multiple, docstr). % ignore
 % TODO: Refine types
 % TODO: This could specify the logo of manual subparts/components.
 doc_id_type(logo, single, term). % ignore
-:- decl doc(CommentType,SubtitleText) => =(logo) * term
+:- decl doc(CommentType,LogoName) => =(logo) * term
 
    # "The name of the logo image for the manual.".
 
@@ -189,7 +190,31 @@ doc_id_type(ack,      single, docstr). % ignore
 @end{verbatim}
      ".
 
-doc_id_type(copyright, single, docstr). % ignore,note
+doc_id_type(stability,      single, term). % ignore
+:- decl doc(CommentType,StabilityText) => =(stability) * stability_level
+
+   # "Provides a @index{stability} level for the module. If present,
+     when generating documentation for the module automatically, the
+     level of stability of the module will be documented. There can be
+     only one of these declarations per module. The second argument
+     should be an atom, out of a number of predefined stability
+     levels. The text included is predefined for each level.
+     Alternatively, one of the admissible atoms can be used as the
+     functor with a single argument, which contains the text to be
+     included.
+
+     @item @em{Examples:}
+@begin{verbatim}
+:- doc(stability,devel).
+:- doc(stability,alpha).
+:- doc(stability,beta).
+:- doc(stability,prod).
+:- doc(stability,alpha(""My own comment on stability."")).
+:- doc(stability,devel(""@@include@{DevelWarning.lpdoc@}"")).
+@end{verbatim}
+     ".
+
+doc_id_type(copyright, single, docstr). % ignore
 :- decl doc(CommentType,CopyrightText) => =(copyright) * docstring
 
    # "Provides a @index{copyright} text. This normally appears
@@ -535,6 +560,23 @@ filetype(user).
 filetype(include).
 filetype(package).
 filetype(part).
+
+% ----------------------------------------------------------------------------
+
+:- doc(stability_level/1,"The defined stability levels that can be
+       attached to files: @includedef{stability_level/1}").
+
+:- regtype stability_level(Level) 
+   # "@var{Level} describes a level of stability.".
+
+stability_level(devel).
+stability_level(alpha).
+stability_level(beta).
+stability_level(prod).
+stability_level(devel(L)) :- docstring(L).
+stability_level(alpha(L)) :- docstring(L).
+stability_level(beta(L))  :- docstring(L).
+stability_level(prod(L))  :- docstring(L).
 
 % ----------------------------------------------------------------------------
 

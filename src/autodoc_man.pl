@@ -33,6 +33,7 @@ rw_command(sp(NS), _, NewAll) :- !,
 	N1 is N+1,
 	ascii_blank_lines(N1, NewCommand),
 	NewAll = raw(NewCommand).
+rw_command(linebreak,              _, [raw_fc, raw_nleb]) :- !.
 rw_command(p(""),                  _, [raw_fc, raw_nleb]) :- !.
 rw_command(noindent(""),           _, []) :- !.
 rw_command(mathenv(S),             _, [raw(S)]) :- !. % TODO: not supported
@@ -124,8 +125,8 @@ rw_command(bibitem(Label,_Ref), _DocSt, R) :- !,
 	R = [item(bf([string_esc("["), string_esc(Label), string_esc("]")]))]. % TODO: use item_env
 rw_command(idx_anchor(_, _, _, _, R0), _, R) :- !, R = R0.
 rw_command(simple_link(_,_,_,_), _, nop) :- !.
-rw_command(man_page(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR), DocSt, R) :- !,
-        fmt_man(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR, DocSt, R).
+rw_command(man_page(TitleR, Version, AuthorRs, AddressRs, StabilityR, SummaryR, UsageR, CopyrightR), DocSt, R) :- !,
+        fmt_man(TitleR, Version, AuthorRs, AddressRs, StabilityR, SummaryR, UsageR, CopyrightR, DocSt, R).
 rw_command(X, _DocSt, _R) :- !,
 	throw(error(domain_error, rw_command/3-env(['X'=X]))).
 
@@ -138,7 +139,7 @@ rw_command_body(var(Body), "I",          Body) :- !.
 rw_command_body(missing_link(Text), "I", R) :- !, R = raw(Text).
 rw_command_body(ref_link(_Link, Text), "I", R) :- !, R = raw(Text).
 
-fmt_man(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR, DocSt, R) :-
+fmt_man(TitleR, Version, AuthorRs, AddressRs, StabilityR, SummaryR, UsageR, CopyrightR, DocSt, R) :-
 	( version_date(Version, Date),
 	  version_numstr(Version, VerStr) ->
 	    true
@@ -159,6 +160,13 @@ fmt_man(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR, DocS
 		      raw(VerStr), raw(" ("), raw(DateStr), raw(")."),
 		      raw_nl]
 	),
+	( StabilityR = [] ->
+	    StabilityR2 = StabilityR
+	; StabilityR2 = [raw_nl,
+	             raw_nl,
+		     raw(".SH STABILITY"), raw_nl,
+		     StabilityR, raw_nl]
+        ),
 	( UsageR = [] ->
 	    UsageR2 = UsageR
 	; UsageR2 = [raw_nl,
@@ -180,6 +188,8 @@ fmt_man(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR, DocS
 	     raw(".B "), raw(ModNameS), raw_nl,
 	     TitleR2,
 	     raw(".IX "), raw(ModNameS), raw_nl,
+	     raw_nl,
+	     StabilityR2,
 	     raw_nl,
 	     raw_nl,
 	     raw(".SH DESCRIPTION"), raw_nl,

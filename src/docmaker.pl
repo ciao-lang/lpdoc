@@ -139,6 +139,8 @@ gen_actions(Format, Actions) :-
         !,
 	action_for_format(Format, Action),
 	Actions = [Action].
+gen_actions(Format, _Actions) :-
+	error_message("Output format '~w' is not supported.",[Format]).
 
 % Action that generate one file format (not necessarily requested in SETTINGS.pl)
 action_for_format(Format, Action) :-

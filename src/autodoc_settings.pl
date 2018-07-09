@@ -106,6 +106,7 @@ load_settings(InFile, InKind, Opts) :-
 	    path_dirname(InFile2, InDir),
 	    % Fill cfg for standalone
 	    add_name_value(filepath, InDir),
+	    add_name_value(docformat, html), % default format
 	    add_name_value('$implements', 'doccfg'),
 	    add_name_value(doc_structure, [InFile]) % TODO: or InFile2?
 	; fail
