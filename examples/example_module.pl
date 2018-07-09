@@ -21,12 +21,12 @@
 :- doc(author,"Anonymous Author 1").  
 :- doc(author,"Anonymous Author 2").  
 
-%%% These use a predefined message.
+%%% These use a predefined message:
 % :- doc(stability,devel). 
 :- doc(stability,alpha).
 % :- doc(stability,beta).
 % :- doc(stability,prod).
-%%% These use a custom message.
+%%% These use a custom message:
 % :- doc(stability,devel("This is a custom message...")).
 % :- doc(stability,alpha("This is a @bf{custom message}...")).
 % :- doc(stability,beta("This is a custom message...")).
