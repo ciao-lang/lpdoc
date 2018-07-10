@@ -616,12 +616,10 @@ enum_indices(IdxName, DocSt) :-
 % If the value is not defined, the action specified by MessageType is carried out.
 get_doc(Id, MessageType, DocSt, Value) :-
 	( doc_id_type(Id, Type, ValueType) -> 
- 	     get_doc_(Id, Type, ValueType, MessageType, DocSt, Value)
-	; 
-	    error_message("Unrecognized doc/comment declaration type '~w'.",[Id]),
-	    fail % TODO: recover from this error?
+ 	    get_doc_(Id, Type, ValueType, MessageType, DocSt, Value)
+	; error_message("Unrecognized doc/comment declaration type '~w'.",[Id]),
+	  fail % TODO: recover from this error?
 	). 
-
 	
 get_doc_(Id, single, ValueType, _MessageType, DocSt, Value) :-
 	get_docdecl(Id, RContent, Dict, Loc),

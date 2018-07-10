@@ -941,16 +941,15 @@ fmt_acknowledges(DocSt, AckR) :-
 
 fmt_stability(DocSt, RText) :-
 	( docst_opt(no_stability, DocSt) ->
-	  RText=[] % Stability documentation turned off
-        ; ( get_doc(stability, ignore, DocSt, Stability) -> 
-	    ( fmt_stability_(DocSt, Stability, RText) ->
-	      true
-	    ;
-		% MH: Is there a better way? (I had to export it...)
-		get_docdecl(stability, _, _, Loc), 
-		error_message(Loc,
+	    RText=[] % Stability documentation turned off
+        ; ( get_doc(stability, dofail, DocSt, Stability) -> 
+	    ( fmt_stability_(DocSt, Stability, RText0) ->
+	        RText = RText0
+	    ; % MH: Is there a better way? (I had to export it...)
+	      ( get_docdecl(stability, _, _, Loc) -> true ; fail ), % Get first
+	      error_message(Loc,
 		"Unrecognized stability level '~w'.", [Stability]),
-		RText = []
+	      RText = []
 	    )
           ; RText = [] % No stability assertion
           )
@@ -988,8 +987,6 @@ stability_text(beta, normal,  "Most of the functionality is there but \
 
 stability_text(prod(Text), normal, Text).
 stability_text(prod, normal, "Apt for production use (but please report any bugs)." ).
-
-
 
 :- pred stability_text_wrapper(+,+,+,-).
 
