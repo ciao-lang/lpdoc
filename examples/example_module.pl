@@ -33,7 +33,6 @@
 % :- doc(stability,prod("This is a custom message...")).
 %%% These produce an error:
 % :- doc(stability,"").
-% :- doc(stability,prod("@include{DevelWarning.lpdoc}")).
 % :- doc(stability,foo).
 % :- doc(stability,foo("This is a custom message...")).
 

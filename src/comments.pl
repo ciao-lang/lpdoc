@@ -210,7 +210,6 @@ doc_id_type(stability,      single, term). % ignore
 :- doc(stability,beta).
 :- doc(stability,prod).
 :- doc(stability,alpha(""My own comment on stability."")).
-:- doc(stability,devel(""@@include@{DevelWarning.lpdoc@}"")).
 @end{verbatim}
      ".
 
