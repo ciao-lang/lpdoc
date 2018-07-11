@@ -224,8 +224,8 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
 	verbose_message("{Generating ~w documentation for ~w", [Backend, FileBase]),
 	docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt),
 	%
-	docst_modtype(DocSt, ModuleType),
-	docst_message("File being documented as '~w'", [ModuleType], DocSt),
+	docst_filetype(DocSt, FileType),
+	docst_message("File being documented as '~w'", [FileType], DocSt),
 	get_last_version(Version, GlobalVers, DocSt),
 	fmt_module(DocSt, Version, GlobalVers, ModuleR),
 	% Register document info
@@ -400,8 +400,8 @@ infodir_version(Version, VersionR) :-
 get_last_version(Version, GlobalVers, DocSt) :-
 	( docst_opt(no_version, DocSt) ->
 	    Version = [], GlobalVers = []
-	; docst_modtype(DocSt, ModuleType),
-	  ( ModuleType = part ; ModuleType = plain ) ->
+	; docst_filetype(DocSt, FileType),
+	  ( FileType = part ; FileType = plain ) ->
 	    Version = [], GlobalVers = []
 	; docst_mvar_get(DocSt, dir, dir(Dir)),
 	  get_last_version_(Version, GlobalVers, Dir, DocSt)
@@ -478,8 +478,8 @@ get_last_local_version(Version, DocSt) :-
 	  doctree(ModR).
 
 fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
-	docst_modtype(DocSt, ModuleType),
-	ModuleType = plain,
+	docst_filetype(DocSt, FileType),
+	FileType = plain,
 	!,
 	docst_mvar_get(DocSt, plain_content, Text),
 	parse_docstring(DocSt, Text, ContentR),
@@ -499,8 +499,8 @@ fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
 	!,
 	% Generates a brief description of the application or library in
 	% @concept{unix man format}.
-	docst_modtype(DocSt, ModuleType),
-	( ModuleType = application ->
+	docst_filetype(DocSt, FileType),
+	( FileType = application ->
 	    % TODO: Should 'S' be 'I' here?
 	    % TODO: Move this to a package instead?
 	    ( clause_read(_, usage_message(_), true, _, S, LB, LE) ->
@@ -579,8 +579,8 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	%
 	CommentR2 = [AuthorR2, VerR, StabilityR1, CommentR1],
 	%
-	docst_modtype(DocSt, ModuleType),
-	( docst_backend(DocSt, texinfo), ModuleType = part ->
+	docst_filetype(DocSt, FileType),
+	( docst_backend(DocSt, texinfo), FileType = part ->
 	    % TODO: Good idea?
 	    CommentR = optional_cartouche(CommentR2)
 	; CommentR = CommentR2
@@ -611,8 +611,8 @@ fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
 	  SecProps2 = [level(1)|SecProps0]
 	  % (add '***' to parts, deprecated)
 %	  SecProps1 = [level(1)|SecProps0],
-%	  docst_modtype(DocSt, ModuleType),
-%	  ( ModuleType = part ->
+%	  docst_filetype(DocSt, FileType),
+%	  ( FileType = part ->
 %	      SecProps2 = [unnumbered|SecProps1],
 %	      doctree_to_rawtext(TitleR2, DocSt, RwTitle),
 %	      SectLabel = global_label("*** "||RwTitle)
@@ -623,8 +623,9 @@ fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
 	get_doc(pragma, ignore, DocSt, Pragmas), % TODO: Do in other way?
 	SecProps3 = [pragmas(Pragmas)|SecProps2],
 	%
-	docst_modtype(DocSt, ModuleType2),
-	SecProps4 = [module_type(ModuleType2)|SecProps3],
+	SecProps4 = SecProps3,
+	% docst_filetype(DocSt, FileType2),
+	% SecProps4 = [file_type(FileType2)|SecProps3], % TODO: remove; unused
 	%
 	ModR0 = section_env([file_top_section|SecProps4], SectLabel, TitleR2, DocR),
 	insert_show_toc(ModR0, DocSt, ModR).
@@ -704,9 +705,9 @@ show_full_toc(DocSt) :-
 	docst_backend(DocSt, html).
 
 module_idx(DocSt, IdxR) :-
-	docst_modtype(DocSt, ModuleType),
-	( ModuleType \== part,
-	  ( ModuleType = application ->
+	docst_filetype(DocSt, FileType),
+	( FileType \== part,
+	  ( FileType = application ->
 	      TI = apl
 	  ; TI = lib
 	  ),
@@ -728,19 +729,19 @@ fmt_authors(AuthorRs, R) :-
 	).
 
 title_for_module_type(TitleR, DocSt, TitleR2) :-
-	docst_modtype(DocSt, ModuleType),
+	docst_filetype(DocSt, FileType),
 	( doctree_is_empty(TitleR) ->
 	    docst_modname(DocSt, NDName),
 	    atom_codes(NDName, NTitle),
-	    ( ModuleType = plain ->
+	    ( FileType = plain ->
 		TitleR2 = string_esc(NTitle)
 	    ; docst_currmod_is_main(DocSt) ->
 	        TitleR2 = [string_esc(NTitle), string_esc(" Reference Manual")]
-	    ; ModuleType = application ->
+	    ; FileType = application ->
 	        TitleR2 = [string_esc(NTitle), string_esc(" (application)")]
-	    ; ModuleType = documentation ->
+	    ; FileType = documentation ->
 	        TitleR2 = [string_esc(NTitle), string_esc(" (documentation)")]
-	    ; ModuleType = part ->
+	    ; FileType = part ->
 		TitleR2 = string_esc(NTitle)
 	    ; TitleR2 = [string_esc(NTitle), string_esc(" (library)")]
 	    )
@@ -1136,20 +1137,20 @@ change(_).
 :- pred doc_interface/2 # "Document the module interface.".
 
 doc_interface(DocSt, R) :-
-	docst_modtype(DocSt, ModuleType),
-	( ModuleType = application
-	; ModuleType = documentation
-	; ModuleType = part
+	docst_filetype(DocSt, FileType),
+	( FileType = application
+	; FileType = documentation
+	; FileType = part
 	),
 	!,
 	R = [].
 doc_interface(DocSt, R) :-
-	docst_mvar_get(DocSt, modinfo, ModSt),
-	ModSt = modinfo(M, Base),
+	docst_mvar_get(DocSt, fileinfo, FileSt),
+	FileSt = fileinfo(M, Base),
 	%
 	docst_message("Generating library header...", DocSt),
 	%
-	docst_modtype(DocSt, ModuleType),
+	docst_filetype(DocSt, FileType),
 	% Exported predicates
 	export_list(Base, DocSt, AllExports),
 	eliminate_hidden(AllExports, Exports),
@@ -1157,7 +1158,7 @@ doc_interface(DocSt, R) :-
 	findall(F/A, def_multifile(Base, F, A, _), RMultifiles),
 	eliminate_hidden(RMultifiles, Multifiles),
 	% Check if there are definitions to be documented
-	check_no_definitions(ModuleType, Exports, Multifiles, DocSt),
+	check_no_definitions(FileType, Exports, Multifiles, DocSt),
 	%
 	% Imported modules
 	findall(IFile, uses_file(Base, IFile), IFiles),
@@ -1170,13 +1171,13 @@ doc_interface(DocSt, R) :-
 	get_doc(nodoc, ignore, DocSt, NoDocS),
 	docst_message("Not documenting: ~w", [NoDocS], DocSt),
 	%
-	get_ops(ModuleType, NoDocS, SOps),
+	get_ops(FileType, NoDocS, SOps),
 	%
 	% The modes (only "exported" if package or include)
-	get_modes(M, ModuleType, NoDocS, NModes),
+	get_modes(M, FileType, NoDocS, NModes),
 	%
 	% Gather all decls to be documented.
-	get_decls(Base, M, ModuleType, NoDocS, NDecls),
+	get_decls(Base, M, FileType, NoDocS, NDecls),
 	%
 	% Internals  
 	get_doc(doinclude, ignore, DocSt, Preds),
@@ -1203,13 +1204,13 @@ doc_interface(DocSt, R) :-
 	fmt_definitions_kind(_DefKind, "internals", Internals, DocSt, InternalsR),
 	R = [ModuleUsageR, DeclsR, ModesR, ExportsR, MultifilesR, InternalsR].
 
-modtype_include_or_package(include).
-modtype_include_or_package(package).
+filetype_include_or_package(include).
+filetype_include_or_package(package).
 
 % Show a warning if there are no definitions to be documented.
-check_no_definitions(ModuleType, Exports, Multifiles, DocSt) :-
+check_no_definitions(FileType, Exports, Multifiles, DocSt) :-
 	( ( Exports=[], Multifiles=[],
-	    \+ modtype_include_or_package(ModuleType)
+	    \+ filetype_include_or_package(FileType)
 	  ) ->
 	    docst_inputfile(DocSt, I),
 	    warning_message(loc(I, 1, 1),
@@ -1251,15 +1252,15 @@ fmt_module_usage(DocSt, CExports, Mults,
 	; docst_inputfile(DocSt, AbsFile),
 	  get_modspec(AbsFile, ModSpec0), % e.g., library(lists)
 	  modspec_nodoc(ModSpec0, ModSpec1), % omit _doc suffix, collapse '(.../)a/a' as '(.../)a'
-	  docst_modtype(DocSt, ModuleType),
-	  modtype_usage_command(ModuleType, Cmd),
+	  docst_filetype(DocSt, FileType),
+	  filetype_usage_command(FileType, Cmd),
 	  % Remove library(_) from packages 
-	  ( ModuleType = package, ModSpec1 = library(ModSpec2) ->
+	  ( FileType = package, ModSpec1 = library(ModSpec2) ->
 	      ModSpec = ModSpec2
 	  ; ModSpec = ModSpec1
 	  ),
 	  % TODO: make sure that module spec is correct! (it is not now)
-	  ( ModuleType = package ->
+	  ( FileType = package ->
 	      format_to_string(":- ~w(~w).", [Cmd, ModSpec], UseDeclR0),
 	      format_to_string(":- module(...,...,[~w]).", [ModSpec], UseDeclR1),
 	      % TODO: use linebreak? or p("")?
@@ -1305,10 +1306,10 @@ fmt_module_usage(DocSt, CExports, Mults,
 	      cartouche(itemize_env(bullet, [Pa1, Pa2, Ro, Rm, Rd, Pa3]))
             ).
 
-modtype_usage_command(module,  use_module).
-modtype_usage_command(user,    ensure_loaded).
-modtype_usage_command(include, include).
-modtype_usage_command(package, use_package).
+filetype_usage_command(module,  use_module).
+filetype_usage_command(user,    ensure_loaded).
+filetype_usage_command(include, include).
+filetype_usage_command(package, use_package).
 
 gen_classified_export_cases([], _CExports, []).
 gen_classified_export_cases([(Type, LabelR)|Xs], CExports, [R|Rs]) :-
@@ -1423,8 +1424,8 @@ fmt_code_spec(C, S1) :-
 % TODO: also 'include' and 'package'?
 
 export_list(Base, DocSt, AllExports) :-
-	docst_modtype(DocSt, ModuleType),
-        ( ModuleType = module ->
+	docst_filetype(DocSt, FileType),
+        ( FileType = module ->
 	    findall(F/A, exports(Base, F, A, _, _), AllExports)
 	; % We may need to add here the case of predicates which are not defined 
 	  % but for which there is an assertion?
@@ -1450,9 +1451,9 @@ eliminate_hidden([Pred|Preds], [Pred|EPreds]) :-
 %% ---------------------------------------------------------------------------
 
 % Get the ops defined in the module
-get_ops(ModuleType, NoDocS, SOps) :-
+get_ops(FileType, NoDocS, SOps) :-
 	% The ops (only "exported" if package or include)
-	( modtype_include_or_package(ModuleType) ->
+	( filetype_include_or_package(FileType) ->
 	    findall(op(P, Prec, PredNames),
 	            get_ops_(P, Prec, PredNames, NoDocS),
 		    Ops),
@@ -1490,8 +1491,8 @@ normalize_ops_list([Pred|Preds], Prec,  Style,  [op(Prec, Style, Pred)|NOps],
 %% ---------------------------------------------------------------------------
 % Get the modes defined in a module
 
-get_modes(M, ModuleType, NoDocS, NModes) :-
-	( modtype_include_or_package(ModuleType) ->
+get_modes(M, FileType, NoDocS, NModes) :-
+	( filetype_include_or_package(FileType) ->
 	    findall(F/A, ( assertion_read(ModeP, M, _, modedef, _, _, S, _, _),
 		    path_basename(S, FN),
 		    path_splitext(FN, BN, _),
@@ -1506,8 +1507,8 @@ get_modes(M, ModuleType, NoDocS, NModes) :-
 % Gather all decls to be documented. 
 % TODO: ??? Not a good idea???
 
-get_decls(Base, M, ModuleType, NoDocS, NDecls) :-
-	( modtype_include_or_package(ModuleType) ->
+get_decls(Base, M, FileType, NoDocS, NDecls) :-
+	( filetype_include_or_package(FileType) ->
 	    % document all having an explicit comment in the module:
 	    findall(F/A, 
                     ( assertion_read(DeclP, M, _, decl, _, _, S, _, _),
@@ -1737,17 +1738,17 @@ filter_out_exports([Pred|Preds], Exports, [Pred|FPreds]) :-
 
 fmt_definitions([],     _,    _DocSt, []).
 fmt_definitions([P|Ps], DefKind, DocSt, [R|Rs]) :-
-	docst_mvar_get(DocSt, modinfo, ModSt),
-	fmt_definition(P, DefKind, ModSt, DocSt, R),
+	docst_mvar_get(DocSt, fileinfo, FileSt),
+	fmt_definition(P, DefKind, FileSt, DocSt, R),
 	fmt_definitions(Ps, DefKind, DocSt, Rs).
 
 %% General case:
 :- pred fmt_definition/5
    # "Generates documentation for one definition (predicate or declaration).".
-% TODO: ModSt is passed due to reexport chains
+% TODO: FileSt is passed due to reexport chains
 
-fmt_definition(F/A, DefKind, ModSt, DocSt, R) :-
-	ModSt = modinfo(M, Base),
+fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
+	FileSt = fileinfo(M, Base),
 	%
 	docst_message("Generating documentation for predicate or declaration ~w:~w/~w", [M, F, A], DocSt),
 	functor(P, F, A),
@@ -1828,8 +1829,8 @@ fmt_definition(F/A, DefKind, ModSt, DocSt, R) :-
                HeadR, NNCommentR1, PredR
                ]),
              sp("1"), raw_nl].
-fmt_definition(F/A, DefKind, ModSt, DocSt, R) :-
-	ModSt = modinfo(M, Base),
+fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
+	FileSt = fileinfo(M, Base),
 	imports_pred(Base, UFile, F, A, _DefType, _Meta, _EndFile),
 	base_name(UFile, UBase),
 	defines_module(UBase, UM),
@@ -1838,7 +1839,7 @@ fmt_definition(F/A, DefKind, ModSt, DocSt, R) :-
 	!,
 	( pred_has_docprop(F/A, doinclude) ->
 	    docst_message("following reexport chain for ~w to ~w", [F/A, UM], DocSt),
-	    fmt_definition(F/A, DefKind, modinfo(UM, UBase), DocSt, R)
+	    fmt_definition(F/A, DefKind, fileinfo(UM, UBase), DocSt, R)
 	;
 	    docst_message("~w reexported from ~w (not documented)", [F/A, UM], DocSt),
 	    Type = udreexp,
@@ -1851,7 +1852,7 @@ fmt_definition(F/A, DefKind, ModSt, DocSt, R) :-
 	    add_lines(RText, RText1),
 	    R = [defpred(local_label(_), Type, PText, F/A, [RText1]), sp("1"), raw_nl]
 	).
-fmt_definition(P, _, _ModSt, _DocSt, R) :-
+fmt_definition(P, _, _FileSt, _DocSt, R) :-
 	R = [],
 	error_message(_, "could not document predicate or new declaration ~w", [P]).
 

@@ -1340,8 +1340,8 @@ get_toc_tree(TOCKind, DocSt, Tree) :-
 	).
 
 show_subparts_in_maintext(DocSt, SubpartsInMaintext) :-
-	( docst_modtype(DocSt, ModType),
-	  subparts_in_maintext(ModType) ->
+	( docst_filetype(DocSt, FileType),
+	  subparts_in_maintext(FileType) ->
 	    SubpartsInMaintext = yes
 	; SubpartsInMaintext = no
 	).
@@ -1380,8 +1380,8 @@ fmt_toc_env(R0, DocSt, _TOCKind, R) :-
 	!,
 	R = [infoenv("menu", R0)].
 fmt_toc_env(R0, DocSt, TOCKind, R) :-
-	docst_modtype(DocSt, ModuleType),
-	toc_title(TOCKind, ModuleType, Title),
+	docst_filetype(DocSt, FileType),
+	toc_title(TOCKind, FileType, Title),
 	( doctree_is_empty(Title) -> R = R1 % no title
 	; R = [subsection_title(Title)|R1]
 	),
@@ -1468,7 +1468,7 @@ toc_link_filter(full, Props, Link, yes) :-
 	\+ section_prop(is_special(_), Props).
 
 % TOC for global links (separate pages)
-% TODO: use different names depending on modtype
+% TODO: use different names depending on filetype
 toc_title(global, application, string_esc("Parts of this manual")).
 toc_title(global, part, string_esc("Subparts")) :- !.
 toc_title(global, documentation, string_esc("Subparts")) :- !.

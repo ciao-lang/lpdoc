@@ -558,7 +558,9 @@ filetype(module).
 filetype(user).
 filetype(include).
 filetype(package).
-filetype(part).
+filetype(application).
+filetype(part). % (introduction of a part)
+filetype(documentation). % (like a part, not at first level)
 
 % ----------------------------------------------------------------------------
 

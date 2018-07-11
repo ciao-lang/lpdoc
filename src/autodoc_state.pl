@@ -42,7 +42,7 @@
 :- use_module(lpdoc(autodoc_parse)).
 :- use_module(lpdoc(autodoc_index)).
 :- use_module(lpdoc(comments), [version_descriptor/1, docstring/1,
-	stringcommand/1, doc_id_type/3]).
+	stringcommand/1, doc_id_type/3, filetype/1]).
 
 % ===========================================================================
 
@@ -253,15 +253,15 @@ docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt) :-
 	; load_source_pl_assrt(I, Opts, M, Base, Dir)
 	),
 	path_basename(Base, Name), % TODO: M (the Prolog module name) and Name may be different...
-	docst_mvar_lookup(DocSt, modinfo, modinfo(M, Base)),
+	docst_mvar_lookup(DocSt, fileinfo, fileinfo(M, Base)),
 	docst_mvar_lookup(DocSt, dir, dir(Dir)),
 	%
 	( docst_mvar_get(DocSt, plain_content, _) ->
-	    ModuleType = plain
-	; detect_modtype(DocSt, ModuleType)
+	    FileType = plain
+	; detect_filetype(DocSt, FileType)
 	),
-	docst_mdata_assertz(modtype(ModuleType), DocSt),
-	docst_mvar_lookup(DocSt, modtype, ModuleType). % TODO: redundant
+	docst_mdata_assertz(filetype(FileType), DocSt),
+	docst_mvar_lookup(DocSt, filetype, FileType). % TODO: redundant
 
 source_is_doc('.lpdoc').
 source_is_doc('.md').
@@ -788,57 +788,43 @@ pred_has_docprop(Pred, Prop) :-
 
 % ---------------------------------------------------------------------------
 
-% TODO: Like @regtype{filetype/1}, but includes 'application'?
-:- export(modtype/1).
-:- regtype modtype/1 # "Represents the type of file being documented.".
-:- doc(modtype/1, "@includedef{modtype/1}").
-
-% TODO: merge 'documentation' and 'part'? I can use the level to infer this
-modtype(part). % (introduction of a part)
-modtype(application).
-modtype(documentation). % (like a part, not at first level)
-modtype(module).
-modtype(user).
-modtype(include).
-modtype(package).
-
-% :- export(detect_modtype/2).
-% modtype is cached in the docstate
-:- pred detect_modtype(DocSt, FileType) => docstate * modtype.
-detect_modtype(DocSt, FileType) :-
+% :- export(detect_filetype/2).
+% filetype is cached in the docstate
+:- pred detect_filetype(DocSt, FileType) => docstate * filetype.
+detect_filetype(DocSt, FileType) :-
 	get_doc(filetype, dofail, DocSt, FileType0),
 	!,
-	( modtype(FileType0) ->
+	( filetype(FileType0) ->
 	    FileType = FileType0
 	; error_message("Unrecognized value in doc(filetype) declaration"),
 	  fail % TODO: recover from this error?
 	).
 %% Application - no interface, so no complication
-detect_modtype(DocSt, FileType) :-
-	docst_mvar_get(DocSt, modinfo, modinfo(_, Base)),
+detect_filetype(DocSt, FileType) :-
+	docst_mvar_get(DocSt, fileinfo, fileinfo(_, Base)),
 	( defines(Base, main, 0, _, _)
 	; defines(Base, main, 1, _, _)
 	),
 	!,
 	FileType = application.
 %% Else, we need to infer the type
-detect_modtype(DocSt, FileType) :-
-	docst_mvar_get(DocSt, modinfo, modinfo(M, _)),
+detect_filetype(DocSt, FileType) :-
+	docst_mvar_get(DocSt, fileinfo, fileinfo(M, _)),
 	( M = user(_) ->
 	    FileType = package % TODO: This is wrong, check for ":- package" declarations instead
 	; FileType = module
 	).
 
-:- export(docst_modtype/2).
-docst_modtype(DocSt, ModType) :-
-	( docst_mvar_get(DocSt, modtype, ModType) ->
+:- export(docst_filetype/2).
+docst_filetype(DocSt, FileType) :-
+	( docst_mvar_get(DocSt, filetype, FileType) ->
 	    true
 	; docst_currmod(DocSt, M), % TODO: Wrong! M is not Base!?
-	  docst_gdata_query(DocSt, M, modtype(ModType0)) ->
-	    ModType = ModType0
+	  docst_gdata_query(DocSt, M, filetype(FileType0)) ->
+	    FileType = FileType0
 	; % TODO: this could be sometimes wrong
-	  % TODO: Copy the modtype in docst_new_sub/3 instead
-	  ModType = documentation % for sections in subfiles...
+	  % TODO: Copy the filetype in docst_new_sub/3 instead
+	  FileType = documentation % for sections in subfiles...
 	).
 
 % ---------------------------------------------------------------------------
