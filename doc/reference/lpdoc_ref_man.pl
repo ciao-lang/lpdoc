@@ -21,13 +21,13 @@
 
 % :- include(ciao_docsrc(common/'ClipAddress')).
 
-:- doc(copyright, "Copyright @copyright{} 1996-2015 Manuel
+:- doc(copyright, "Copyright @copyright{} 1996-2018 Manuel
 Hermenegildo and Jos@'{e} Francisco Morales.
 
 @include{DocCopyright.lpdoc}
 ").
 
-:- doc(summary, "@include{README_LPDOC.lpdoc}").
+:- doc(summary, "@include{Summary.lpdoc}").
 
 :- doc(module, "@include{Intro.lpdoc}
 
@@ -40,8 +40,7 @@ setting parameters in an @file{SETTINGS} file (see @ref{Generating a
 manual}).
 
 @begin{alert}
-TODO: command line options not available here; need
-cooperation with lpmake
+Use @tt{lpdoc --help} to see a list of the available command line options.
 @end{alert}
 ").
 
