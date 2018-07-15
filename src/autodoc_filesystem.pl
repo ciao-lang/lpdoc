@@ -377,7 +377,7 @@ get_parent_bundle(Bundle) :-
 :- export(get_modspec/2).
 get_modspec(ModPath, ModSpec) :-
 	( reverse_ext_find_pl_filename(ModPath, ModSpec0),
-	  \+ ModSpec0 = at_bundle(_, _) -> % TODO: must be in an alias path?
+	  \+ ModSpec0 = at_bundle(_, _) -> % TODO: must be in a path alias?
 	    ModSpec = ModSpec0
 	; % TODO: emit warning?
 	  ModSpec = ModPath % absolute path (no better way...)

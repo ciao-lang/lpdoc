@@ -189,7 +189,7 @@ load_vpaths(InFile) :-
 	( % (failure-driven loop)
 	  ( P = InDir
 	  ; resolved_filepath(InDir, P)
-	  ; file_search_path(_Alias, P), % TODO: prioritize alias paths for the current bundle?
+	  ; file_search_path(_Alias, P), % TODO: prioritize path aliases for the current bundle?
 	    \+ P = '.'
 	  ),
 	    add_vpath(P),
@@ -210,7 +210,7 @@ resolved_filepath(InDir, P) :-
 	  path_norm(P2, P)
 	).
 
-% TODO: prioritize alias paths for the current bundle?
+% TODO: prioritize path aliases for the current bundle?
 % :- use_module(lpdoc(autodoc_filesystem), [get_parent_bundle/1]).
 % :- use_module(engine(internals), ['$bundle_alias_path'/3]).
 
