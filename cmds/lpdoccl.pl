@@ -58,15 +58,15 @@ Options to control messaging during execution:
   --verbosity=<value>    Verbosity level
                          (quiet|progress(default)|full)
 
-  --warning_level=<value> Warning level reported 
+  --warning=<value>      Warning level reported 
                           - none: no warnings (only errors) reported
                           - normal (default): warnings reported
                           - all: warnings and notes reported
 
   -q                     Synomim for --verbosity=quiet
-                                 and --warning_level=none
+                                 and --warning=none
   -v                     Synomim for --verbosity=all
-                                 and --warning_level=all
+                                 and --warning=all
 
   --trace-deps           Trace dependencies (for debugging)
 
@@ -270,6 +270,9 @@ is_option0(X) :- clean_cmd(X, _).
 handle_option0(X) :- clean_cmd(X, Mode), !,
 	assertz_fact(opt_mode(clean(Mode))).
 
+handle_name_value('warning', Value) :- !, % (alias)
+	% TODO: use opt_autodoc_option for both verbosity and warning_level (JF)
+	handle_name_value('warning_level', Value).
 handle_name_value(Name, Value) :-
 	assertz_fact(opt_name_value(Name, Value)).
 
