@@ -63,9 +63,9 @@ Options to control messaging during execution:
                           - normal (default): warnings reported
                           - all: warnings and notes reported
 
-  -q                     Synomim for --verbosity=quiet
+  -q                     Synomym for --verbosity=quiet
                                  and --warning=none
-  -v                     Synomim for --verbosity=all
+  -v                     Synomym for --verbosity=all
                                  and --warning=all
 
   --trace-deps           Trace dependencies (for debugging)
