@@ -31,7 +31,7 @@ dependency.").
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(autodoc_filesystem), [get_cache_dir0/2, find_file/2]).
 :- use_module(lpdoc(autodoc_aux), [autodoc_process_call/3, cmd_logbase/3]).
-:- use_module(lpdoc(autodoc_aux), [verbose_message/1, verbose_message/2]).
+:- use_module(lpdoc(autodoc_messages)).
 
 :- pred resolve_bibliography(DocSt) : docstate #
 "This predicate resolves bibliographical references. The algorithm is as follows:
@@ -51,7 +51,7 @@ dependency.").
 % - Store the results (in the docstate)
 
 resolve_bibliography(DocSt) :-
-	verbose_message("{Resolving bibliographical references", []),	
+	autodoc_message(verbose,"Resolving bibliographical references"),	
 	( no_citations(DocSt) ->
 	    % We had no citations, do nothing
 	    % (bibtex would fail otherwise)
@@ -64,7 +64,7 @@ resolve_bibliography(DocSt) :-
 	% TODO: at this time this is more convenient than asserting data
 	docst_mvar_lookup(DocSt, biblio_doctree, RefsR),
 	docst_mvar_lookup(DocSt, biblio_pairs, RefPairs),
-	verbose_message("}", []).
+	autodoc_message(verbose,"Done resolving bibliographical references").
 
 % Write the references, call bibtex, parse the output, and extract
 % RefPairs ((Label,Ref) pairs from bibitem commands, used later to map
@@ -225,7 +225,7 @@ parse_commands(Y, Z, W) :-
 parse_commands(Z, Z, _).
 
 warning_str([A, B, C, D, E, F, G, H]) :-
-	format("Parsing error around ~s \n", [[A, B, C, D, E, F, G, H]]).
+	autodoc_message(error, "Parsing error around ~s \n", [[A, B, C, D, E, F, G, H]]).
 
 %% Not empty char sequence
 command_chars1([C|Cs]) -->

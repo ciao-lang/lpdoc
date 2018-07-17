@@ -17,8 +17,8 @@
 :- use_module(library(terms),      [atom_concat/2]).
 :- use_module(library(format),     [format/3]).
 :- use_module(library(format_to_string), [format_to_string/3]).
-:- use_module(library(messages)).
 :- use_module(lpdoc(comments), [stringcommand/1, version_descriptor/1]).
+:- use_module(lpdoc(autodoc_messages)).
 
 % ======================================================================
 
@@ -665,11 +665,11 @@ illegal_nodename_repeated_char(0' ).
 %   if the section name contains characters that info will not like
 %   and try to fix it within what is allowed by texinfo.").
 %
-%% 	warning_message(
+%% 	autodoc_message(warning, 
 %% """~s"": info format does not support char ""~c"" in section names; replaced with ""~c""",
 %% 	    [Section, H, NH]),
 %
-%% 	warning_message(
+%% 	autodoc_message(warning, 
 %% """~s"": info format does not support chars ""~c~c"" in section names; character ""~c"" deleted",
 %% 	    [Section, H, H, H]),
 
@@ -847,12 +847,12 @@ copy_texinfo_style_if_needed(TexiDir) :-
 	( setting_value(libtexinfo, no) ->
 	    % TODO: the default texinfo.tex is NOT able to process our
 	    % .texi output!
-	    note_message("Using external texinfo.tex style")
+	    autodoc_message(note, "Using external texinfo.tex style")
 	; setting_value(lpdoclib, LibDir),
 	  In = ~path_concat(LibDir, 'texinfo.tex'),
 	  Out = ~path_concat(TexiDir, 'texinfo.tex'),
 	  warn_on_nosuccess(copy_file(In, Out, [overwrite])),
-	  note_message(note, "Using internal texinfo.tex style", [])
+	  autodoc_message(note, note, "Using internal texinfo.tex style", [])
 	).
 
 %% Make sure it generates postscript fonts, not bitmaps (selecting
@@ -894,7 +894,7 @@ texipaths(TexiFile, TexiDir, TexiName, FileBase0, FileBase) :-
 %% but needed: otherwise incomplete info file generated if there are any errors
 %% As an alternative, set error limit very high... --error-limit 100000
 do_texi_to_info(TexiFile, InfoFile, InfoindexFile, FileBase) :-
-	% note_message("Generating info file and index for ~w using ~w",
+	% autodoc_message(note, "Generating info file and index for ~w using ~w",
 	%    [FileBase, ~makeinfo]),
 	texipaths(TexiFile, TexiDir, TexiName, FileBase, AbsFileBase),
 	atom_concat(AbsFileBase, '.info.tmp', TmpFile2),

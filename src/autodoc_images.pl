@@ -16,13 +16,13 @@
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_filesystem)).
 :- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_messages)).
 
 :- use_module(library(system), [copy_file/3]).
 :- use_module(library(system_extra), [warn_on_nosuccess/1]).
 :- use_module(library(process), [process_call/3]).
 :- use_module(library(pathnames), [path_basename/2]).
 :- use_module(library(errhandle), [error_protect/1]).
-:- use_module(library(messages)).
 
 % ---------------------------------------------------------------------------
 :- use_module(library(format)).
@@ -62,7 +62,7 @@ locate_and_convert_image(SrcSpecS, AcceptedExts, DocSt, TargetFileS) :-
 	    cached_image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt),
 	    %
 	    atom_codes(TargetFile, TargetFileS)
-	; error_message("-> Image ~w not found in any known format", [SrcSpec]),
+	; autodoc_message(error, "-> Image ~w not found in any known format", [SrcSpec]),
 	  fail
 	).
 
@@ -88,9 +88,8 @@ cached_image_convert(SrcBase, SrcExt, TargetBase, TargetExt, _DocSt) :-
         current_fact(cached_image(SrcBase, SrcExt, TargetBase, TargetExt)), !.
 cached_image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 	% Convert the image
-	docst_message("-> Including image ~w in documentation as ~w", [SrcBase, TargetBase], DocSt),
-	%format(user_error, "-> Including image ~w in documentation as ~w~n", [SrcFile, TargetFile]),
-	% ( verbose_message("Converting/Copying file from ~w to ~w", [SrcFile, TargetFile]),
+	autodoc_message(verbose, "-> Including image ~w in documentation as ~w", [SrcBase, TargetBase]),
+	% autodoc_message(verbose, "Converting/Copying file from ~w to ~w", [SrcFile, TargetFile]),
 	image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt),
         assertz_fact(cached_image(SrcBase, SrcExt, TargetBase, TargetExt)).
 

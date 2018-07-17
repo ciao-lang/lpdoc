@@ -31,6 +31,7 @@
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(comments), [version_descriptor/1, docstring/1,
 	stringcommand/1]).
+:- use_module(lpdoc(autodoc_messages)).
 
 % The backends
 :- use_module(lpdoc(autodoc_texinfo), []).
@@ -1123,7 +1124,7 @@ version_string(Version, Str) :-
 	),
 	list_concat([Sv, " ", Sd], Str).
 version_string(Version, Str) :-
-	message(warning, ['unrecognized version format `', Version, '\'']),
+	autodoc_message(warning, "unrecognized version format '~w'", [Version]),
 	Str = "".
 
 % ===========================================================================
@@ -1134,8 +1135,8 @@ version_string(Version, Str) :-
 
 :- doc(subsection, "Formatting Cites and References").
 
-:- pred fmt_cite(Ref, DocSt, R) # "Process (resolve) a bibliographical
-   citation".
+:- pred fmt_cite(Ref, DocSt, R) 
+# "Process (resolve) a bibliographical citation".
 fmt_cite(Ref0, DocSt, R) :-
 	( docst_mvar_get(DocSt, biblio_pairs, RefPairs) ->
 	    remove_spaces(Ref0, Ref),
@@ -1181,7 +1182,7 @@ resolve_cite(C, RefPairs, _DocSt, R) :-
 	; R = string_esc("{UNKNOWNCITE?}"),
 	  % TODO: Improve warning message
 	  atom_codes(RefAtom, C),
-	  message(error, ['Unresolved bibliographical reference `', RefAtom, '\''])
+	  autodoc_message(error, "unresolved bibliographical reference '~w'", [RefAtom])
 	).
 
 % ---------------------------------------------------------------------------
@@ -1201,7 +1202,7 @@ resolve_ref(Ref, FullTree, R) :-
 	    R = ref_link(Link, Ref)
 	; % TODO: Emit warning here?
 	  R = missing_link(Ref),
-	  format(user_error, "WARNING: Could not resolve @ref{~s}~n", [Ref])
+	  autodoc_message(warning, "could not resolve @ref{~s}~n", [Ref])
 	).
 
 % ---------------------------------------------------------------------------

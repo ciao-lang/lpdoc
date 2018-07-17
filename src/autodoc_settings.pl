@@ -7,8 +7,8 @@
    documentation configurations.").
 
 :- use_module(library(pathnames), [path_concat/3]).
-:- use_module(library(messages), [error_message/2]).
 :- use_module(library(aggregates)).
+:- use_module(lpdoc(autodoc_messages),[autodoc_message/3]).
 
 % ---------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ get_pred_value(Name, Value) :-
 	doccfg_holder:call_unknown(_:Pred).
 
 % ---------------------------------------------------------------------------
-:- doc(section, "Loading Setting").
+:- doc(section, "Loading Settings").
 
 % TODO: no unload?
 :- export(load_settings/3).
@@ -127,7 +127,7 @@ ensure_lpdoclib_defined :-
 	( LpDocLibDir = ~file_search_path(lpdoclib),
 	  file_exists(~path_concat(LpDocLibDir, 'doccfg.pl')) ->
 	    add_name_value(lpdoclib, LpDocLibDir)
-	; error_message(
+	; autodoc_message(error, 
 % ___________________________________________________________________________
  "No valid file search path for 'lpdoclib' alias.\n"||
  "Please, check this is LPdoc installation.\n", []),
@@ -149,20 +149,27 @@ ensure_lpdoclib_defined :-
 :- export(setting_value_or_default/2).
 :- pred setting_value_or_default(Var, Value)
 # "Returns in @var{Value} the value of the variable @var{Var}. In case
-  this variable does not exists, it returns a default value. If there
+  this variable does not exist, it returns a default value. If there
   is no default value for the variable @var{Var} it fails.".
 
 setting_value_or_default(Name, Value) :-
 	( get_value(Name, _) -> % Has some value
 	    get_value(Name, Value)
-	; Value = ~default_val(Name)
-	).
+	; ( Value = ~default_val(Name) ->
+            true
+	  ; autodoc_message(error,
+	    "no ~w provided and no default value available.", [Name]),
+	    fail)
+        ). 
+	
 
 % TODO: Use defaults from doccfg package instead?
 default_val(startpage) := 1.
 default_val(papertype) := afourpaper.
 % TODO: wrong; only for html backend; use output_name instead?
 default_val(htmldir) := ~bundle_path(core, builddir, 'doc').
+default_val(verbosity) := progress.
+default_val(warning_level) := normal.
 
 :- export(setting_value/2).
 setting_value(Name, Value) :-

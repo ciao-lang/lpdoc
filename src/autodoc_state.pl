@@ -24,7 +24,6 @@
 :- use_module(library(compiler/c_itf)).
 :- use_module(library(assertions/assertions_props),
 	    [predfunctor/1, propfunctor/1]).
-:- use_module(library(messages)).
 :- use_module(library(pathnames),
 	[path_dirname/2, path_basename/2,
 	 path_concat/3, path_split/3,
@@ -43,6 +42,7 @@
 :- use_module(lpdoc(autodoc_index)).
 :- use_module(lpdoc(comments), [version_descriptor/1, docstring/1,
 	stringcommand/1, doc_id_type/3, filetype/1]).
+:- use_module(lpdoc(autodoc_messages)).
 
 % ===========================================================================
 
@@ -334,30 +334,18 @@ load_source_pl_assrt(F, Opts, M, Base, Dir) :-
 %%% Eliminate clauses coming from library(assertions) unless Main=assertions!
 %% 	(  Main = assertions
 %% 	-> true
-%% 	;  simple_message("*** Eliminating assertions stuff..."),
+%% 	;  autodoc_message(simple, "*** Eliminating assertions stuff..."),
 %% 	   base_name(library(assertions),AssrtBase),
-%% 	   simple_message("*** AssrtBase is ~w",[AssrtBase]),
+%% 	   autodoc_message(simple, "*** AssrtBase is ~w",[AssrtBase]),
 %% 	   findall(_,
 %% 	           ( clause_read(AB,A,B,C,D,E,F),
-%%      	             simple_message("*** retracting ~w",
+%%      	             autodoc_message(simple, "*** retracting ~w",
 %%                            [clause_read(AB,A,B,C,D,E,F)]) ), _)
 %% 	),
 
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Common Operations on a docstate").
-
-:- use_module(library(messages)).
-
-:- export(docst_message/2).
-docst_message(Text, DocSt) :-
-	docst_opts(DocSt, Opts),
-	optional_message(Text, Opts).
-
-:- export(docst_message/3).
-docst_message(Text, Args, DocSt) :-
-	docst_opts(DocSt, Opts),
-	optional_message(Text, Args, Opts).
 
 :- export(docst_opt/2).
 docst_opt(Opt, DocSt) :-
@@ -617,7 +605,7 @@ enum_indices(IdxName, DocSt) :-
 get_doc(Id, MessageType, DocSt, Value) :-
 	( doc_id_type(Id, Type, ValueType) -> 
  	    get_doc_(Id, Type, ValueType, MessageType, DocSt, Value)
-	; error_message("Unrecognized doc/comment declaration type '~w'.",[Id]),
+	; autodoc_message(error, "Unrecognized doc/comment declaration type '~w'.",[Id]),
 	  fail % TODO: recover from this error?
 	). 
 	
@@ -656,7 +644,7 @@ treat_missing_docdecl(ignore, _, _) :- !.
 treat_missing_docdecl(dofail, _, _) :- !, fail.
 treat_missing_docdecl(MessageType, Id, DocSt) :-
 	docst_inputfile(DocSt, S),
-	show_message(MessageType, loc(S, 1, 1),
+	autodoc_message(MessageType, loc(S, 1, 1),
 	    "no "":- doc(~w,...)"" declaration found", [Id]).
 
 :- export(get_doc_changes/3).
@@ -691,7 +679,7 @@ get_doc_pred_varnames(F/A, CArgs) :-
 	( all_vars(CArgs) ->
 	    true
 	; % TODO: should we create new non-colliding names instead?
-	  warning_message(Loc, "nonvariable argument(s) in comment head ~w, "
+	  autodoc_message(warning, Loc, "nonvariable argument(s) in comment head ~w, "
 		|| "variable names ignored", [CH]),
 	  fail
 	),
@@ -796,7 +784,7 @@ detect_filetype(DocSt, FileType) :-
 	!,
 	( filetype(FileType0) ->
 	    FileType = FileType0
-	; error_message("Unrecognized value in doc(filetype) declaration"),
+	; autodoc_message(error, "Unrecognized value in doc(filetype) declaration"),
 	  fail % TODO: recover from this error?
 	).
 %% Application - no interface, so no complication

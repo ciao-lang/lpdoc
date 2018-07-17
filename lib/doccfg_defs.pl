@@ -179,6 +179,30 @@
     syntax_highlight(yes)
 ]).
 
+:- pred verbosity/1 => verbosity_t
+
+# "Level of verbosity of (normally progress) messages. @tt{quiet}
+  means no messages printed, @tt{normal} means standard messages, and
+  @tt{all} means more detailed messages. See @pred{autodoc_message_t/1}.".
+
+:- export(verbosity/1).
+
+:- default_def(verbosity/1, [
+	verbosity(progress)
+]).
+
+:- pred warning_level/1 => warning_level_t
+
+# "Warning reporting level. @tt{none} means only error messages are
+   printed, @tt{normal} means errors and warnings, @tt{all} means also
+   notes.  See @pred{autodoc_message_t/1}.".
+
+:- export(warning_level/1).
+
+:- default_def(warning_level/1, [
+	warning_level(progress)
+]).
+
 % ---------------------------------------------------------------------------
 % Settings for texinfo backend
 

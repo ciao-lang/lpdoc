@@ -4,7 +4,7 @@
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 
-:- use_module(library(messages)).
+:- use_module(lpdoc(autodoc_messages)).
 :- use_module(library(system), [file_exists/1]).
 
 :- use_module(lpdoc(autodoc_settings)).
@@ -29,7 +29,7 @@ read_file(File, Content) :-
 	read_stream(IS, Content),
 	close(IS).
 read_file(File, []) :-
-	error_message("file ~w not found", [File]).
+	autodoc_message(error,"file ~w not found", [File]).
 
 read_stream(IS, Content) :-
 	get_code(IS, N),
@@ -52,15 +52,24 @@ ascii_blank_lines(N,[0'\n | R]) :-
 :- use_module(library(logged_process), [logged_process_call/3]).
 
 % TODO: logs may also be useful when status is 0
+% TODO: this really needs a separate flag?
 % Options for logging external commands (controlled by verbosity options)
 logopts(LogOpts, A) :-
-	( autodoc_option('-v') ->
-	    % In verbose mode, always show logs
-	    A = [show_logs(always)|LogOpts]
-	; % In non-verbose, just note where logs are stored on error
-	  % (change to 'on_error' to show full logs)
-	  A = [show_logs(note_on_error)|LogOpts]
-	).
+	setting_value_or_default(verbosity,L), L=full, !,
+	% In verbose mode, always show logs
+	A = [show_logs(always)|LogOpts].
+logopts(LogOpts, A) :-
+	setting_value_or_default(verbosity,L), L=quiet, !,
+	% In silent mode, no logs
+	A = [show_logs(silent)|LogOpts].
+logopts(LogOpts, A) :-
+	setting_value_or_default(verbosity,L), L=progress, 
+	!,
+	A = [show_logs(note_on_error)|LogOpts].
+%%% Alternative value: on_error
+%% logopts(LogOpts, A) :-
+%% 	!,
+%% 	A = [show_logs(on_error)|LogOpts].
 
 :- export(autodoc_process_call/3).
 autodoc_process_call(Cmd, Args, Opts) :-
@@ -76,28 +85,9 @@ autodoc_process_call(Cmd, Args, Opts) :-
 % TODO: Backend should not be needed
 :- export(cmd_logbase/3).
 cmd_logbase(Backend, RunId, LogBase) :-
+
 	get_cache_dir0(Backend, CacheDir),
 	path_concat(CacheDir, RunId, LogBase).
 
 % ---------------------------------------------------------------------------
-
-:- use_module(library(format), [format/2, format_control/1]).
-
-:- export(verbose_message/1).
-:- export(verbose_message/2).
-
-:- pred verbose_message(Text, ArgList) : format_control * list
-# "The text provided in @var{Text} is printed as a message, using the
-   arguments in @var{ArgList}, if @tt{autodoc_option('-v')} is
-   defined. Otherwise nothing is printed.".
-
-verbose_message(Text) :-
-	verbose_message(Text, []).
-
-verbose_message(Mess, Args) :-
-	( autodoc_option('-v') ->
-	    format(Mess, Args), nl
-	;
-	    true
-	).
 

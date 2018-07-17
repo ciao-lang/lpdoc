@@ -2,8 +2,12 @@
 	[error_text/3],
 	[assertions, regtypes, basicmodes]).
 
-:- doc(title, "Error Messages").
+:- doc(title, "(Parsing) Error Messages").
 :- doc(author, "Manuel Hermenegildo").
+
+:- doc(module, "These texts are the basically the errors generated
+   during parsing (@lib{autodoc_parse.pl}). Other error messages are
+   interspersed in the code.").
 
 error_text(error, error, "could not rewrite command ~w into ~w format").
 error_text(unrecognizedcmd, warning,

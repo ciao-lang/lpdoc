@@ -8,7 +8,6 @@
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 
-:- use_module(library(messages)).
 :- use_module(library(lists), [append/3]).
 :- use_module(library(errhandle), [error_protect/1]).
 
@@ -21,6 +20,7 @@
 :- use_module(lpdoc(autodoc_doctree)).
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(autodoc_filesystem), [find_file/2, find_doc_source/2]).
+:- use_module(lpdoc(autodoc_messages)).
 
 :- use_module(lpdoc(comments), [docstring/1]).
 
@@ -54,7 +54,7 @@ parse_docstring_(DocSt, Loc, Verb, S, R) :-
 
 handle_parse_error(Type, Loc, Args) :-
 	error_text(Type, MType, Format),
-	show_message(MType, Loc, Format, Args),
+	autodoc_message(MType, Loc, Format, Args),
 	!.
 
 %% ---------------------------------------------------------------------------
@@ -413,7 +413,7 @@ parse_predname(Functor, Arity, PredNameS) :-
 	atom_codes(Functor, FunctorS),
 	number_codes(Arity, ArityS).
 parse_predname(0, 0, PredNameS) :-
-	error_message("illegal predicate name ~s in code inclusion command",
+	autodoc_message(error, "illegal predicate name ~s in code inclusion command",
 	    [PredNameS]).
 
 % TODO: incomplete parsing
@@ -503,7 +503,7 @@ handle_incl_command(includefact(Pred), DocSt, Verb, RContent) :-
 	( Functor \== 0,
 	  functor(Pattern, Functor, Arity),
 	  clause_read(_, Pattern, true, _, _, _, _) ->
-	    docst_message("-> Including fact ~w in documentation string", [Functor], DocSt),
+	    autodoc_message(verbose, "-> Including fact ~w in documentation string", [Functor]),
 	    ( Arity = 1 ->
 		true
 	    ; send_signal(parse_error(aritynot1, []))
@@ -516,7 +516,8 @@ handle_incl_command(includedef(Pred), DocSt, _Verb, RContent) :-
 	Pred = Functor/Arity,
 	!,
 	( portray_to_string(Functor, Arity, Content) ->
-	    docst_message("-> Including code for ~w in documentation string", [Functor/Arity], DocSt),
+	    autodoc_message(verbose, "-> Including code for ~w in documentation string", 
+                            [Functor/Arity]),
 	    % TODO: here type is not 'normal' but 'verb'
 	    escape_string(normal, Content, DocSt, NContent),
 	    build_env('verbatim', [raw_string(NContent)], RContent)
@@ -532,10 +533,10 @@ handle_incl_file(Mode, RelFile, DocSt, Verb, RContent) :-
 	  ; error_protect(find_file(RelFile, File))
 	  ),
 	  read_file(File, Content) ->
-	    docst_message("{-> Including file ~w in documentation string", [File], DocSt),
+	    autodoc_message(verbose, "-> Including file ~w in documentation string", [File]),
 	    incl_verb(DocSt, Verb, Verb2),
 	    parse_docstring__1(DocSt, Verb2, Content, RContent),
-	    docst_message("}", DocSt)
+	    autodoc_message(verbose, "Done including file ~w in documentation string", [File])
 	; RContent = err(parse_error(cannot_read, [RelFile]))
 	).
 

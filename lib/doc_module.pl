@@ -1,6 +1,6 @@
 :- package(doc_module).
 % (implementing an interface for doc_module)
-% Use this package in module implementing new LPdoc commands
+% Use this package in modules implementing new LPdoc commands
 % (see load_doc_module/1 at doccfg_defs.pl)
 
 :- discontiguous doc_cmd_type/1.

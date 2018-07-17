@@ -968,7 +968,7 @@ escapeseq --> "@{"
 
    @item{@tt{@@cite@{@em{keyword}@}}} @cindex{@@cite command}
    @em{keyword} is the identifier of a @index{bibliographic entry}.
-   Such entry is assumed to reside in on of a number of @apl{bibtex}
+   Such entry is assumed to reside in one of a number of @apl{bibtex}
    files (@index{.bib files}) @cindex{bibtex}. A reference in brackets
    (@bf{[ ]}) is inserted in the text an the full reference is
    included at the end, with all other references, in an appendix. For

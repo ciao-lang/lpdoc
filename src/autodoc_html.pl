@@ -12,13 +12,13 @@
 :- use_module(lpdoc(autodoc_refsdb)).
 :- use_module(lpdoc(autodoc_images)).
 :- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_messages), [autodoc_message/3]).
 :- use_module(library(lists), [append/3, list_concat/2]).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(dict)).
 :- use_module(library(pathnames), [path_basename/2]).
 :- use_module(lpdoc(comments), [stringcommand/1]).
 :- use_module(library(format_to_string), [format_to_string/3]).
-:- use_module(library(messages), [error_message/2]).
 %
 :- use_module(library(syntax_highlight),
 	[can_highlight/1, highlight_string_to_html_string/3]).
@@ -389,7 +389,7 @@ fmt_codeblock(Lang, Text, R) :-
 	  \+ setting_value(syntax_highlight, no) -> % (default is 'yes')
 	    ( highlight_string_to_html_string(LangAtm, Text, HtmlStr) ->
 	        TextR = raw(HtmlStr)
-	    ; error_message("could not highlight code block for ~w syntax", [LangAtm]),
+	    ; autodoc_message(error,"could not highlight code block for ~w syntax", [LangAtm]),
 	      TextR = raw_string(Text)
 	    )
 	; TextR = raw_string(Text)

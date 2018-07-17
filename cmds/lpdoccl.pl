@@ -40,12 +40,9 @@ General options:
   --version              Show version and exit
   -T                     Start a LPdoc toplevel (single option)
 
-  -v                     Verbose
-  --trace-deps           Trace dependencies (for debugging)
+  -t TARGET              Format (pdf|ps|html|info|manl)
 
   --Name=Value           Set or override the option Name (doccfg)
-
-  -t TARGET              Format (pdf|ps|html|info|manl)
 
 Options to view or clean the documentation output:
 
@@ -55,7 +52,26 @@ Options to view or clean the documentation output:
   --docsclean            Clean all except .texi output"|| /* intermediate, temp_no_texi */ "
   --distclean            Clean all except final output (e.g., .pdf)"|| /* intermediate, texi*/ "
   --realclean            Clean all generated files"|| /* intermediate, temp_no_texi, texi*/ "
+
+Options to control messaging during execution:
+
+  --verbosity=<value>    Verbosity level
+                         (quiet|progress(default)|full)
+
+  --warning_level=<value> Warning level reported 
+                          - none: no warnings (only errors) reported
+                          - normal (default): warnings reported
+                          - all: warnings and notes reported
+
+  -q                     Synomim for --verbosity=quiet
+                                 and --warning_level=none
+  -v                     Synomim for --verbosity=all
+                                 and --warning_level=all
+
+  --trace-deps           Trace dependencies (for debugging)
+
 ").
+% TODO: MH: --trace-deps does nothing!
 
 % Invocation from the command-line interface
 :- export(main/1).
@@ -224,9 +240,18 @@ is_option0('-T').
 handle_option0('-T') :-
 	assertz_fact(opt_mode(toplevel)).
 
+%%%% ****
+is_option0('-q').
+handle_option0('-q') :-
+	assertz_fact(opt_name_value(verbosity, quiet)),
+	assertz_fact(opt_name_value(warning_level, none)).
+	% assertz_fact(opt_autodoc_option('+v')).
+
 is_option0('-v').
 handle_option0('-v') :-
-	assertz_fact(opt_autodoc_option('-v')).
+	assertz_fact(opt_name_value(verbosity, full)),
+	assertz_fact(opt_name_value(warning_level, all)).
+	% assertz_fact(opt_autodoc_option('-v')).
 
 is_option0('--trace-deps').
 handle_option0('--trace-deps') :-

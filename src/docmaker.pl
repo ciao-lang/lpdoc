@@ -12,7 +12,6 @@
 :- use_module(library(compiler), [use_module/1]).
 
 %% Ciao packages and libraries
-:- use_module(library(messages)).
 :- use_module(library(lists), [list_concat/2, append/3]).
 :- use_module(library(file_utils)).
 :- use_module(library(pathnames), [path_concat/3, path_dirname/2, path_splitext/3]).
@@ -25,6 +24,7 @@
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(autodoc_filesystem)).
 :- use_module(lpdoc(autodoc_texinfo), [infodir_base/2]).
+:- use_module(lpdoc(autodoc_messages)).
 
 % Holder for doc_module
 :- use_module(lpdoc(docmod_holder)).
@@ -112,10 +112,10 @@ gen(Format) :-
 % report_cmd(BegEnd, Ext) :-
 % 	file_format_name(Ext, FormatName),
 % 	!,
-% 	simple_message("~w manual generation in ~w (~w) format.",
+% 	autodoc_message(progress, "~w manual generation in ~w (~w) format.",
 % 	    [BegEnd, Ext, FormatName]).
 % report_cmd(BegEnd, Base) :-
-% 	simple_message("~w processing of '~w'.", [BegEnd, Base]).
+% 	autodoc_message(progress, "~w processing of '~w'.", [BegEnd, Base]).
 
 % Load doc_module (for extensions)
 % TODO: unload is missing!
@@ -140,7 +140,7 @@ gen_actions(Format, Actions) :-
 	action_for_format(Format, Action),
 	Actions = [Action].
 gen_actions(Format, _Actions) :-
-	error_message("Output format '~w' is not supported.",[Format]).
+	autodoc_message(error, "Output format '~w' is not supported.",[Format]).
 
 % Action that generate one file format (not necessarily requested in SETTINGS.pl)
 action_for_format(Format, Action) :-
@@ -157,8 +157,8 @@ action_for_format(Format, Action) :-
 
 :- use_module(library(pathnames), [path_basename/2]).
 
-% Schematically, there are the rules that defines how documentation is
-% generated for a specific backend. Let A be a file, Main the mainmod
+% Schematically, there are the rules that define how documentation is
+% generated for a specific backend. Let A be a file, Main the mainmod,
 % and Ci the components:
 %
 %   1) dr(A) <- source(A) + <SETTINGS>
@@ -178,7 +178,7 @@ action_for_format(Format, Action) :-
 	query_source(Spec, AbsFile),
 	add_settings_dep(AbsFile,Deps).
 'fsmemo.run'(gen_doctree(Backend, Spec)) :- !,
-        % simple_message("Generating doctree for ~w",[Spec]),
+        % autodoc_message(simple, "Generating doctree for ~w",[Spec]),
         gen_doctree(Backend, Spec).
 
 gen_doctree(Backend, FileBase) :-
@@ -215,7 +215,7 @@ add_settings_dep(SpecF) := ['SOURCE'(SpecF)|Fs] :-
 	components_target(Backend,dr,FdrComps),
         Deps = [gen_doctree(Backend,Spec)|FdrComps].
 'fsmemo.run'(compute_grefs(Backend)) :- !,
-        simple_message("Computing globally resolved references.",[]),
+        autodoc_message(verbose, "Computing globally resolved references."),
         compute_grefs(Backend).
 
 compute_grefs(Backend) :-
@@ -233,7 +233,7 @@ compute_grefs(Backend) :-
 'fsmemo.deps'(translate_doctree(Backend,Spec),Deps) :- !,
         Deps = [gen_doctree(Backend,Spec),compute_grefs(Backend)].
 'fsmemo.run'(translate_doctree(Backend,Spec)) :- !,
-        % simple_message("Translating doctree for ~w",[Spec]),
+        % autodoc_message(simple, "Translating doctree for ~w",[Spec]),
         translate_doctree(Backend,Spec).
 
 translate_doctree(Backend, FileBase) :-
@@ -254,7 +254,7 @@ translate_doctree(Backend, FileBase) :-
 	components_target(Backend,cr,FcrComps),
         Deps = [translate_doctree(Backend,Spec)|FcrComps].
 'fsmemo.run'(autodoc_finish(Backend)) :- !,
-        simple_message("Post-processing the document.",[]),
+        autodoc_message(verbose, "Post-processing the document."),
         autodoc_finish(Backend).
 
 % ---------------------------------------------------------------------------
@@ -266,7 +266,7 @@ translate_doctree(Backend, FileBase) :-
 'fsmemo.deps'(autodoc_gen_alternative(Backend,_Alt),Deps) :- !,
         Deps = [autodoc_finish(Backend)].
 'fsmemo.run'(autodoc_gen_alternative(Backend,Alt)) :- !,
-        simple_message("Generating document in ~w format.",[Alt]),
+        autodoc_message(verbose, "Generating document in ~w format.",[Alt]),
         autodoc_gen_alternative(Backend,Alt).
 
 % ---------------------------------------------------------------------------

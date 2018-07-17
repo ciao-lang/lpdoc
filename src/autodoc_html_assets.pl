@@ -1,4 +1,4 @@
-:- module(_, [], [assertions, fsyntax]).
+:- module(_, [], [assertions, isomodes, fsyntax]).
 
 :- doc(title, "Assets for the HTML Backend").
 :- doc(author, "Jose F. Morales").
@@ -8,9 +8,9 @@
    of the HTML backend.").
 
 :- use_module(library(pathnames), [path_basename/2]).
-:- use_module(library(messages), [note_message/1, error_message/2]).
 :- use_module(library(system), [file_exists/1, copy_file/3]).
 
+:- use_module(lpdoc(autodoc_messages), [autodoc_message/2, autodoc_message/3]).
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(autodoc_filesystem)).
 
@@ -78,7 +78,7 @@ prepare_asset_dir(SrcDir) :-
 	HtmlDir = ~setting_value_or_default(htmldir),
 	( file_exists(SrcDir) ->
 	    true
-	; error_message("No asset found at '~w'", [SrcDir]),
+	; autodoc_message(error, "No asset found at '~w'", [SrcDir]),
 	  fail
 	),
 	copy_file_tree(installable_precomp(full), SrcDir, HtmlDir, _Perms).
@@ -130,7 +130,7 @@ detect_mathjax :-
         ).
 
 no_mathjax_message :-
-	note_message(
+	autodoc_message(note, 
              "No MathJax detected. In order to view formulas in the HTML output, "||
              "please install MathJax 1.1 under your public_html/ directory. "||
              "(http://www.mathjax.org/download/)").
