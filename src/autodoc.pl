@@ -51,14 +51,9 @@
 
 % ---------------------------------------------------------------------------
 
-%% Order below is still important (at least in current Ciao version):
-
-% TODO: Refine
 :- use_module(library(format), [format_to_string/3]).
-:- use_module(library(ttyout)).
-:- use_module(library(aggregates)).
+:- use_module(library(aggregates), [findall/3]).
 :- use_module(library(read), [read/2]).
-:- use_module(library(dict)).
 
 % Ciao libraries
 :- use_module(library(compiler), [use_module/1]).
@@ -245,7 +240,7 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
 	%
 	autodoc_message(verbose,"Done generating ~w documentation for ~w", 
 	                [Backend, FileBase]),
-	ttyflush,
+	flush_output(user),
 	!.
 autodoc_gen_doctree(_, FileBase, _, _, _) :-
 	autodoc_message(error,"formatting ~w could not be completed", [FileBase]).
@@ -362,7 +357,7 @@ fmt_infodir_entry(DocSt, Version, Mod) :-
 	doctree_scan_and_save(R, ModInfodir, DocSt1),
 	%
 	autodoc_message(verbose, "Done generating info index"),
-	ttyflush.
+	flush_output(user).
 
 get_default_title(DocSt, TitleR) :-
 	get_doc(title, ignore, DocSt, TitleR0),
@@ -2310,7 +2305,7 @@ doc_property(Prop, Loc, P, DocSt, PropR) :-
 	  DocR = undefined,
 	  VarDict = [],
 	  autodoc_message(error, Loc, "unknown property ~w in assertion for ~w", [Prop, P]),
-	  ttyflush
+	  flush_output(user)
 	),
 	fmt_property(DocSt, Prop, NPM, DocR, VarDict, PropR).
 
