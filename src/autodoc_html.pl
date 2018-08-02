@@ -59,8 +59,8 @@ rw_command(sp(_), _, R) :- !, R = raw("<p>").
 %	html_blank_lines(N1, NewCommand),
 %	R = raw(NewCommand).
 rw_command(p(""),                _, raw("<p>")) :- !.
-rw_command(codeblock(Lang, Text), _, R) :- !,
-	fmt_codeblock(Lang, Text, R).
+rw_command(codeblock(Lang, Text), DocSt, R) :- !,
+	fmt_codeblock(Lang, Text, DocSt, R).
 rw_command(mathenv(S),           _, R) :- !,
 	% environment using MathJax (in-line formula)
 	R = htmlenv(script, [type="math/tex"], raw(S)).
@@ -382,7 +382,16 @@ sec_is_cover(SecProps) :-
 
 :- use_module(library(format), [format/2]).
 
-fmt_codeblock(Lang, Text, R) :-
+fmt_codeblock(Lang, Text, DocSt, R) :-
+	R = htmlenv(pre, [class="lpdoc-codeblock"], TextR),
+	( try_highlight(Lang, Text, TextR0) ->
+	    TextR = TextR0
+	; % TODO: sometimes type should be 'verb'? (forbid 'verbatim'?)
+	  escape_string(normal, Text, DocSt, NText),
+	  TextR = raw_string(NText)
+	).
+
+try_highlight(Lang, Text, TextR) :-
 	( atom_codes(LangAtm, Lang),
 	  \+ LangAtm = 'text',
 	  can_highlight(LangAtm),
@@ -390,11 +399,10 @@ fmt_codeblock(Lang, Text, R) :-
 	    ( highlight_string_to_html_string(LangAtm, Text, HtmlStr) ->
 	        TextR = raw(HtmlStr)
 	    ; autodoc_message(error,"could not highlight code block for ~w syntax", [LangAtm]),
-	      TextR = raw_string(Text)
+	      fail
 	    )
-	; TextR = raw_string(Text)
-	),
-	R = htmlenv(pre, [class="lpdoc-codeblock"], TextR).
+	; fail
+	).
 
 % ---------------------------------------------------------------------------
 
