@@ -13,7 +13,7 @@
 
 %% Ciao packages and libraries
 :- use_module(library(lists), [list_concat/2, append/3]).
-:- use_module(library(file_utils)).
+:- use_module(library(streams_utils)).
 :- use_module(library(pathnames), [path_concat/3, path_dirname/2, path_splitext/3]).
 
 %% LPdoc libraries

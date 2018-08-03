@@ -1,7 +1,7 @@
 :- module(_, [page_response/3], [assertions]).
 
 :- use_module(library(pathnames), [path_concat/3]).
-:- use_module(library(file_utils), [file_to_string/2]).
+:- use_module(library(streams_utils), [file_to_string/2]).
 :- use_module(library(pillow/html), [html_template/3, html2terms/2]).
 :- use_module(ciaobld(config_common), [site_root_dir/1]). % TODO: move generated templates somewhere else? make sure files are there?
 

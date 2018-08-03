@@ -12,7 +12,7 @@
 :- use_module(library(persdb/datadir), [ensure_datadir/2]).
 :- use_module(library(bundle/bundle_paths), [bundle_path/4]).
 :- use_module(library(system), [file_exists/1]).
-:- use_module(library(file_utils), [file_to_string/2]).
+:- use_module(library(streams_utils), [file_to_string/2]).
 :- use_module(library(pillow/html), [html2terms/2]).
 
 :- use_module(lpdoc(docmaker), [doc_cmd/3]).

@@ -13,7 +13,7 @@
 :- use_module(library(lists), [append/3]).
 :- use_module(library(pathnames)).
 :- use_module(library(system)).
-:- use_module(library(file_utils), [file_to_string/2]).
+:- use_module(library(streams_utils), [file_to_string/2]).
 
 % ---------------------------------------------------------------------------
 
