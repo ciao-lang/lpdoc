@@ -2019,7 +2019,7 @@ show_other_assrt_header(Usages, OtherAssrt) :-
 	OtherAssrt = [_|_]. % length > 0
 
 gen_other_assrt_header(R) :-
-	R = [raw_nl, bf(string_esc("General properties:")), string_esc(" ")].
+	R = [raw_nl, bf(string_esc("Other properties:")), string_esc(" ")].
 
 %% ---------------------------------------------------------------------------
 :- pred doc_usages/5 # "Generates documentation for each @em{usage} of
