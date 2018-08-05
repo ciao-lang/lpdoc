@@ -53,33 +53,36 @@
    # "@tt{Option} is a supported documentation option.".
 
 % TODO: Duplicated in lpdoc/lib/doccfg_props.pl
-supported_option(verbose).
-supported_option(no_bugs).
-supported_option(no_authors).
-supported_option(no_stability).
-supported_option(no_version).
-supported_option(versioned_output).
-supported_option(no_lpdocack).
-supported_option(no_changelog).
-supported_option(no_patches).
-supported_option(autogen_warning).
-supported_option(modes).
-supported_option(head_props).
-supported_option(literal_props).
-supported_option(no_propnames).
-supported_option(no_undefined).
-supported_option(no_propsepln).
-supported_option(no_biblio).
-supported_option(no_sysmods).
-supported_option(no_engmods).
-supported_option(no_packages).
-supported_option(no_isoline).
-supported_option(propmods).
-supported_option(no_propuses).
-supported_option(shorttoc).
-supported_option(regtype_props).
-supported_option(onesided).
-supported_option(no_math).
+supported_option := verbose.
+supported_option := no_bugs.
+supported_option := no_authors.
+supported_option := no_stability.
+supported_option := no_version.
+supported_option := versioned_output.
+supported_option := no_lpdocack.
+supported_option := no_changelog.
+supported_option := no_patches.
+supported_option := autogen_warning.
+supported_option := modes.
+supported_option := head_props.
+supported_option := literal_props.
+supported_option := no_propnames.
+supported_option := no_undefined.
+supported_option := no_propsepln.
+supported_option := no_biblio.
+supported_option := no_sysmods.
+supported_option := no_engmods.
+supported_option := no_packages.
+supported_option := no_isoline.
+supported_option := propmods.
+supported_option := no_propuses.
+supported_option := shorttoc.
+supported_option := regtype_props.
+supported_option := onesided.
+supported_option := no_math.
+supported_option := tests.
+supported_option := no_examples.
+supported_option := status.
 
 :- export(option_comment/2).
 :- pred option_comment(Option,Text) 
@@ -87,8 +90,9 @@ supported_option(no_math).
 	=> supported_option * string
 
         # "@var{Option} is a documentation option which is
-          supported. @var{Text} describes the effect of selecting that
-          option. Currently supported options are:
+          supported. These options can be applied to the main file or
+          to the components.  @var{Text} describes the effect of
+          selecting that option. The currently supported options are:
 
 @includedef{option_comment/2}          
           ".
@@ -132,6 +136,13 @@ option_comment(regtype_props,"Include in the doc for regtypes the global prop"||
     " stating that they are indeed regtypes.").
 option_comment(onesided, "For printing on one side (default is two).").
 option_comment(no_math, "Disable mathematical environments.").
+option_comment(tests,
+	"Document all test assertions (default is only those that have 'example' as a comp property).").
+option_comment(no_examples,
+	"Document no test assertions, i.e., also not those that have 'example' as a comp property.").
+option_comment(status,
+	"Document also the status of assertions (default is no status, more appropriate for manuals).").
+
 
 % ===========================================================================
 

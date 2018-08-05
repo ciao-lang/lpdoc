@@ -37,25 +37,33 @@ filename(P) :- atm(P).
 supported_option := verbose.
 supported_option := no_bugs.
 supported_option := no_authors.
+supported_option := no_stability.
 supported_option := no_version.
 supported_option := versioned_output.
 supported_option := no_lpdocack.
 supported_option := no_changelog.
 supported_option := no_patches.
+supported_option := autogen_warning.
 supported_option := modes.
 supported_option := head_props.
 supported_option := literal_props.
-supported_option := no_prop_names.
+supported_option := no_propnames.
 supported_option := no_undefined.
 supported_option := no_propsepln.
 supported_option := no_biblio.
-supported_option := no_bullet.
 supported_option := no_sysmods.
 supported_option := no_engmods.
 supported_option := no_packages.
 supported_option := no_isoline.
 supported_option := propmods.
+supported_option := no_propuses.
 supported_option := shorttoc.
+supported_option := regtype_props.
+supported_option := onesided.
+supported_option := no_math.
+supported_option := tests.
+supported_option := no_examples.
+supported_option := status.
 
 :- doc(section, "Supported formats").
 
