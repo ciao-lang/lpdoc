@@ -44,26 +44,55 @@ complex documents, by editing the (automatically provided)
 @index{SETTINGS.pl} in the same way as when generating a manual from
 the command line (see below). However, when generating complex
 documents, it is best to devote an independent, permanent directory to
-the manual, and the full procedure described in the rest of this text
-is preferred.
+the manual, and the full procedure described in 
+@ref{More complex documentation generation} below is preferred.
 
 @section{Generating a manual} 
 
-Two possible scenarios are described in this section. The first one is
+Two possible methods are described in this section. The first one is
 indicated to document quickly a single module and the second one
 targets the documentation of a larger application or library, in which
 the settings (which define how the documentation is to be generated,
 etc.) are read from a file, so that they can be reused as the
 application / library evolves.
 
-In order to make @apl{lpdoc} generate quickly the documentation of a
-single file it suffices to execute the command @tt{lpdoc -d
-doc_structure=modulename pdf}, where @tt{modulename} is the module to be
-documented (without extension) and (in this example) @tt{pdf} is the
-desired format of the manual (other accepted formats include html,
-pfd, ps, etc. -- see later). @apl{lpdoc} will generate a manual with
-the name of the module and the format extension (in the example it
-would be modulename.pdf) in the same directory where it is executed.
+@subsection{Quick documentation generation for a single file} 
+
+In order to make @apl{lpdoc} generate quickly the documentation for a
+single file simply execute in a shell: 
+
+@begin{verbatim}
+lpdoc file.pl
+@end{verbatim}
+
+@comment{lpdoc -d doc_structure=modulename pdf}
+
+where @tt{file.pl} is the file to be documented. This will generate
+the documentation in @tt{html} format (the default) in the directory
+in which @apl{lpdoc} is run. Open @tt{file.html/index.html} with a
+browser to see it. This can also be done easily in most platforms
+with: @begin{verbatim} lpdoc --view file.pl @end{verbatim}
+
+There are several other possible output formats such as @tt{pdf},
+@tt{info}, @tt{ascii}, @tt{manl}, @tt{ps}, etc. using the @tt{-t}
+option:
+
+@begin{verbatim}
+lpdoc -t pdf file.pl
+@end{verbatim}
+
+The manual generated will generally have the same name as the file but
+with the format as extension (i.e., in the example above it would be
+@tt{file.pdf}). See also @ref{Cleaning up the documentation directory}
+for cleaup commands.
+
+It is possible to pass most of the options explained the following
+sections to the @apl{lpdoc} command (@tt{lpdoc -h} describes the
+syntax). However, as mentioned before, for more complex use cases it
+is best to put the options in a @tt{SETTINGS.pl} file as described
+below.
+
+@subsection{More complex documentation generation} 
 
 For the second scenario, the @apl{lpdoc} library directory includes a
 generic file which is quite useful for the generation of complete
@@ -88,13 +117,13 @@ the distribution of the application or library to be documented."||
 
 "@item Execute the command @tt{lpdoc lpsettings} in the directory
 where the documentation is to be created (e.g., @tt{doc} in the
-previous point). @apl{lpdoc} will create an
+previous point). @apl{lpdoc} will create a 
 @file{SETTINGS.pl.generated} file with the default settings.  This
 file should be renamed to @file{SETTINGS.pl} once the user agrees
 with its contents.
 
 @item Edit @file{SETTINGS.pl} to suit your needs. It is recommended that
-you review, at least, the following points:
+you review at least the following points:
 
 @begin{itemize}
 
@@ -255,7 +284,7 @@ documentation is being generated:
 
 "@begin{itemize}
 
-@item @tt{lpdoc clean} deletes all intermediate files, but leaves the
+@item @tt{lpdoc --clean} deletes all intermediate files, but leaves the
 targets (i.e., the @tt{.pdf}, @tt{.ascii}, @tt{.html}, etc. files), as
 well as all the generated @tt{.texic} files.
 
@@ -654,8 +683,8 @@ standard Prolog comments (which @apl{lpdoc} will not read). An
 alternative and quite useful solution is to put such internal comments
 in @em{patch} changes (e.g., 1.1#2 to 1.1#3), and put the more general
 comments, which describe major changes to the user and should appear
-in the manual, in @em{version} changes (e.g., 1.1#2 to
-1.2#0). Selecting the appropriate options in @apl{lpdoc} then allows
+in the manual, in @em{version} changes (e.g., 1.1#2 to 1.2#0). 
+Selecting the appropriate options in @apl{lpdoc} then allows
 including in the manual the version changes but not the patch changes
 (which might on the other hand be included in an @index{internals
 manual}).
@@ -769,7 +798,7 @@ can be done quite simply by using the @@include command. For example,
 the following declaration:
 
 @begin{verbatim}
-:- doc(module,""@@include@{Intro.lpdoc@}"").
+:- doc(module,""@include{Intro.lpdoc}"").
 @end{verbatim}
 
 @noindent will include the contents of the file
@@ -801,8 +830,8 @@ included in a section of the main file documentation as follows:
 @begin{verbatim}
 :- doc(module,""
    ...
-   @@section@{Installation instructions@}
-   @@include@{INSTALLATION.lpdoc@}
+   @section{Installation instructions}
+   @include{INSTALLATION.lpdoc}
    ...
    "").
 @end{verbatim}
@@ -816,7 +845,7 @@ the top level of the source directory of the application. To this end, an
 :- use_package([assertions]).
 :- doc(filetype, application). %% forces file to be documented as an application
 :- doc(title,""Installation instructions"").
-:- doc(module,""@@include@{INSTALLATION.lpdoc@}"").
+:- doc(module,""@include{INSTALLATION.lpdoc}"").
 @end{verbatim}
 
 Then, the ascii @tt{INSTALLATION} file can be generated by simply 
@@ -845,9 +874,7 @@ this is that there is no directory path to this file declared in the
 
 @item Messages of the type:
 @begin{verbatim}
-
- ! No room for a new @@write .
-
+ ! No room for a new @write .
 @end{verbatim} while converting from @tt{.texi} to @tt{.dvi} (i.e.,
 while running @apl{tex}). These messages are @apl{tex}'s way of saying
 that an internal area (typically for an index) is full. This is
