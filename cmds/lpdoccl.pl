@@ -89,7 +89,7 @@ main_(Args) :-
 	error_bad_args(Args).
 
 error_bad_args(Args) :-
-	throw(autodoc_error("Illegal arguments: ~w~n"||
+	throw(autodoc_error("Illegal or missing arguments: ~w~n"||
 			    "Use 'lpdoc --help' for help.~n", [Args])).
 
 select_cmd(Cmd) :-
