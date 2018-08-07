@@ -64,7 +64,7 @@ fmt_html_template(File, Args0) := R :-
 	connect_params(FreeDict, Args).
 
 locate_tmpl(A, B) :-
-	% TODO: fix, allow multiple values, use lpdoclib too
+	% TODO: fix, allow multiple values, use lpdoc_etc too
 	B = ~path_concat(~setting_value(tmplpath), A).
 
 % Connect values in the first list with the mapping B

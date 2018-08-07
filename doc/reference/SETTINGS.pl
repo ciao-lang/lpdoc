@@ -1,4 +1,4 @@
-:- module(_, [], [lpdoclib(doccfg)]).
+:- doccfg(_).
 
 %! \title Config for LPdoc reference manual
 %  \author Manuel Hermenegildo

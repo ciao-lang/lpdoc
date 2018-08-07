@@ -2,7 +2,8 @@
 depends([core]).
 alias_paths([
     lpdoc = 'src',
-    lpdoclib = 'lib'
+    library = 'lib',
+    lpdoc_etc = 'etc'
 ]).
 cmd('lpdoc', [main='cmds/lpdoccl']).
 lib('src').

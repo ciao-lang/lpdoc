@@ -1,4 +1,4 @@
-:- module(_, [], [lpdoclib(doccfg)]).
+:- module(_, [], [doccfg]).
 
 %! \title  Default configuration file for LPdoc
 %  \author The Ciao Development Team

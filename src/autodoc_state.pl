@@ -52,7 +52,7 @@
 :- prop supported_option(Option) 
    # "@tt{Option} is a supported documentation option.".
 
-% TODO: Duplicated in lpdoc/lib/doccfg_props.pl
+% TODO: Duplicated in lpdoc/lib/doccfg/doccfg_props.pl
 supported_option := verbose.
 supported_option := no_bugs.
 supported_option := no_authors.

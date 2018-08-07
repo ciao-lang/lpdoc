@@ -13,7 +13,7 @@
 :- use_module(library(http/http_server), [http_protect/4]).
 :- use_module(library(pillow/error_templates), [html_error_response/2]).
 
-:- use_module(lpdoclib(lpdoc_http_rt), [page_response/3]).
+:- use_module(library(lpdoc_http/lpdoc_http_rt), [page_response/3]).
 
 treat_request(Request, Response) :-
 	http_protect(treat_request_, error_response, Request, Response).

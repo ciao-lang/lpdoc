@@ -116,8 +116,8 @@ write_bibtex_citations(DocSt, RAuxFile) :-
 	),
 	% Our custom style that writes cites in pseudo-lpdoc notation
 	Style = 'docstring', 
-	( setting_value(lpdoclib, LibDir) -> true ; fail ),
-	path_concat(LibDir, Style, StyleFile),
+	( setting_value(lpdoc_etc, EtcDir) -> true ; fail ),
+	path_concat(EtcDir, Style, StyleFile),
 	%
 	format(CS, "\\bibstyle{~w}~n", [StyleFile]),
 	% The .bib files required to resolve references

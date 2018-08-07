@@ -848,8 +848,8 @@ copy_texinfo_style_if_needed(TexiDir) :-
 	    % TODO: the default texinfo.tex is NOT able to process our
 	    % .texi output!
 	    autodoc_message(note, "Using external texinfo.tex style")
-	; setting_value(lpdoclib, LibDir),
-	  In = ~path_concat(LibDir, 'texinfo.tex'),
+	; setting_value(lpdoc_etc, EtcDir),
+	  In = ~path_concat(EtcDir, 'texinfo.tex'),
 	  Out = ~path_concat(TexiDir, 'texinfo.tex'),
 	  warn_on_nosuccess(copy_file(In, Out, [overwrite])),
 	  autodoc_message(note, note, "Using internal texinfo.tex style", [])

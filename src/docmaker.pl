@@ -319,7 +319,9 @@ peek_doccfg(FileName) :-
 	read_first_term(FileName, Term),
 	( var(Term) -> fail
 	; Term = (:- module(_, _, Ps)),
-	  member(lpdoclib(doccfg), Ps) ->
+	  member(doccfg, Ps) ->
+	    true
+	; Term = (:- doccfg(_)) -> % TODO: arity 0 or 1?
 	    true
 	; fail
 	).

@@ -14,12 +14,12 @@
 :- export('$implements'/1).
 '$implements'('doccfg').
 
-:- load_compilation_module(lpdoclib(doccfg_tr)).
+:- load_compilation_module(library(doccfg/doccfg_tr)).
 :- add_sentence_trans(doccfg_tr:doccfg_sent/3, 8110).
 
 % ----------------------------------------------------------------------------
 % Base definition that every doccfg extends
 
-:- include(lpdoclib(doccfg_defs)).
+:- include(library(doccfg/doccfg_defs)).
 
 

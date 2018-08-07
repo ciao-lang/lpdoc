@@ -8,7 +8,7 @@
 % \author Manuel Hermenegildo
 % \author Jose F. Morales
 
-:- use_module(lpdoclib(doccfg_props)).
+:- use_module(library(doccfg/doccfg_props)).
 
 % ----------------------------------------------------------------------------
 % Paths 
@@ -89,7 +89,7 @@
 % TODO: Make it local to each module (not global in the doccfg file).
 :- pred load_doc_module(F) => term
 # "Documentation module (@tt{doc_module}) for extensions (see
-  @lib{lpdoclib(doc_module)}).".
+  @lib{doc_module}).".
 :- export(load_doc_module/1).
 :- default_def(load_doc_module/1, [(load_doc_module(_) :- fail)]).
 

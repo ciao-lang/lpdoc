@@ -112,24 +112,24 @@ load_settings(InFile, InKind, Opts) :-
 	; fail
 	),
 	set_opts(Opts),
-	ensure_lpdoclib_defined.
+	ensure_lpdoc_etc_defined.
 
-% Verify that the configuration module uses the lpdoclib(doccfg) package
+% Verify that the configuration module uses the library(doccfg) package
 :- export(verify_settings/0).
 verify_settings :-
 	( setting_value('$implements', 'doccfg') ->
 	    true
-	; throw(autodoc_error("Configuration files must use the lpdoclib(doccfg) package", []))
+	; throw(autodoc_error("Configuration files must use the library(doccfg) package", []))
 	).
 
-% Define 'lpdoclib' setting, check that it is valid
-ensure_lpdoclib_defined :-
-	( LpDocLibDir = ~file_search_path(lpdoclib),
-	  file_exists(~path_concat(LpDocLibDir, 'doccfg.pl')) ->
-	    add_name_value(lpdoclib, LpDocLibDir)
+% Define 'lpdoc_etc' setting, check that it is valid
+ensure_lpdoc_etc_defined :-
+	( LpDocEtcDir = ~file_search_path(lpdoc_etc),
+	  file_exists(~path_concat(LpDocEtcDir, 'lpdoc.css')) -> % (some example)
+	    add_name_value(lpdoc_etc, LpDocEtcDir)
 	; autodoc_message(error, 
 % ___________________________________________________________________________
- "No valid file search path for 'lpdoclib' alias.\n"||
+ "No valid file search path for 'lpdoc_etc' alias.\n"||
  "Please, check this is LPdoc installation.\n", []),
 	  fail
 	).

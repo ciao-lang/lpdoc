@@ -44,7 +44,7 @@ prepare_html_assets(Backend, Opts) :-
 asset_file(css, Path) :-
 	\+ setting_value(html_layout, tmpl_layout(_, _, _)), % TODO: better way?
 	F = 'lpdoc.css',
-	setting_value(lpdoclib, Dir),
+	setting_value(lpdoc_etc, Dir),
 	path_concat(Dir, F, Path).
 asset_file(css, Path) :-
 	\+ setting_value(syntax_highlight, no),
@@ -53,7 +53,7 @@ asset_file(css, Path) :-
 	path_concat(Dir, F, Path).
 asset_file(js, Path) :-
 	F = 'lpdoc-aux.js',
-	setting_value(lpdoclib, Dir),
+	setting_value(lpdoc_etc, Dir),
 	path_concat(Dir, F, Path).
 
 % ---------------------------------------------------------------------------
