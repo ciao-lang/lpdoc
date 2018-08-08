@@ -71,7 +71,11 @@ where @tt{file.pl} is the file to be documented. This will generate
 the documentation in @tt{html} format (the default) in the directory
 in which @apl{lpdoc} is run. Open @tt{file.html/index.html} with a
 browser to see it. This can also be done easily in most platforms
-with: @begin{verbatim} lpdoc --view file.pl @end{verbatim}
+with:
+
+@begin{verbatim}
+lpdoc --view file.pl
+@end{verbatim}
 
 There are several other possible output formats such as @tt{pdf},
 @tt{info}, @tt{ascii}, @tt{manl}, @tt{ps}, etc. using the @tt{-t}
