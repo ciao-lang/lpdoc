@@ -152,6 +152,8 @@ parse_commands("~" || Tail) --> start, "~{}", !,
 	parse_commands(Tail).
 parse_commands("&" || Tail) --> start, "&", !,
 	parse_commands(Tail).
+parse_commands(Tail) --> start, "-", !, % (hyphenation, ignored)
+	parse_commands(Tail).
 %% Some accents without braces (e.g. \'a ===> \'{a})
 parse_commands(NCommand) -->
 	( open ; [] ), % a kludge to void entering the 'alt syntax' clause
