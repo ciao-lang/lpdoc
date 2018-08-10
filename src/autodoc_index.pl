@@ -288,7 +288,8 @@ index_key2([B|Bs], [R|Rs]) :-
 index_key_single(Pre, B, Label, R, R0) :-
 	B = idx_b(ExtMode,Base,IdxLabel),
 	Link = link_to(Base,IdxLabel),
-	atom_codes(Base, BaseC),
+	modname_nodoc(Base, Base_ND), % TODO: sure?
+	atom_codes(Base_ND, BaseC),
 	( ExtMode = def(Type) ->
 	    ( def_text(Type, TypeC) -> true ; atom_codes(Type, TypeC) ),
 	    Msg = [string_esc(BaseC), string_esc(" "), string_esc(TypeC)]
