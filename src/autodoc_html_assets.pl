@@ -72,16 +72,16 @@ prepare_asset_dirs(Dirs) :-
 
 %:- export(prepare_asset_dir/1).
 :- pred prepare_asset_dir(+SrcDir)
-   # "Copy contents (recursively) of @var{SrcDir} into @tt{htmldir}.".
+   # "Copy contents (recursively) of @var{SrcDir} into output directory.".
 % TODO: Avoid copy if not necessary
 prepare_asset_dir(SrcDir) :-
-	HtmlDir = ~setting_value_or_default(htmldir),
+	get_output_dir(html, OutputDir),
 	( file_exists(SrcDir) ->
 	    true
 	; autodoc_message(error, "No asset found at '~w'", [SrcDir]),
 	  fail
 	),
-	copy_file_tree(installable_precomp(full), SrcDir, HtmlDir, _Perms).
+	copy_file_tree(installable_precomp(full), SrcDir, OutputDir, _Perms).
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Math engine (MathJax)").

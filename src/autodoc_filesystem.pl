@@ -218,13 +218,13 @@ clean_fs_db :-
 get_output_dir(Backend, Dir) :-
 	computed_output_dir(Backend, Dir0), !, Dir = Dir0.
 get_output_dir(Backend, Dir) :-
-	Dir1 = '',
+	Dir1 = '', % TODO: relative because doc_cmd/3 do cd/1 to the real output dir
 	( output_packed_in_dir(Backend, DirSuffix) ->
-	    % Use a directory inside 'htmldir'
+	    % Pack output in a directory
 	    main_output_name(Backend, OutBase),
 	    atom_concat(OutBase, DirSuffix, OutDir),
 	    path_concat(Dir1, OutDir, Dir)
-	; % Store in 'htmldir' directly
+	; % Store directly
 	  Dir = Dir1
 	),
 	assertz_fact(computed_output_dir(Backend, Dir)).

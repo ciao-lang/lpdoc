@@ -166,8 +166,6 @@ setting_value_or_default(Name, Value) :-
 % TODO: Use defaults from doccfg package instead?
 default_val(startpage) := 1.
 default_val(papertype) := afourpaper.
-% TODO: wrong; only for html backend; use output_name instead?
-default_val(htmldir) := ~bundle_path(core, builddir, 'doc').
 default_val(verbosity) := progress.
 default_val(warning_level) := normal.
 
