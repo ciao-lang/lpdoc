@@ -20,7 +20,7 @@ dependency.").
 :- use_module(library(dict)).
 :- use_module(library(aggregates)).
 :- use_module(library(terms),      [atom_concat/2]).
-:- use_module(library(streams_utils), [file_to_string/2]).
+:- use_module(library(stream_utils), [file_to_string/2]).
 :- use_module(library(lists), [append/3]).
 :- use_module(library(format)).
 :- use_module(library(pathnames), [path_concat/3]).

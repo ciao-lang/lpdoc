@@ -920,7 +920,7 @@ index_symlink :-
 	; create_link(From, To)
 	).
 
-:- use_module(library(streams_utils), [string_to_file/2]).
+:- use_module(library(stream_utils), [string_to_file/2]).
 
 :- multifile autodoc_gen_alternative_hook/2.
 % note: no alternative formats here

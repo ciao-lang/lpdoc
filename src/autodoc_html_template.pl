@@ -4,7 +4,7 @@
 :- doc(author, "Jose F. Morales").
 
 :- use_module(library(system), [file_exists/1]).
-:- use_module(library(streams_utils), [file_to_string/2]).
+:- use_module(library(stream_utils), [file_to_string/2]).
 :- use_module(library(pathnames), [path_concat/3]).
 :- use_module(library(lists), [append/3]).
 
