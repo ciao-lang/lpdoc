@@ -2,7 +2,7 @@
 
 :- doc(title,"The LPdoc top-level and command-line interface").
 :- doc(author, "Manuel Hermenegildo").
-:- doc(author, "Jos@'{e} Francisco Morales").
+:- doc(author, "Jose F. Morales").
 
 :- doc(module, "This is the top-level and command-line interface to
    LPdoc. Please look at @lib{lpdoc} documentation for top-level usage

@@ -50,7 +50,7 @@ get_bundle_manual_source(Bundle, R) :-
 	R = ~main_file_path(Bundle, Props),
 	file_exists(R).
 
-% TODO: when using a Manifest the 'SETTINGS':output_name/1 is not needed
+% TODO: when using a Manifest doccfg:output_name/1 is not needed
 %   (the same than it is not needed to specify an output name in a .pl file
 %    with a main/{0,1})
 

@@ -4,8 +4,8 @@
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 
-:- doc(module, "This library drives the documentation generation from
-   a @index{SETTINGS.pl} file").
+:- doc(module, "This module implements the main driver for
+   documentation generation.").
 
 :- use_module(library(format)).
 :- use_module(library(aggregates)).
@@ -40,7 +40,7 @@
 % TODO: document Opts better, change format (e.g., N(V) instead of get_value(N,V))
 :- export(doc_cmd/3).
 :- pred doc_cmd(InFile, Opts, Cmd) # "Treat according to @var{Cmd}
-   @var{InFile} (which can be a doccfg or standalone file).
+   @var{InFile} (which can be a @lib{doccfg}-file or standalone file).
    @var{Opts} is the list of options (see @pred{autodoc_option/1}).".
 
 doc_cmd(InFile0, Opts, Cmd) :-
@@ -142,7 +142,7 @@ gen_actions(Format, Actions) :-
 gen_actions(Format, _Actions) :-
 	autodoc_message(error, "Output format '~w' is not supported.",[Format]).
 
-% Action that generate one file format (not necessarily requested in SETTINGS.pl)
+% Action that generate one file format (not necessarily requested in the doccfg file)
 action_for_format(Format, Action) :-
 	parent_format(Format,ParentFormat),
 	format_get_subtarget(ParentFormat, Backend, Subtarget),
@@ -161,12 +161,14 @@ action_for_format(Format, Action) :-
 % generated for a specific backend. Let A be a file, Main the mainmod,
 % and Ci the components:
 %
-%   1) dr(A) <- source(A) + <SETTINGS>
+%   1) dr(A) <- source(A) + <DOCCFG>
 %   2) gr(Main) <- [dr(Main), dr(C1),...,dr(Cn)]
 %   3) cr(A) <- [gr(Main),dr(A)]
 %   4) fr(Main) <- [cr(Main),cr(C1),...,cr(Cn)]
 %
-% NOTE: Dependency to SETTINGS could be refined
+
+:- doc(bug, "Dependency to the DOCCFG file could be refined to its
+   contents rather than its date.").
 
 % ---------------------------------------------------------------------------
 % 1) Doctree and references from each source

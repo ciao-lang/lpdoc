@@ -19,6 +19,9 @@ doc_structure :=
         'lpdoc_ref_man'-[
 	  'Reference'-[
 	    'Generating',
+	    'Writing',
+	    'doccfg/doccfg_doc', % (document the trait)
+	    'doccfg/doccfg_props', % (document option values)
 	    'comments',
 	    'assertions/assertions_doc',
 	    'assertions/assertions_props',
@@ -26,7 +29,8 @@ doc_structure :=
 	    'basic_props',
 	    'assertions/native_props',
 	    'metaprops/meta_props',
-	    'lpdoc_examples',
+	    'lpdoc_examples'
+	    %
 	    % TODO: If we want to include it, it should be in a
             %	    different manual so that we do not mess the
             %	    current indices (e.g., q/1 is not a predicate from
@@ -41,7 +45,6 @@ doc_structure :=
 %		'unittest/unittest_statistics',
 %		'unittest/unittest_examples'
 %	       ],
-	    'lpdoc_install'
           ],
 	  'Internals'-[
 	    'docmaker',

@@ -23,5 +23,3 @@ doc_compopts := ~commonopts.
 allow_markdown := no.
 syntax_highlight := no.
 
-% ----------------------------------------------------------------------------
-% End of SETTINGS

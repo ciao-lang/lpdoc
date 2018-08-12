@@ -4,7 +4,8 @@
 :- doc(author, "Jose F. Morales").
 
 :- doc(module, "This module defines the predicates to load and access
-   documentation configurations.").
+   documentation configurations (modules implementing
+   @lib{doccfg}).").
 
 :- use_module(library(pathnames), [path_concat/3]).
 :- use_module(library(aggregates)).

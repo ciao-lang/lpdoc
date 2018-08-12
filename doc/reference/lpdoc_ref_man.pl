@@ -17,7 +17,7 @@
 % TODO: In this case, the people here are also the authors
 :- doc(credits, "@bf{Edited by:}").
 :- doc(credits, "Manuel Hermenegildo").
-:- doc(credits, "Jos@'{e} Francisco Morales").
+:- doc(credits, "Jose F. Morales").
 
 % :- include(ciao_docsrc(common/'ClipAddress')).
 
@@ -29,20 +29,7 @@ Hermenegildo and Jos@'{e} Francisco Morales.
 
 :- doc(summary, "@include{Summary.lpdoc}").
 
-:- doc(module, "@include{Intro.lpdoc}
-
-@section{lpdoc usage}
-The following provides the different command line options available
-when invoking @apl{lpdoc}. This description is intended only for
-advanced users which might like to use @apl{lpdoc} in custom
-applications. Note that the normal way to use @apl{lpdoc} is by
-setting parameters in an @file{SETTINGS} file (see @ref{Generating a
-manual}).
-
-@begin{alert}
-Use @tt{lpdoc --help} to see a list of the available command line options.
-@end{alert}
-").
+:- doc(module, "@include{Intro.lpdoc}").
 
 % ===========================================================================
 

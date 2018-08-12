@@ -2,7 +2,7 @@
 
 :- doc(filetype, documentation).
 
-:- doc(title,"An Example - Documenting a Library Module").
+:- doc(title,"An example - Documenting a library module").
 
 :- doc(author,"Manuel Hermenegildo").
 

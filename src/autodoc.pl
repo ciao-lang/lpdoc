@@ -87,6 +87,7 @@ defkind_prop(X) :- propfunctor(X).
 % ---------------------------------------------------------------------------
 
 % Local libraries
+:- use_module(library(doccfg/doccfg_props), [supported_option/1]).
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(autodoc_filesystem)).
@@ -100,21 +101,6 @@ defkind_prop(X) :- propfunctor(X).
 :- use_module(lpdoc(autodoc_messages)).
 
 % ===========================================================================
-
-:- export(index_comment/2).
-:- pred index_comment(Index,Text) 
-
-	=> atom * string
-
-        # "@var{Type} is a type of index which is
-          supported. @var{Text} describes the index contents.".
-
-index_comment(Type,Text) :-
-	typeindex(Type,_,_,Text,_).
-
-:- use_module(lpdoc(autodoc_doctree)).
-
-% ---------------------------------------------------------------------------
 
 :- doc(section, "Output Directory Preparation").
 % Make sure that the output directory for this target has been prepared
@@ -2711,7 +2697,7 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 :- doc(bug, "(using conditional compilation?) Conditional inclusion,
    in order to make several types of manuals from a single file, e.g.,
    :- doc(doinclude(refmanual),p/3) and 'refmanual' is an option
-   passed to lpdoc (in SETTINGS).  ").
+   passed to lpdoc (e.g., from a @lib{doccfg} file).").
 
 :- doc(bug, "Should support texinfo @@dircategory and the
    install-info method.").

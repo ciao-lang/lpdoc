@@ -8,16 +8,7 @@
 
 :- use_module(library(strings), [string/3]).
 
-%% Actually, already in assertions
-%% :- new_declaration(doc/2). 
-
-:- doc(bug, "I think that There should be a dependency from here to
-   autodoc_doctree.  This is the textual representation of a doctree
-   (JFMC)").
-
-:- doc(title,"Documentation Mark-up Language and Declarations").
-% TODO: The following title looks more like a subtitle
-%:- doc(title,"Enhancing Documentation with Machine-Readable Comments").
+:- doc(title,"Documentation mark-up language and declarations").
 
 :- doc(author,"Manuel Hermenegildo").
 
@@ -975,7 +966,7 @@ escapeseq --> "@{"
    example, @tt{@@cite@{iso-prolog@}} will introduce a citation to a
    bibliographic entry whose keyword is @tt{iso-prolog}. The list of
    bibliography files which will be searched for a match is determined
-   by @tt{bibfile/1} fact of the @apl{lpdoc} @file{SETTINGS} file.
+   by @tt{bibfile/1} fact of the @lib{doccfg} file.
 
    @item{@tt{@@ref@{@em{section title}@}}} @cindex{@@ref command}
    introduces at point a reference to the section or node @em{section
@@ -1260,3 +1251,13 @@ stringcommand(codeblock(A,B)    ) :- string(A), string(B). % TODO: internal for 
 % (see autodoc_doctree.pl)
 stringcommand(bibitem(A,B)      ) :- string(A), string(B).
 stringcommand(newblock(B)       ) :- string(B).
+
+% ---------------------------------------------------------------------------
+
+%% Actually, already in assertions
+%% :- new_declaration(doc/2). 
+
+:- doc(bug, "I think that There should be a dependency from here to
+   autodoc_doctree.  This is the textual representation of a doctree
+   (JFMC)").
+

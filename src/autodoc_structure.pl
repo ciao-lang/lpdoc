@@ -13,7 +13,7 @@
 % ---------------------------------------------------------------------------
 % Parse the whole document structure (a tree)
 
-% TODO: Add a regular type for doc_structure/1 (used too for the SETTINGS files)
+% TODO: Add a regular type for doc_structure/1 (see @lib{doccfg})
 
 % docstr_node(Mod, Base, ParentComponent, Mode)
 %
@@ -61,7 +61,7 @@ add_docstr_node(Mod, Base, Parent, Mode) :-
 	( current_fact(docstr_node(Mod, Base, _, _)) ->
 	    % TODO: This condition should change if a hierarchical module system is implemented
 	    % TODO: Fix error reporting (this code is tried several times before exiting lpdoc)
-	    throw(autodoc_error("Duplicated ~w module in doc_structure/1 in SETTINGS file.", [Base]))
+	    throw(autodoc_error("Duplicated ~w module in the doc_structure/1 definition.", [Base]))
 	; assertz_fact(docstr_node(Mod, Base, Parent, Mode))
 	).
 
