@@ -68,23 +68,12 @@ logopts(LogOpts, A) :-
 	% A = [show_logs(note_on_error)|LogOpts].
         %%% Alternative value: on_error
 	A = [show_logs(on_error)|LogOpts].
-        %%% Alternative value: err_only
-	% A = [show_logs(err_only)|LogOpts].
+        %%% Alternative value: on_error_stderr
+	% A = [show_logs(on_error_stderr)|LogOpts].
 %% 
 %% logopts(LogOpts, A) :-
 %% 	!,
 %% 	A = [show_logs(on_error)|LogOpts].
-
-
-%%    - silent:        do not show any log (default).
-%%    - always:        always show logs (whether success or error).
-%%    - note_always:   always show a note indicating where logs are stored, 
-%%                     but do not show contents (whether success or error).
-%%    - on_error:      show the logs if there is an error.
-%%    - note_on_error: on error, show a note indicating where logs are 
-%%                     stored, but do not show contents.
-%%    - err_only:      on error, show stderr and a note indicating where 
-%                      the stdout log is.
 
 :- export(autodoc_process_call/3).
 autodoc_process_call(Cmd, Args, Opts) :-
