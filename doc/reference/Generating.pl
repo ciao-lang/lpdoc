@@ -70,7 +70,7 @@ output).
 
 To enable incremental documentation generation, @apl{lpdoc} maintains
 intermediate files in a directory named @tt{file.cachedoc/}. See
-@ref{Cleaning up} for cleaup commands to remove both the intermediate
+@ref{Cleaning up} for cleanup commands to remove both the intermediate
 and target files.
 
 @cindex{Emacs, generating manuals from}

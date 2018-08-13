@@ -717,7 +717,7 @@ time_struct(Hours:Minutes*Seconds+TimeZone) :-
 
   ").
 
-:- regtype version_maintenance_type(Type) # "@var{Type} os a type of
+:- regtype version_maintenance_type(Type) # "@var{Type} is a type of
    version maintenance for a file.".
 
 version_maintenance_type(on).
