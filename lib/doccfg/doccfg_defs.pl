@@ -63,8 +63,8 @@
    If the main or any component file name ends with @tt{_doc}, then it
    is treated as documenting the same file name without the @tt{_doc}
    suffix. This is useful for separating the documentation from the
-   source file (see @ref{Separating the documentation from the source
-   file}).".
+   source file (see 
+   @ref{Separating the documentation from the source file}).".
 
 % (no default, must be defined)
 

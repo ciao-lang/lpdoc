@@ -8,32 +8,51 @@
 
 :- use_module(library(strings), [string/3]).
 
-:- doc(title,"Documentation mark-up language and declarations").
+:- doc(title,"Documentation mark-up language and doc declarations").
 
 :- doc(author,"Manuel Hermenegildo").
 
-:- doc(module,"This defines the admissible uses of the
-   @decl{doc/2} declaration (which is used mainly for adding
-   @concept{machine readable comments} to programs), the
-   @concept{formatting commands} which can be used in the text strings
-   inside these comments, and some related properties and data
-   types. These declarations are ignored by the compiler in the same
-   way as classical comments.  Thus, they can be used to document the
-   program source in place of (or in combination with) the normal
-   comments typically inserted in the code by programmers. However,
-   because they are more structured and they are machine-readable,
-   they can also be used to generate printed or on-line documentation
+:- doc(module,"Two documentation aids are defined herein:
+
+   @begin{itemize} 
+
+   @item @decl{doc/2} declarations and their many uses.  @comment{(and
+   some related properties and data types)} These declarations are one
+   of the two main means of enhancing the documentation of programs
+   (the other being @lib{assertions}).  @decl{doc/2} declarations
+   provide @index{textual comments} which are @em{complementary} to
+   the formal statements present in @index{assertions}.  See the
+   documentation for @decl{doc/2} below, which also contains examples
+   of use. 
+
+   @item The @concept{formatting commands} of the @index{mark-up
+   language} used in the text strings inside both @decl{doc/2}
+   declarations and in the comment field of assertions.  See
+   @prop{docstring/1}, @prop{stringcommand/1}, etc. below.
+
+   @end{itemize}
+
+   @decl{doc/2} declarations can be used to document predicates and
+   other parts of the program source in place of (or in combination
+   with) the normal comments that are typically inserted in the code
+   (and they are ignored by the compiler in the same way as classical
+   comments).  However, they are much preferred to classical comments
+   because they are more structured and they are machine-readable, and
+   can thus also be used to generate printed or on-line documentation
    automatically, using the @apl{lpdoc} automatic documentation
-   generator.  These @index{textual comments} are meant to be
-   complementary to the formal statements present in
-   @index{assertions} (see the @lib{assertions} library).
+   generator.
+
+   Note that in addition to the more structured @decl{doc/2}
+   declarations and mark-up language described here, these
+   declarations can also be writtten in a @em{wiki}
+   (@index{mark-down}) style -- see @lib{doccomments} for details.
 
    ").
 
 :- doc(usage,"It is not necessary to use this library in user
    programs.  The recommended procedure in order to make use of the
    @decl{doc/2} declarations that this library defines is to include
-   instead the @lib{assertions} package, which provides efficient
+   instead the @lib{assertions} package, which provides 
    support for all assertion- and comment-related declarations, using
    one of the following declarations, as appropriate:
 
@@ -47,16 +66,17 @@
 % Comment-related definitions
 % ----------------------------------------------------------------------------
 
-% This forces documentation (otherwise, it stays undocumented!).
-:- doc(doinclude,doc/2).
-
 % A definition to provide meta-information about 'doc' declarations. 
 % TODO: Ideally, this should be written in the assertions
+:- doc(hide,doc_id_type/3).
 :- export(doc_id_type/3).
 :- discontiguous(doc_id_type/3).
 % Typing for each doc directive:
 %   doc_id_type(Id, Type, ValueType)
 % TODO: This should be part of comments.pl
+
+% This forces documentation (otherwise, it stays undocumented!).
+:- doc(doinclude,doc/2).
 
 :- doc(doc/2,"This declaration provides one of the main means
    for adding @index{machine readable comments} to programs (the
@@ -73,7 +93,9 @@ doc_id_type(title, single, docstr). % warning, note (manpage)
      of the manual in on-line indices. There should be at most one of
      these declarations per module.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(title,""Documentation-Oriented Assertions"").
 @end{verbatim}
@@ -86,7 +108,9 @@ doc_id_type(subtitle, multiple, docstr). % ignore
      @index{title}. The subtitle will be displayed under the proper
      title.
 
-     @item @em{Example:}
+     @begin{itemize}
+     @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(title,""Dr. Strangelove"").
 :- doc(subtitle,""How I Learned to Stop Worrying and Love the Bomb"").
@@ -103,7 +127,9 @@ doc_id_type(subtitle_extra, multiple, docstr). % ignore
      be used accordingly. Several of these declarations can appear per
      module, which is useful for, e.g., multiple line addresses.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(subtitle_extra,""A Reference Manual"").
 :- doc(subtitle_extra,""Technical Report 1/1.0"").
@@ -129,7 +155,9 @@ doc_id_type(author, multiple, docstr). % warning
      author. If more explanation is needed (who did what when, etc.)
      use an acknowledgements comment.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(author,""Alan Robinson"").
 @end{verbatim}
@@ -142,7 +170,9 @@ doc_id_type(address, multiple, docstr). % ignore
      other contact information for the authors of the module or
      application.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(address,""Syracuse University"").
 @end{verbatim}
@@ -159,7 +189,9 @@ doc_id_type(credits, multiple, docstr). % ignore
 %       authors. Contrary the @index{author} declaration, its text is not
 %       indexed nor documented as author names.
 %  
+%       @begin{itemize}
 %       @item @em{Example:}
+%       @end{itemize}
 %  @begin{verbatim}
 %  :- doc(credits,""@em{Edited by:}"").
 %  :- doc(credits,""Someone"").
@@ -175,7 +207,9 @@ doc_id_type(ack,      single, docstr). % ignore
      or section. There can be only one of these declarations per
      module.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(ack,""Module was written by Alan, but others helped."").
 @end{verbatim}
@@ -194,7 +228,9 @@ doc_id_type(stability,      single, term). % ignore
      functor with a single argument, which contains the text to be
      included.
 
+     @begin{itemize}
      @item @em{Examples:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(stability,devel).
 :- doc(stability,alpha).
@@ -211,7 +247,9 @@ doc_id_type(copyright, single, docstr). % ignore
      somewhere towards the beginning of a printed manual. There should
      be at most one of these declarations per module.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(copyright,""Copyright @copyright{} 2001 FSF."").
 @end{verbatim}
@@ -225,7 +263,9 @@ doc_id_type(summary,   single, docstr). % ignore,note
      @index{abstract} for the whole manual. There should be at most
      one of these declarations per module.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(summary,""This is a @@bf@{very@} important library."").
 @end{verbatim}
@@ -242,7 +282,9 @@ doc_id_type(module, single, docstr). % note
      one of these declarations per module. @var{CommentText} may use
      @bf{sections} if substructure is needed.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(module,""This module is the @@lib@{comments@} library.""). 
 @end{verbatim}
@@ -259,7 +301,9 @@ doc_id_type(appendix, single, docstr). % ignore
      declarations per module. @var{CommentText} may use @bf{subsections} if
      substructure is needed.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(appendix,""Other module functionality...""). 
 @end{verbatim}
@@ -274,7 +318,9 @@ doc_id_type(usage, single, docstr). % ignore
      for use when the module needs to be treated in some special way.
      There should be at most one of these declarations per module.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(usage,""Do not use: still in development!""). 
 @end{verbatim}
@@ -289,7 +335,9 @@ doc_id_type(section, single, docstr). % dofail
       documentation purposes, so visibility and scope of definitions
       is not affected by sectioning commands.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(section,""Main Steps of the Algorithm"").
 @end{verbatim}
@@ -301,7 +349,9 @@ doc_id_type(subsection, single, docstr). % dofail
    # "Insert a @index{program subsection} with name @var{SubSection}
      (see @index{program section} command for more details).
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(subsection,""Auxiliary Definitions"").
 @end{verbatim}
@@ -314,7 +364,9 @@ doc_id_type(subsubsection, single, docstr). % dofail
      @var{SubSubSection} (see @index{program section} command for more
      details).
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(subsubsection,""Auxiliary Definitions"").
 @end{verbatim}
@@ -331,7 +383,9 @@ doc_id_type(pred(_), single, docstr). % dofail
      at most one of these declarations per predicate, function,
      property, or type.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(doc/2,""This declaration provides one of the main 
    means for adding @@concept@{machine readable comments@} to 
@@ -348,7 +402,9 @@ doc_id_type(bug, multiple, docstr). % ignore
      the text in the @var{Text} fields will be used as items in an
      itemized list of module or application bugs.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(bug,""Comment text still has to be written by user."").
 @end{verbatim}
@@ -371,7 +427,9 @@ doc_id_type(version(_,_,_), single, docstr).
      order (i.e., the topmost comment should be the most recent
      one).
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(version(1*1+21,1998/04/18,15:05*01+'EST'), ""Added some
    missing comments.  (Manuel Hermenegildo)"").
@@ -385,7 +443,9 @@ doc_id_type(version_maintenance, single, docstr).
    # "Defines the type of version maintenance that should be performed
       by the @apl{emacs} Ciao mode. 
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(version_maintenance,dir('../version')).
 @end{verbatim}
@@ -434,7 +494,9 @@ doc_id_type(doinclude, multiple, term). % ignore
      documenation for @var{PredName} to appear directly in this
      module.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(doinclude,p/3).
 @end{verbatim}
@@ -452,7 +514,9 @@ doc_id_type(hide, multiple, term).
      effect: it signals that an exported predicate should @em{not} be
      included in the documentation.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(hide,p/3).
 @end{verbatim}
@@ -503,7 +567,9 @@ doc_id_type(nodoc, multiple, term). % ignore
       packages to avoid the documenter from including documentation of
       certain other packages which the package being documented uses.
 
+     @begin{itemize}
      @item @em{Example:}
+     @end{itemize}
 @begin{verbatim}
 :- doc(nodoc,assertions).
 @end{verbatim}
@@ -515,7 +581,9 @@ doc_id_type(pragma, multiple, term). % dofail
 % 
 %    # "Internal documentation parameter for this module.
 % 
-%      @item @em{Example:}
+%     @begin{itemize}
+%     @item @em{Example:}
+%     @end{itemize}
 % @begin{verbatim}
 % :- doc(pragma,...).
 % @end{verbatim}
@@ -649,7 +717,7 @@ time_struct(Hours:Minutes*Seconds+TimeZone) :-
 
   ").
 
-:- regtype version_maintenance_type(Type) # "@var{Type} a type of
+:- regtype version_maintenance_type(Type) # "@var{Type} os a type of
    version maintenance for a file.".
 
 version_maintenance_type(on).

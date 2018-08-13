@@ -57,7 +57,7 @@
 
 % TODO: MH Same as in doccfg_props.... 
 :- doc(verbosity_t/1, "Defines the levels of verbosity for the
-   messages produced by the message priting
+   messages produced by the message printing
    predicates. @includedef{verbosity_t/1}").
 :- export(verbosity_t/1).
 :- regtype verbosity_t(L) # "@var{L} is a verbosity level.".
@@ -66,7 +66,7 @@ verbosity_t := quiet|progress|full.
 
 
 :- doc(warning_level_t/1, "Defines which levels of warning will be
-   printed by the message priting
+   printed by the message printing
    predicates. @includedef{warning_level_t/1}").
 :- export(warning_level_t/1).
 :- regtype warning_level_t(L) # "@var{L} is a warning level.".

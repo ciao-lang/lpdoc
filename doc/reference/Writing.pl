@@ -1,7 +1,8 @@
 
 :- use_package([assertions]).
 
-:- doc(filetype, documentation).
+% :- doc(filetype, documentation).
+:- doc(filetype, part).
 
 :- doc(title,"Writing documentation").
 
@@ -16,9 +17,9 @@ and @concept{troubleshooting} advice.
 
 @subsection{Documenting source files} 
 
-Despite @apl{lpdoc} can produce documentation from the source file
-interface, the quality of the documentation generated can be greatly
-enhanced by including within the program text:
+While @apl{lpdoc} can produce useful documentation from the interface
+of the source file, the quality of the documentation generated can be
+greatly enhanced by including within the program text:
 
 @begin{itemize}
 
@@ -30,9 +31,9 @@ enhanced by including within the program text:
 
 @bf{Assertions} are declarations which are included in the source
 program and provide the compiler with information regarding
-characteristics of the program. Typical assertions include type
-declarations, modes, general properties (such as @em{does not fail}),
-standard compiler directives (such as @decl{dynamic/1}, @decl{op/3},
+properties of the code. Typical assertions include type
+declarations, modes, computational properties (such as nonfailure or determinacy),
+many compiler directives (such as @decl{dynamic/1}, @decl{op/3},
 @decl{meta_predicate/1}...), etc.  When documenting a module,
 @apl{lpdoc} will use the assertions associated with the module
 interface to construct a textual description of this interface.  In
@@ -41,38 +42,51 @@ predicate can be included in the documentation by explicitly
 requesting it (see the documentation for the @decl{doc/2}
 declaration).  Judicious use of these assertions allows at the same
 time documenting the program code, documenting the external use of the
-module, and greatly improving the debugging process. The latter is
-possible because the assertions provide the compiler with information
-on the intended meaning or behaviour of the program (i.e., the
-specification) which can be checked at compile-time (by a suitable
-preprocessor/static analyzer) and/or at run-time (via checks inserted
-by a preprocessor).
+module, and greatly improving program debugging and allowing program verification.  
+The latter is possible because the assertions provide the compiler
+with information on the intended meaning or behaviour of the program
+(i.e., the specification) which can be checked at compile-time (by a
+suitable preprocessor/static analyzer) and/or at run-time (via checks
+inserted by a preprocessor). See @ref{The Ciao assertion language} for
+more details.
 
 @bf{Machine-readable comments} are also declarations included in the
-source program but which contain additional information intended to be
-read by humans (i.e., this is an instantiation of the
-@index{literate programming} style of Knuth
-@cite{knuth-lit}). Typical comments include title, author(s), bugs,
-changelog, etc.  Judicious use of these comments allows enhancing at
-the same time the documentation of the program text and the manuals
-generated from it.
+source program which contain additional information intended to be
+read by humans (i.e., this is an instantiation of the @index{literate
+programming} style of Knuth @cite{knuth-lit}). Typical such comments
+include title, author(s), summary, bugs, changelog, etc.  Judicious
+use of these comments allows enhancing at the same time the
+documentation of the program text and the manuals generated from
+it. See @ref{Documentation mark-up language and doc declarations} for
+more details.  These declarations can also be writtten in wiki 
+(@index{mark-down}) style -- see @lib{doccomments}.
 
-@apl{lpdoc} requires these assertions and comments to be written
-using the @apl{Ciao} system @em{assertion language}.  A simple compatibility
-library is available in order to make it possible to compile programs
-documented using assertions and comments in traditional (constraint)
-logic programming systems which lack native support for them (see the
-@tt{compatibility} directory in the @apl{lpdoc} library). Using this
-library, such assertions and comments are simply ignored by the
-compiler. This compatibility library also allows compiling
-@apl{lpdoc} itself under (C)LP systems other than the @apl{Ciao} system
-under which it is developed.
+@apl{lpdoc} requires these @bf{assertions} and @bf{machine-readable}
+comments to be written using the @apl{Ciao} @em{assertion language}.
+While @apl{Ciao} has core support for this language, it is however
+quite straightforward in most Prolog and (C)LP systems to define a
+library with dummy declarations so that the assertions and comments
+meant for @apl{lpdoc} are simply ignored by the compiler, making it
+possible to compile programs documented using assertions and comments
+in such systems and at the same time generate documentation using
+@apl{lpdoc} (as well as making other uses of the assertions such as
+checking tehm statically and/or dynamically).  It is also possible to
+compiling @apl{lpdoc} itself under (C)LP systems other than the
+@apl{Ciao}m under which @apl{lpdoc} is developed (this has has been
+done already for a number of Prolog and (C)LP systems).
+
+@comment{A simple compatibility library is available in order to make
+it possible to compile programs documented using assertions and
+comments in traditional (constraint) logic programming systems which
+lack native support for them (see the @tt{compatibility} directory in
+the @apl{lpdoc} library).}
+
 
 @section{More complex manuals} 
 
 Writing and generating more complex manuals involves writing a
-@index{documentation configuration} file (e.g, @tt{SETTINGS.pl}) with
-this basic structure:
+@index{documentation configuration} (@lib{doccfg}) file (e.g,
+@tt{SETTINGS.pl}) with this basic structure:
 
 @begin{verbatim}
 :- module(_, [], [doccfg]).
@@ -130,6 +144,8 @@ these:
   printable outputs (@tt{pdf}) (see @pred{papertype/1}).
 
 @end{itemize}
+
+See @lib{doccfg} for other options.
 
 @section{Advanced usage tips}
 @cindex{usage tips}
@@ -300,8 +316,8 @@ running @tt{lpdoc -t ascii INSTALLATION.pl}.
 @apl{lpdoc} supports version comments (@tt{:- doc(version(...),
 ""..."").}) to document the list of version/patch changes
 (@concept{CHANGELOG}s) of a particular software. These can be included
-as part of the manual or translated to plain text (@ref{Generating
-README files}).
+as part of the manual or translated to plain text 
+(@ref{Generating README files}).
 
 Version numbers in comments specify a @em{major}, @em{minor}, and
 @em{patch} number. As a common convention, @em{patch} changes (e.g.,
@@ -351,7 +367,7 @@ normally because more indices were selected in the @tt{index/1}
 option of the @index{documentation configuration} file than the
 maximum number supported by the installed version of
 @apl{tex}/@apl{texinfo} installations, as mentioned in @ref{Generating
-a manual}. The easiest fix is to reduce the number of indices
+and accessing manuals}. The easiest fix is to reduce the number of indices
 generated.  Alternatively, it may be possible to recompile your local
 @apl{tex}/@apl{texinfo} installation with a higher number of indices.
 

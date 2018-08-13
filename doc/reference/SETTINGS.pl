@@ -11,6 +11,7 @@ filepath := '../readmes'.
 filepath := '../../src'.
 filepath := '../../examples'.
 filepath := at_bundle(core, 'doc/common'). % (for InPrelude.lpdoc)
+filepath := at_bundle(core, 'library/doccomments'). 
 filepath := ~ciaofilepath_common.
 
 output_name := 'lpdoc'.
@@ -19,17 +20,23 @@ doc_structure :=
         'lpdoc_ref_man'-[
 	  'Reference'-[
 	    'Generating',
-	    'Writing',
-	    'doccfg/doccfg_doc', % (document the trait)
-	    'doccfg/doccfg_props', % (document option values)
-	    'comments',
-	    'assertions/assertions_doc',
-	    'assertions/assertions_props',
-	    'regtypes/regtypes_doc',
-	    'basic_props',
-	    'assertions/native_props',
-	    'metaprops/meta_props',
-	    'lpdoc_examples'
+	    'Writing'-[
+		'doccfg/doccfg_doc', % (document the trait)
+ 	        'doccfg/doccfg_props' % (document option values)
+            ],
+	    'MarkUpDown'-[
+		'comments',
+		'doccomments_doc' % Maturity?
+            ],
+	    'AssrtDoc'-[
+	        'assertions/assertions_doc',
+	        'assertions/assertions_props',
+	        'regtypes/regtypes_doc',
+	        'basic_props',
+	        'assertions/native_props',
+	        'metaprops/meta_props'
+            ],
+            'lpdoc_examples'
 	    %
 	    % TODO: If we want to include it, it should be in a
             %	    different manual so that we do not mess the

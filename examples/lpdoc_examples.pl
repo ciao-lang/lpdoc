@@ -10,13 +10,14 @@
 
 @comment{@section{Examples} }
 
-A simple example @cindex{example of lpdoc use} of the use of
+An example @cindex{example of lpdoc use} of the use of
 @apl{lpdoc} is this manual, which can be built in the @tt{doc}
 directory of the @apl{lpdoc} distribution.  Other examples of
 manuals generated using @apl{lpdoc} can be found in the @apl{Ciao}
 system and preprocessor @tt{doc} directories (i.e., most of the
-@apl{Ciao} manuals are generated using @apl{lpdoc}).  Some simpler
-examples can be found in the @tt{examples} directory of the
+@apl{Ciao} manuals are generated using @apl{lpdoc}) and in the 
+various @apl{Ciao} bundles (typically each has an @apl{lpdoc} manual).  
+Some simpler examples can be found in the @tt{examples} directory of the
 @apl{lpdoc} distribution. In particular, the chapter following this
 one contains the documentation generated automatically for the module
 defined by file @tt{examples/example_module.pl} (which for simplicity

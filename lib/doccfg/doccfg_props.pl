@@ -1,9 +1,9 @@
 :- module(_, [], [regtypes, assertions, fsyntax]).
 
-:- doc(title, "Properties for documentation settings").
+:- doc(title, "Admissible values  for the documentation configuration options").
 
-:- doc(module, "This module defines several properties used in
-   documentation configuration settings.").
+:- doc(module, "This module defines the regular types that define the
+   admissible values for the documentation configuration options.").
 
 :- doc(section, "Paths").
 

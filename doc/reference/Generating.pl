@@ -45,7 +45,7 @@ line options.
 
 Manuals can be generated from single module or from a collection of
 modules specified in a @index{documentation configuration} file (as
-described in @ref{Writing manuals}) which defines how the
+described in @ref{Writing documentation}) which defines how the
 documentation is structured, as well as options for its
 generation). For example, executing from the command line:
 
@@ -70,8 +70,8 @@ output).
 
 To enable incremental documentation generation, @apl{lpdoc} maintains
 intermediate files in a directory named @tt{file.cachedoc/}. See
-@ref{Cleaning up documentation} for cleaup commands to remove both the
-intermediate and target files.
+@ref{Cleaning up} for cleaup commands to remove both the intermediate
+and target files.
 
 @cindex{Emacs, generating manuals from}
 @cindex{generating from Emacs}
