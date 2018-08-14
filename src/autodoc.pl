@@ -1736,9 +1736,9 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
            "Generating documentation for predicate or declaration ~w:~w/~w.", 
            [M, F, A]),
 	functor(P, F, A),
-	predicate_usages(P, DefKind, M, Usages),
+	predicate_usages(P, DefKind, M, DocSt, Usages),
 	predicate_level_comment(F/A, DocSt, CommentR, CommentHead),
-	other_assertions(P, DefKind, M, OtherAssrt),
+	other_assertions(P, DefKind, M, DocSt, OtherAssrt),
 	%
 	( ( DefKind == decl
 	  ; DefKind == modedef
@@ -1775,7 +1775,9 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
 	->  Standard = iso
 	; Standard = non_iso
 	),
-	fmt_head_descriptor(CommentHead, PType, Standard, HeadR),
+	( CommentHead = _/_ -> HeadR = []
+	; fmt_head_descriptor(CommentHead, PType, Standard, HeadR)
+	),
 	%% Trying to catch props that are just declared with no comment:
 	( doctree_is_empty(NCommentR),
 	  Usages = [assertion_read(_, _, _, _, NAss, _, _, _, _)], %% N=1,
@@ -1809,9 +1811,9 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
 	    PredR = [UsagesR]
 	; PredR = [UsagesR, NativeR, OtherAssrtR]
 	),
-	R = [defpred(local_label(_), PType, PText, F/A, [
-               HeadR, NNCommentR1, PredR
-               ]),
+	R = [defpred(local_label(_), PType, PText, F/A, HeadR, [
+               NNCommentR1, PredR
+             ]),
              sp("1"), raw_nl].
 fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
 	FileSt = fileinfo(M, Base),
@@ -1834,7 +1836,7 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
 		Text),
 	    parse_docstring0(DocSt, Text, RText),
 	    add_lines(RText, RText1),
-	    R = [defpred(local_label(_), Type, PText, F/A, [RText1]), sp("1"), raw_nl]
+	    R = [defpred(local_label(_), Type, PText, F/A, [], [RText1]), sp("1"), raw_nl]
 	).
 fmt_definition(P, _, _FileSt, _DocSt, R) :-
 	R = [],
@@ -1846,19 +1848,26 @@ fmt_definition(P, _, _FileSt, _DocSt, R) :-
 %% Get the assertions that describe usages (defkind_pred type):
 %% (do not get decl or modedef assrts; if documenting decl or modedef, 
 %% then get only decl or modedef  assrts)
-predicate_usages(P, DefKind, M, Usages) :-
-	findall(assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-	    ( doc_assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-		( nonvar(DefKind)
-		-> ( (DefKind = decl ; DefKind = modedef)
-		    -> Type = DefKind
-		    ; ((\+ Type = decl), (\+ Type = modedef)) )
-		; true ),
-		defkind_pred(Type),
-		% (findall does internally backtracking, which undoes variable bindings)
-		bind_dict_varnames(Dict)
-	    ),
-	    Usages).
+predicate_usages(P, DefKind, M, DocSt, Usages) :-
+	findall(Assrt, enum_predicate_usages(P, DefKind, M, DocSt, Assrt), Usages).
+
+enum_predicate_usages(P, DefKind, M, DocSt, Assrt) :-
+	doc_assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+	( nonvar(DefKind) ->
+	    ( ( DefKind = decl
+	      ; DefKind = modedef
+	      ) ->
+	        Type = DefKind
+	    ; \+ Type = decl,
+	      \+ Type = modedef
+	    )
+	; true
+	),
+	defkind_pred(Type),
+	% (findall does internally backtracking, which undoes variable bindings)
+	bind_dict_varnames(Dict),
+	Assrt = assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+	\+ omit_usage(Assrt, DocSt).
 
 %% Get any comment declarations, compute CommentHead:
 predicate_level_comment(F/A, DocSt, CommentR, CommentHead) :-
@@ -1872,15 +1881,32 @@ predicate_level_comment(F/A, DocSt, CommentR, CommentHead) :-
 
 %% Get any other assertions:
 %% (except for decls)
-other_assertions(_P, DefKind, _M, []) :-
+other_assertions(_P, DefKind, _M, _DocSt, []) :-
 	DefKind == decl,
 	!.
-other_assertions(P, _DefKind, M, OtherAssrt) :-
-	findall(assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-	    ( doc_assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-		\+ (defkind_pred(Type)),
-		bind_dict_varnames(Dict) ),
-	    OtherAssrt).
+other_assertions(P, _DefKind, M, DocSt, OtherAssrt) :-
+	findall(Assrt, enum_other_assertions(P, M, DocSt, Assrt), OtherAssrt).
+
+enum_other_assertions(P, M, DocSt, Assrt) :-
+	doc_assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+	\+ defkind_pred(Type),
+	bind_dict_varnames(Dict),
+	Assrt = assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+	\+ omit_usage(Assrt, DocSt).
+
+% This usage should be omitted
+omit_usage(Assrt, _DocSt) :-
+	% If no info, then don't document!
+	Assrt = assertion_read(CP, _M, _Status, _PType, NAss, _, _, _, _),
+	assertion_body(_, [], [], [], [], [], NAss),
+	CP =.. [_|Args],
+	allvars(Args),
+	!.
+omit_usage(Assrt, DocSt) :-
+	% Do not document 'test' assertions unless it is specified in DocSt
+	PType = test,
+	Assrt = assertion_read(_CP, _M, _Status, PType, _NAss, _, _, _, _),
+	\+ docst_opt(tests, DocSt).
 
 %% ---------------------------------------------------------------------------
 :- pred look_for_pred_type(L, P, T) ::
@@ -2024,17 +2050,8 @@ doc_usages_([Usage|Usages], N, Multiple, _P, PType, DocSt, [UsageR|UsagesR]) :-
 	N1 is N+1,
 	doc_usages_(Usages, N1, Multiple, _P, PType, DocSt, UsagesR).
 
-%% If no info, then don't document!
-doc_usage(Assrt, _N, _Multiple, _PType, _DocSt, UsageR) :-
-	Assrt = assertion_read(CP, _M, _Status, _PType, NAss, _, _, _, _),
-	assertion_body(_, [], [], [], [], [], NAss),
-	CP =.. [_|Args],
-	allvars(Args),
-	!,
-	UsageR = [].
 doc_usage(Assrt, N, Multiple, PType, DocSt, UsageR) :-
 	Assrt = assertion_read(_P, _M, Status, AType, NAss, _Dict, S, LB, LE),
-%	display(a(N, Multiple, PType, Assrt)), nl,
 	Loc = loc(S, LB, LE),
 	assertion_body(P, DP, CP, AP, GP, CO, NAss),
 	fix_var_arg_names(P, Loc, NP),
@@ -2055,7 +2072,11 @@ doc_usage(Assrt, N, Multiple, PType, DocSt, UsageR) :-
 	%
 	( CO=[], DP=[], CP=[], AP=[], NGP=[] ->
 	    UsageR = [] % No info
-	; gen_usage_header(N, Status, AType, Multiple, HeaderStr),
+	; ( docst_opt(status, DocSt) ->
+	      gen_status_str(Status, AType, StatusStr)
+	  ; StatusStr = [] % (do not show assertion status)
+	  ),
+	  gen_usage_str(N, AType, Multiple, UsageStr),
 	  % TODO: Extract a descriptive head from the normalized assertion
 	  % Documenting a general property or empty usage
 	  fmt_head_descriptor(NP, PType, Standard, HeadR),
@@ -2070,11 +2091,15 @@ doc_usage(Assrt, N, Multiple, PType, DocSt, UsageR) :-
 	  doc_site(answer, Loc, Cond, AP,  NP, AType, Status, DocSt, APR),
 	  %
 	  doc_site(global, Loc, Cond, NGP, NP, AType, Status, DocSt, NGPR),
-	  UsageR = defassrt(Status, AType, HeaderStr, HeadR, DescR, assrtprops(DPR, CPR, APR, NGPR))
+	  UsageR = defassrt(Status, StatusStr, UsageStr, HeadR, DescR, assrtprops(DPR, CPR, APR, NGPR))
         ).
 
 fmt_head_descriptor(P, PType, Standard, HeadR) :-
 	( P=_F/_A ->
+	    % % Alternative: show F/A
+	    % format_to_string("~w/~w", [F, A], PS),
+	    % R1 = [tt(string_esc(PS))]
+	    % Alternative: show nothing (assumes that names are elsewhere)
 	    R1 = []
 	; assrt_type_text(PType, _Text, Prefix, Postfix),
 	  format_to_string("~w", [P], PS),
@@ -2094,41 +2119,35 @@ fmt_standard(iso, R) :- !,
 	R = iso("").
 fmt_standard(_Standard, []).
 
-gen_usage_header(_N, _Status, test, _Multiple, HeaderStr) :- !,
+gen_status_str(_Status, test, StatusStr) :- !, StatusStr = "".
+gen_status_str(_Status, entry, StatusStr) :- !, StatusStr = "".
+gen_status_str(Status, _AType, StatusStr) :-
+	% Name for other assertions (take from status)
+	% TODO: check at compile time that we cover all cases
+	%   in assertions_props:assrt_status/1
+	( Status = true ->  StatusStr = "True"
+	; Status = false -> StatusStr = "False"
+	; Status = check -> StatusStr = "Check"
+	; Status = checked -> StatusStr = "Checked"
+	; Status = trust -> StatusStr = "Trust"
+	; StatusStr = "" % throw(error(unknown_assrt_status(Status), gen_status_str/5))
+	).
+
+gen_usage_str(_N, test, _Multiple, UsageStr) :- !,
 	% TODO: Probably not right.
-	HeaderStr = "Test:".
-gen_usage_header(_N, _Status, entry, _Multiple, HeaderStr) :- !,
+	UsageStr = "Test:".
+gen_usage_str(_N, entry, _Multiple, UsageStr) :- !,
 	% TODO: check.
-	HeaderStr = "Module entry condition:".
-gen_usage_header(N, check, _AType, Multiple, HeaderStr) :- !,
-	( usage_str(N, Multiple, HeaderStr0) ->
-	    HeaderStr = HeaderStr0
-	; HeaderStr = "Check:" % TODO: Correct?
-	).
-gen_usage_header(N, Status, _AType, Multiple, HeaderStr) :-
-	% TODO: N is not used, is it correct?
-	( % Name for other assertions (take from status)
-	  % TODO: check at compile time that we cover all cases
-          %   in assertions_props:assrt_status/1
-          ( Status = true ->  StatusStr = "True"
-          ; Status = false -> StatusStr = "False"
-%          ; Status = check -> StatusStr = "Check" % TODO: Already treated
-          ; Status = checked -> StatusStr = "Checked"
-          ; Status = trust -> StatusStr = "Trust"
-	  ; throw(error(unknown_assrt_status(Status), gen_usage_header/5))
-	  )
-	),
-	( usage_str(N, Multiple, UsageStr) ->
-	    append("("||StatusStr, ") "||UsageStr, HeaderStr)
-	; append(StatusStr, ":", HeaderStr)
-	).
+	UsageStr = "Module entry condition:".
+gen_usage_str(N, _AType, Multiple, UsageStr) :-
+	usage_str(N, Multiple, UsageStr).
 
 usage_str(N, Multiple, Str) :-
 	( Multiple = 1 ->
 	    format_to_string("Usage ~w:", N, Str)
 	; Multiple = 0 ->
 	    Str = "Usage:"
-	; fail % (not an usage)
+	; Str = "" % (not an usage)
 	).
 
 allvars([]).

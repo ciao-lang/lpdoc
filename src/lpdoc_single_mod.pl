@@ -119,7 +119,7 @@ docfile_to_html_term(ModPath, HtmlTerm) :-
 
 % ---------------------------------------------------------------------------
 
-:- export(add_pred_anchor_url/4). % TODO: see rw_command/3 for defpred/5
+:- export(add_pred_anchor_url/4). % TODO: see rw_command/3 for defpred/6
 % Obtain a pred URL from a module URL
 add_pred_anchor_url(ModURL, Name, Arity) := PredURL :-
 	atom_number(AArity, Arity),

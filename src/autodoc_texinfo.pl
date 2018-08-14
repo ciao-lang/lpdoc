@@ -290,7 +290,7 @@ rw_command(pred_in_toc(PN, Type), _DocSt, R) :-
 rw_command(left_and_right(Left, Right), _DocSt, R) :- !,
 	R = [Left, hfill, Right].
 rw_command(navigation_env(_, _), _DocSt, R) :- !, R = [].
-rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
+rw_command(defpred(IdxLabel, Type, Text, PN, HeadR, Body), DocSt, R) :- !,
 	( docst_opt(shorttoc, DocSt) ->
 	    % Do not put the predicates in the table of contents
 	    R1 = []
@@ -300,8 +300,9 @@ rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
 	idx_get_indices(def, Type, Indices),
 	R = [R1,
              backend_idx(Indices, IdxLabel, string_esc(S)),
-	     infoenv("deffn", [raw(Text), raw(" "), string_esc(S), raw(":")], Body)].
-rw_command(defassrt(_Status, _AType, HeaderStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
+	     infoenv("deffn", [raw(Text), raw(" "), string_esc(S), raw(":")], [HeadR, Body])].
+rw_command(defassrt(_Status, StatusStr, UsageStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
+	join_status_and_usage(StatusStr, UsageStr, HeaderStr),
 	( HeaderStr = "" -> HeaderR = []
 	; HeaderR = [p(""), bf(string_esc(HeaderStr)), string_esc(" ")]
 	),
@@ -380,6 +381,16 @@ def_cmd_args(I, N, [X|Xs]) :-
 	X = raw("#"||IS),
 	I1 is I + 1,
 	def_cmd_args(I1, N, Xs).
+
+join_status_and_usage(StatusStr, UsageStr, HeaderStr) :-
+	( StatusStr = "" ->
+	    HeaderStr = UsageStr
+	; append("["||StatusStr, "]"||HeaderStr0, HeaderStr),
+	  ( UsageStr = "" ->
+	      HeaderStr0 = UsageStr
+	  ; HeaderStr0 = " "||UsageStr
+	  )
+	).
 
 % TODO: add a table with the list of info commands types, and use that
 %       to choose to insert a new line or not. See "@-Command Syntax"

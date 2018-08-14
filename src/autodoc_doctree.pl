@@ -256,8 +256,8 @@ icmd_type(pred_in_toc(t,t)).
 % line. E.g. 
 %  | foo/1          PREDICATE |
 icmd_type(left_and_right(d,d)).
-icmd_type(defpred(t,t,t,t,d)).
-icmd_type(defassrt(t,t,s,d,d,d)).
+icmd_type(defpred(t,t,t,t,d,d)).
+icmd_type(defassrt(t,s,s,d,d,d)).
 icmd_type(assrtprops(d,d,d,d)).
 icmd_type(defauthor(t,t,t)).
 icmd_type(navigation_env(d,d)).
@@ -558,7 +558,7 @@ doctree_scan_refs(component_link(Base), DocSt) :-
 doctree_scan_refs(idx_env(Mode, Type, IdxLabel, Ref, _Body), DocSt) :-
 	!,
 	add_idx_entry(Mode, Type, IdxLabel, Ref, DocSt).
-doctree_scan_refs(defpred(IdxLabel, Type, _, PN, Body), DocSt) :-
+doctree_scan_refs(defpred(IdxLabel, Type, _, PN, _, Body), DocSt) :-
 	!,
 	% TODO: This logic is repeated in each backend
 	PN = F/A, format_to_string("~w/~w", [F, A], S0),

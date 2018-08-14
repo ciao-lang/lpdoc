@@ -260,41 +260,48 @@ rw_command(navigation_env(Left, Right), _DocSt, R) :- !,
 	R = [htmlenv(div, [class="lpdoc-nav"], [
                htmlenv(span, [class="lpdoc-on-right"], Right),
                htmlenv(span, Left)])].
-rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
+rw_command(defpred(IdxLabel, Type, Text, PN, HeadR, Body), DocSt, R) :- !,
 	PN = F/A, format_to_string("~w/~w", [F, A], S),
 	( get_idxbase(Type, DocSt, IdxBase) ->
 	    OutLink = link_to(IdxBase, local_label(S))
 	; % TODO: warning?
 	  OutLink = no_link
 	),
+	fmt_usage_decl(HeadR, UsageDecl),
 	idx_get_indices(def, Type, Indices),
 	R = [htmlenv(div, [
-               htmlenv(span, [class="lpdoc-predtag-on-right"], [raw(Text)]),
                htmlenv(div, [class="lpdoc-defname"], [
-		 idx_anchor(Indices, IdxLabel, string_esc(S), OutLink, string_esc(S)),
-%	         string_esc(S),
-		 raw(":")
+                 htmlenv(span, [class="lpdoc-predtag"], [raw(Text)]),
+		 idx_anchor(Indices, IdxLabel, string_esc(S), OutLink, string_esc(S))
+%	         string_esc(S)
                ]),
 %	       linebreak,
-               htmlenv(div, [class="lpdoc-deftext"], [Body])
+               htmlenv(div, [class="lpdoc-deftext"], [UsageDecl, Body])
              ])
             ].
-rw_command(defassrt(Status, AType, HeaderStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
-	( AType = test -> HeaderStyle = "lpdoc-test-header" % TODO: Status ignored
-	; Status = true -> HeaderStyle = "lpdoc-true-header"
-	; Status = false -> HeaderStyle = "lpdoc-false-header"
-	; Status = check -> HeaderStyle = "lpdoc-check-header"
-	; Status = checked -> HeaderStyle = "lpdoc-checked-header"
-	; Status = trust -> HeaderStyle = "lpdoc-trust-header"
-	; throw(error(unknown_assrt_status(Status), rw_command/3))
-	),
-	( HeaderStr = "" -> HeaderR = []
-	; HeaderR =
-            [p(""),
-	     htmlenv(span, [class=HeaderStyle], [string_esc(HeaderStr)])]
+rw_command(defassrt(Status, StatusStr, UsageStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
+	( StatusStr = "" -> HeaderR1 = HeaderR0
+	; ( Status = true -> StatusStyle = "lpdoc-true-header"
+	  ; Status = false -> StatusStyle = "lpdoc-false-header"
+	  ; Status = check -> StatusStyle = "lpdoc-check-header"
+	  ; Status = checked -> StatusStyle = "lpdoc-checked-header"
+	  ; Status = trust -> StatusStyle = "lpdoc-trust-header"
+	  ; throw(error(unknown_assrt_status(Status), rw_command/3))
+	  ),
+	  HeaderR1 =
+            [htmlenv(span, [class=StatusStyle], [string_esc(StatusStr)])|HeaderR0]
         ),
+	%KK HERE show status and usage; then disable status with doccomments
+	( UsageStr = "" -> HeaderR0 = []
+	; HeaderR0 = [htmlenv(span, [class="lpdoc-usage-header"], [string_esc(UsageStr)])]
+	),
+	% add optional p("")
+	( HeaderR1 = [] -> HeaderR = HeaderR1
+	; HeaderR = [p("")|HeaderR1]
+	),
+	fmt_usage_decl(HeadR, UsageDecl),
 	R = [HeaderR,
-	     htmlenv(span, [class="lpdoc-usagedecl"], HeadR),
+	     UsageDecl,
 	     htmlenv(p, DescR),
 	     UsageProps].
 rw_command(assrtprops(DPR, CPR, APR, NGPR), _DocSt, R) :- !,
@@ -310,6 +317,11 @@ rw_command(simple_link(Style, Label, Link, Title), DocSt, R) :- !,
 rw_command(X, DocSt, _R) :- !,
 	docst_currmod(DocSt, Name),
 	throw(error(not_in_domain_rw_command(html, Name, X), rw_command/3)).
+
+fmt_usage_decl(HeadR, UsageDecl) :-
+	( doctree_is_empty(HeadR) -> UsageDecl = []
+	; UsageDecl = [htmlenv(span, [class="lpdoc-usage-decl"], HeadR)]
+	).
 
 :- pred fmt_link(Style, IdLabel, Link, DocSt, Text, R) ::
 	atm * doclabel * doclink * docstate * doctree * doctree

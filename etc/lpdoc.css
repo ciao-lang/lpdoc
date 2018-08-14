@@ -10,6 +10,9 @@
 .lpdoc-defname {
     font-size: 105%;
     font-weight:bold;
+    background-color: #eee;
+    padding: 3px 8px 3px 8px;
+    border-radius: 3px;
 }
 
 .lpdoc-deftext {
@@ -24,7 +27,7 @@
 .lpdoc-iso {
     color: white;
     background-color: #48d;
-    text-shadow: 0px 1px 2px #000;
+    /* text-shadow: 0px 1px 2px #000; */
     font-size: 80%;
     padding-left: 4px; padding-right: 4px;
     border-radius: 4px;
@@ -71,16 +74,24 @@ pre.lpdoc-codeblock {
     overflow-x: auto;
 }
 
-.lpdoc-var {
-    color: #e06000;
-}
-
 .lpdoc-var, pre, tt, code {
     font-family: "Source Code Pro", monospace;
 }
 
-/* Assertion status tags */
-span.lpdoc-test-header,
+.lpdoc-var {
+    color: #e06000;
+}
+tt, code {
+    color: #666;
+}
+.lpdoc-var, tt, code {
+    font-size: 95%;
+    padding: 0px 2px 0px 2px;
+    border-radius: 3px;
+    background: #f7f7f7;
+}
+
+/* Assertion status tags (on the right) */
 span.lpdoc-true-header,
 span.lpdoc-false-header,
 span.lpdoc-check-header,
@@ -88,11 +99,11 @@ span.lpdoc-checked-header,
 span.lpdoc-trust-header {
     color: white;
     padding: 3px 8px 3px 8px;
-    border-radius: 3px 0px 0px 3px;
+    margin-left: 4px;
+    border-radius: 3px;
+    float: right;
 }
 
-/* Name tag for test assertions (E.g., Test) */
-span.lpdoc-test-header { background: #ad62ff; }
 /* Name tag for true assertions (in green) */
 span.lpdoc-true-header { background: #78ac2b; }
 /* Name tag for false assertions (in red) */
@@ -104,25 +115,40 @@ span.lpdoc-checked-header { background: #6eb88c; }
 /* Name tag for trust assertions (in orange) */
 span.lpdoc-trust-header { background: #ffa162; }
 
+/* E.g., "Usage 1" */
+span.lpdoc-usage-header {
+    font-weight: bold;
+    padding-right: 8px;
+}
+
 /* E.g., foo(+,-,+) */
-span.lpdoc-usagedecl {
-    background: #eee;
+span.lpdoc-usage-decl {
+    /* background: #eee; */
+    background: #eff6fc; /* like mod usage */
+    color: #1d609a;
     padding: 3px 8px 3px 8px;
-    border-radius: 0px 3px 3px 0px;
+    /* border-radius: 0px 3px 3px 0px; */
+    border-radius: 3px;
     line-height: 1.6em; /* TODO: better way? (avoid some overlap in narrow windows) */
+}
+span.lpdoc-usage-decl .lpdoc-var,
+span.lpdoc-usage-decl tt,
+span.lpdoc-usage-decl code {
+    background: none;
+    color: #1d609a;
 }
 
 /* Tag for predicates (PREDICATE, REGTYPE, etc.) */
-span.lpdoc-predtag,
-span.lpdoc-predtag-on-right {
+span.lpdoc-predtag {
     font-size: 14px;
+    font-weight: bold;
     color: #888;
-    background: #eee;
-    padding: 3px 8px 3px 8px;
-    border-radius: 3px;
+    /* background: #eee; */
+    /* padding: 3px 8px 3px 8px; */
+    /* border-radius: 3px; */
+    padding-right: 8px;
+    /* float: right; */ /* on the right (unused) */
 }
-
-span.lpdoc-predtag-on-right { float: right; } /* on the right */
 
 /* --------------------------------------------------------------------------- */
 /* Special blocks */
@@ -132,6 +158,12 @@ span.lpdoc-predtag-on-right { float: right; } /* on the right */
     border-radius: 3px;
     padding: 8px;
     background: #EFF6FC;
+}
+.lpdoc-cartouche .lpdoc-var,
+.lpdoc-cartouche tt,
+.lpdoc-cartouche code {
+    background: none;
+    color: #1d609a;
 }
 
 .lpdoc-alert {
