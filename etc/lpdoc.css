@@ -74,6 +74,17 @@ pre.lpdoc-codeblock {
     overflow-x: auto;
 }
 
+pre.lpdoc-codeblock .lpdoc-var,
+pre.lpdoc-codeblock tt,
+pre.lpdoc-codeblock code {
+    background: none;
+}
+
+pre.lpdoc-codeblock tt,
+pre.lpdoc-codeblock code {
+    color: black;
+}
+
 .lpdoc-var, pre, tt, code {
     font-family: "Source Code Pro", monospace;
 }
@@ -154,10 +165,10 @@ span.lpdoc-predtag {
 /* Special blocks */
 
 .lpdoc-cartouche {
-    border: 1px solid #C8E2F0;
+    border: 1px solid #c8e2f0;
     border-radius: 3px;
     padding: 8px;
-    background: #EFF6FC;
+    background: #eff6fc;
 }
 .lpdoc-cartouche .lpdoc-var,
 .lpdoc-cartouche tt,
@@ -167,9 +178,12 @@ span.lpdoc-predtag {
 }
 
 .lpdoc-alert {
-    border: 1px solid #aaa;
-    border-left: 10px solid #ab4263;
+    border: 1px solid #f27d8f;
+    border-left: 5px solid #f27d8f;
     padding: 8px;
+    border-radius: 3px;
+    color: #c52121;
+    background: #fff5f5;
 }
 
 div.lpdoc-twocolumns {
