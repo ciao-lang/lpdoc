@@ -44,10 +44,11 @@
    texinfo, the documentation for a module is a texinfo chapter,
    suitable for inclusion in a wrapper ``main'' document file.
 
-   A simple example of the use of this library a reference manual is
-   included with the library source code. Other examples can be found
-   in the Ciao documentation directory (i.e., the Ciao manuals
-   themselves).  ").
+   A principal use of this library is as one of the main components of
+   the @apl{lpdoc} autodocumenter.  Examples of the use of @apl{lpdoc}
+   and are included in the @apl{lpdoc} source code. Other examples can
+   be found in the Ciao documentation directories (i.e., the Ciao
+   manuals themselves).  ").
 
 % ---------------------------------------------------------------------------
 
