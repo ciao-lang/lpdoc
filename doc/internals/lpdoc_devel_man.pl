@@ -27,12 +27,16 @@ Hermenegildo and Jos@'{e} Francisco Morales.
 ").
 
 :- doc(summary, "This is the LPdoc @concept{internals manual},
-providing information on how the different internal parts of
-@apl{lpdoc} are connected, which can be useful if new capabilities
-need to be added to the system or its libraries are used for other
-purposes.").
+   providing information on the different internal parts of
+   @apl{lpdoc} are their connections, which can be useful if new
+   capabilities need to be added to the system or its libraries are
+   used for other purposes.").
 
-:- doc(module, "").
+:- doc(module, "This is the LPdoc @concept{internals manual},
+   providing information on the different internal parts of
+   @apl{lpdoc} are their connections, which can be useful if new
+   capabilities need to be added to the system or its libraries are
+   used for other purposes.").
 
 % ===========================================================================
 
