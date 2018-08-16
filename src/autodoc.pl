@@ -36,7 +36,7 @@
    (@lib{autodoc_texinfo}, @lib{autodoc_html}, @lib{autodoc_man},
    etc.).
 
-   One of the main output format supported is @tt{texinfo} (see The
+   One of the main output formats supported is @tt{texinfo} (see The
    GNU Texinfo Documentation System manual for more info), from which
    printed manuals and several other printing and on-line formats can
    be easily generated automatically (including info). There is also
