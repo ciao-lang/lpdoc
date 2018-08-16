@@ -46,9 +46,9 @@
 
    A principal use of this library is as one of the main components of
    the @apl{lpdoc} autodocumenter.  Examples of the use of @apl{lpdoc}
-   and are included in the @apl{lpdoc} source code. Other examples can
-   be found in the Ciao documentation directories (i.e., the Ciao
-   manuals themselves).  ").
+   are included in the @apl{lpdoc} source code. Other examples can be
+   found in the Ciao documentation directories (i.e., the Ciao manuals
+   themselves).  ").
 
 % ---------------------------------------------------------------------------
 
