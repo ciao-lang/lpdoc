@@ -47,10 +47,10 @@ Other parts of this document provide:
 
 @end{itemize}
 
-This document is also an @concept{internals manual}, providing
-information on how the different internal parts of @apl{lpdoc} are
-connected, which can be useful if new capabilities need to be added to
-the system or its libraries are used for other purposes.
+A separate @concept{internals manual} provides information on how the
+different internal parts of @apl{lpdoc} are connected, which can be
+useful if new capabilities need to be added to the system or its
+libraries are used for other purposes.
 
 All of the above have been generated automatically from the assertions
 in the corresponding sources and can also be seen as examples of the

@@ -9,4 +9,5 @@ cmd('lpdoc', [main='cmds/lpdoccl']).
 lib('src').
 lib('lib').
 manual('lpdoc', [main='doc/reference/SETTINGS.pl']).
+manual('lpdoc_devel', [main='doc/internals/SETTINGS.pl']).
 readme('CHANGELOG', [main='doc/readmes/CHANGELOG_LPDOC.pl']).
