@@ -650,8 +650,9 @@ fmt_introduction(IntroExtra, DocSt, IntroR, AfterIntroR) :-
 	    AfterIntroR = [IntroExtra],
 	    IntroR = IntroR0
 	; % Emit a section for the introduction
-          ( docst_no_components(DocSt),
-	    \+ docst_backend(DocSt, html) -> % TODO: strange output in html
+          ( docst_no_components(DocSt)
+	    % \+ docst_backend(DocSt, html) -> % TODO: strange output in html
+	    ->
 	      IntroProps = [unnumbered|IntroProps0],
 	      docst_modname(DocSt, NDName),
 	      atom_codes(NDName, IntroTitle),
