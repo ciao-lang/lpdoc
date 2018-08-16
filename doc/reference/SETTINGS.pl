@@ -20,15 +20,13 @@ doc_structure :=
 	'lpdoc_ref_man'-[
 	  'Generating',
 	  'Writing'-[
-		'doccfg/doccfg_doc', % (document the trait)
+	      'doccfg/doccfg_doc', % (document the trait)
  	      'doccfg/doccfg_props' % (document option values)
           ],
-	  'MarkUpDown'-[
-		'comments',
-		'doccomments_doc' % Maturity?
+	  'comments'-[
+	      'doccomments_doc' % Maturity?
           ],
-	  'AssrtDoc'-[
-	      'assertions/assertions_doc',
+	  'assertions/assertions_doc'-[
 	      'assertions/assertions_props',
 	      'regtypes/regtypes_doc',
 	      'basic_props',
