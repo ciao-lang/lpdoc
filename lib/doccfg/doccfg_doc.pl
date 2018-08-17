@@ -1,4 +1,8 @@
 :- module(doccfg_doc, [], [doccfg]).
+:- doc(filetype, package).
+:- doc(nodoc, assertions).
+:- doc(nodoc, fsyntax).
+:- doc(nodoc, regtypes).
 
 :- doc(title, "Documentation configuration options").
 

@@ -1144,50 +1144,62 @@ doc_interface(DocSt, R) :-
 	eliminate_hidden(RMultifiles, Multifiles),
 	% Check if there are definitions to be documented
 	check_no_definitions(FileType, Exports, Multifiles, DocSt),
-	%
-	% Imported modules
-	findall(IFile, uses_file(Base, IFile), IFiles),
-	% Other user files loaded
-	findall(IUFile, adds(Base, IUFile), IUFiles),
-	% Packages
-	get_pkgs(M, Base, DocSt, PkgFiles),
-	%
 	% Source files whose contents should not be documented
 	get_doc(nodoc, ignore, DocSt, NoDocS),
 	autodoc_message(verbose, "Not documenting: ~w.", [NoDocS]),
-	%
+	% - Operators
 	get_ops(FileType, NoDocS, SOps),
-	%
-	% The modes (only "exported" if package or include)
+	%  - The modes (only "exported" if package or include)
 	get_modes(M, FileType, NoDocS, NModes),
-	%
-	% Gather all decls to be documented.
+	%  - Gather all decls to be documented.
 	get_decls(Base, M, FileType, NoDocS, NDecls),
 	%
-	% Internals  
-	get_doc(doinclude, ignore, DocSt, Preds),
-	filter_out_exports(Preds, Exports, Internals),
+	% Imports:
+	%  - Imported modules (classified)
+	findall(IFile, uses_file(Base, IFile), IFiles),
+	classify_files(IFiles, Base, UFiles, SysFiles, EngFiles, DocSt),
+	%  - Other user files loaded
+	findall(IUFile, adds(Base, IUFile), IUFiles),
+	%  - Packages
+	get_pkgs(M, Base, DocSt, PkgFiles),
+	%
+	fmt_imports(DocSt, UFiles, IUFiles, SysFiles, EngFiles, PkgFiles, Rimports),
+	%
+	% Module usage and exported definitions:
 	%
 	classify_exports(Exports, M, Base, CExports),
-	classify_files(IFiles, Base, UFiles, SysFiles, EngFiles, DocSt),
+	fmt_module_usage_and_itf(DocSt, CExports, Multifiles, SOps, NDecls, NModes, Rimports, ModuleUsageR),
 	%
-	fmt_module_usage(DocSt, CExports, Multifiles,
-	    UFiles, IUFiles, SysFiles, EngFiles, PkgFiles,
-	    SOps, NDecls,
-	    NModes, ModuleUsageR),
-	%
-	% new declarations
+	% Definitions:
+	%  - new declarations
 	fmt_definitions_kind(decl, "new declarations", NDecls, DocSt, DeclsR),
-	% any modes defined
+	%  - any modes defined
 	fmt_definitions_kind(modedef, "new modes", NModes, DocSt, ModesR),
-	% exported predicates, props, etc.
+	%  - exported predicates, props, etc.
 	fmt_definitions_kind(nodecl, "exports", Exports, DocSt, ExportsR),
-	% multifile predicates
+	%  - multifile predicates
 	fmt_definitions_kind(nodecl, "multifiles", Multifiles, DocSt, MultifilesR),
-	% predicates for which it is explicitly requested (via a
+	%  - predicates for which it is explicitly requested (via a
 	% @tt{:- doc(doinclude,<PredName>)} directive)
+	get_doc(doinclude, ignore, DocSt, DoInclPreds),
+	filter_out_exports(DoInclPreds, Exports, Internals),
 	fmt_definitions_kind(_DefKind, "internals", Internals, DocSt, InternalsR),
-	R = [ModuleUsageR, DeclsR, ModesR, ExportsR, MultifilesR, InternalsR].
+	%
+	% Module imports (if applicable)
+	( \+ filetype_include_or_package(FileType),
+	  is_nonempty_doctree(Rimports) ->
+	    ModuleDepsR = section_env(
+                [with_parent,level(2)],
+                local_label(_),
+                string_esc("Documentation on imports"),
+	        [string_esc("This module has the following direct dependencies:"),
+		 Rimports]
+              )
+	; ModuleDepsR = nop
+	),
+	%
+	% Everything:
+	R = [ModuleUsageR, DeclsR, ModesR, ExportsR, MultifilesR, InternalsR, ModuleDepsR].
 
 filetype_include_or_package(include).
 filetype_include_or_package(package).
@@ -1203,33 +1215,57 @@ check_no_definitions(FileType, Exports, Multifiles, DocSt) :-
 	; true
 	).
 
-:- doc(fmt_module_usage(DocSt,Exports,Mults,
-   UMods,IUMods,SMods,EMOds,PkgMods,
-   Ops,NDecls,NModes,R), "This
-   predicate defines the format of the usage info for the
-   module. @var{Exports} contains the predicates
-   exported by the module (taken from the @pred{module/2}
-   declaration). @var{UMods} contains the user modules imported by the
-   module. @var{SMods} contains the system modules imported by the
-   module. @var{EMods} contains the internal (engine) modules imported
-   by the module. @var{Ops} contains any exported operator
-   definitions. @var{NDecls} contains any exported new
-   declarations. @var{NModes} contains any new mode
-   definitions.").
-
-:- pred fmt_module_usage(DocSt, Exports, Mults,
-	    UMods, IUMods, SysMods, EngMods, PkgMods,
-	    Ops, NDecls, NModes, R)
-	: ( docstate(DocSt), list(Exports, predname),
-	    list(Exports, predname),
-	    list(UMods), list(IUMods), list(SysMods), list(EngMods), list(PkgMods),
+:- pred fmt_module_usage_and_itf(DocSt, Exports, Mults,
+	    Ops, NDecls, NModes, Rimports, R)
+	: ( docstate(DocSt), list(Exports, predname), list(Mults, predname),
 	    list(Ops), list(NDecls, atm), list(NModes, atm),
-	    doctree(R) )
-# "The module header info is documented as the first section of the
-   chapter.".
-fmt_module_usage(DocSt, CExports, Mults,
-	    UMods, IUMods, SysMods, EngMods, PkgMods, Ops, NDecls,
-	    NModes, R) :-
+	    doctree(Rimports) ) => doctree(R)
+# "This predicate defines the format of the usage info for the
+   module. @var{Exports} contains the predicates exported by the
+   module (taken from the @pred{module/2} declaration). @var{Ops}
+   contains any exported operator definitions. @var{NDecls} contains
+   any exported new declarations. @var{NModes} contains any new mode
+   definitions. @var{Rimports} contains the formatted imports
+   (included in the interface for included files and packages).".
+
+fmt_module_usage_and_itf(DocSt, CExports, Mults,
+	    Ops, NDecls, NModes, Rimports, R) :-
+        fmt_module_usage(DocSt, UsageR),
+	gen_item(bf, string_esc("Library usage"), UsageR, Pa1),
+	%
+	( CExports = [] ->
+	    Pa2 = nop
+	; Filters = [("PREDICATE", string_esc("Predicates")),
+	             ("FUNCTION", string_esc("Functions")),
+		     ("PROPERTY", string_esc("Properties")),
+		     ("FUNCTION", string_esc("Functions")),
+		     ("REGTYPE", string_esc("Regular Types")),
+		     %% (enable to document modes)
+		     % ("MODE", string_esc("Modes")),
+		     ("ENTRY POINT", string_esc("Entry points"))],
+	  gen_classified_export_cases(Filters, CExports, E1),
+	  gen_cases(em, string_esc("Multifiles"), Mults, E2),
+	  %
+	  gen_item(bf, string_esc("Exports"), itemize_env(minus, [E1, E2]), Pa2)
+	),
+	gen_cases(bf, string_esc("New operators defined"), Ops, Ro),
+	gen_cases(bf, string_esc("New modes defined"), NModes, Rm),
+	gen_cases(bf, string_esc("New declarations defined"), NDecls, Rd),
+	%
+	docst_filetype(DocSt, FileType),
+	( filetype_include_or_package(FileType) ->
+	    gen_item(bf, string_esc("Implicit imports"), Rimports, Rb)
+	; Rb = nop
+	),
+	%
+	R = section_env(
+              [with_parent,level(2)],
+              local_label(_),
+              string_esc("Usage and interface"),
+	      cartouche(itemize_env(bullet, [Pa1, Pa2, Ro, Rm, Rd, Rb]))
+            ).
+
+fmt_module_usage(DocSt, UsageR) :-
 	get_doc(usage, ignore, DocSt, UsageR0),
 	( is_nonempty_doctree(UsageR0) ->
 	    % Usage comment to override automatic one
@@ -1253,43 +1289,7 @@ fmt_module_usage(DocSt, CExports, Mults,
 	  ; format_to_string(":- ~w(~w).", [Cmd, ModSpec], UseDeclR0),
             UsageR = tt(string_esc(UseDeclR0))
 	  )
-	),
-	gen_item(bf, string_esc("Library usage"), UsageR, Pa1),
-	%
-	( CExports = [] ->
-	    Pa2 = nop
-	; Filters = [("PREDICATE", string_esc("Predicates")),
-	             ("FUNCTION", string_esc("Functions")),
-		     ("PROPERTY", string_esc("Properties")),
-		     ("FUNCTION", string_esc("Functions")),
-		     ("REGTYPE", string_esc("Regular Types")),
-		     %% (enable to document modes)
-		     % ("MODE", string_esc("Modes")),
-		     ("ENTRY POINT", string_esc("Entry points"))],
-	  gen_classified_export_cases(Filters, CExports, E1),
-	  gen_cases(em, string_esc("Multifiles"), Mults, E2),
-
-	  gen_item(bf, string_esc("Exports"), itemize_env(minus, [E1, E2]), Pa2)
-	),
-	gen_cases(bf, string_esc("New operators defined"), Ops, Ro),
-	gen_cases(bf, string_esc("New modes defined"), NModes, Rm),
-	gen_cases(bf, string_esc("New declarations defined"), NDecls, Rd),
-	( IUMods = [], UMods = [], SysMods = [], EngMods = [], PkgMods = [] ->
-	    Pa3 = nop
-	; gen_cases(em, string_esc("Application modules"), UMods, L1),
-	  gen_cases(em, [string_esc("Files of module "), tt(string_esc("user"))], IUMods, L2),
-	  gen_cases(em, string_esc("System library modules"), SysMods, L3),
-	  gen_cases(em, string_esc("Internal (engine) modules"), EngMods, L4),
-	  gen_cases(em, string_esc("Packages"), PkgMods, L5),
-	  gen_item(bf, string_esc("Imports"), itemize_env(minus, [L1, L2, L3, L4, L5]), Pa3)
-	),
-	% TODO: this section_env contains more things!
-	R = section_env(
-              [with_parent,level(2)],
-              local_label(_),
-              string_esc("Usage and interface"),
-	      cartouche(itemize_env(bullet, [Pa1, Pa2, Ro, Rm, Rd, Pa3]))
-            ).
+	).
 
 filetype_usage_command(module,  use_module).
 filetype_usage_command(user,    ensure_loaded).
@@ -1313,6 +1313,27 @@ gen_cases(Style, LabelR, Xs, R) :-
 	; fmt_terms(Xs, code, Xs1), % TODO: 'code' could be made more specific (e.g. lib, op, ...)
 	  fmt_commas_period(Xs1, Xs2),
 	  gen_item(Style, LabelR, [Xs2, raw_nl], R)
+	).
+
+:- pred fmt_imports(DocSt, UMods, IUMods, SysMods, EngMods, PkgMods,
+	    Rimports)
+	: ( docstate(DocSt), 
+	    list(UMods), list(IUMods), list(SysMods), list(EngMods), list(PkgMods),
+	    doctree(Rimports) )
+# "This predicate defines the format of the imports info. @var{UMods}
+   contains the imported user modules, @var{SMods} contains the
+   imported system modules, @var{EMods} contains the imported internal
+   (engine) modules.".
+
+fmt_imports(_DocSt, UMods, IUMods, SysMods, EngMods, PkgMods, Rimports) :-
+	( IUMods = [], UMods = [], SysMods = [], EngMods = [], PkgMods = [] ->
+	    Rimports = nop
+	; gen_cases(em, string_esc("Application modules"), UMods, L1),
+	  gen_cases(em, [string_esc("Files of module "), tt(string_esc("user"))], IUMods, L2),
+	  gen_cases(em, string_esc("System library modules"), SysMods, L3),
+	  gen_cases(em, string_esc("Internal (engine) modules"), EngMods, L4),
+	  gen_cases(em, string_esc("Packages"), PkgMods, L5),
+	  Rimports = itemize_env(minus, [L1, L2, L3, L4, L5])
 	).
 
 % ----------------------------------------------------------------------
