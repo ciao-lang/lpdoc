@@ -104,7 +104,8 @@ rw_command(env_('itemize', X),     _, [infocmd("itemize", raw("@bullet{}")), X, 
 rw_command(env_('enumerate', X),   _, [infocmd("enumerate", []), X, infocmd("end", raw("enumerate"))]) :- !.
 rw_command(env_('description', X), _, [infocmd("table", raw("@asis")), X, infocmd("end", raw("table"))]) :- !.
 rw_command(env_('cartouche', X),   _, [infocmd("cartouche", []), X, infocmd("end", raw("cartouche"))]) :- !.
-rw_command(env_('alert', X),   _, [infocmd("cartouche", []), X, infocmd("end", raw("cartouche"))]) :- !.
+rw_command(env_('note', X),        _, [infocmd("cartouche", []), X, infocmd("end", raw("cartouche"))]) :- !.
+rw_command(env_('alert', X),       _, [infocmd("cartouche", []), X, infocmd("end", raw("cartouche"))]) :- !.
 rw_command(env_('verbatim', X),    _, [infocmd("smallexample", []), X, infocmd("end", raw("smallexample"))]) :- !.
 rw_command(item(S), _, R) :- !, % (for lists and descriptions)
 	% TODO: use item_env
@@ -242,6 +243,8 @@ rw_command(optional_cartouche(X), _DocSt, R) :- !,
              ]),
 	     if(tex, infocmd("vfill"))
 	     ].
+rw_command(note(X), _DocSt, R) :- !,
+	R = infoenv("cartouche", X).
 rw_command(alert(X), _DocSt, R) :- !,
 	R = infoenv("cartouche", X).
 rw_command(bibitem(Label,_Ref), _DocSt, R) :- !,

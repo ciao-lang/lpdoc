@@ -232,6 +232,7 @@ icmd_type(item_env(t,d)). % TODO: extract from item?
 icmd_type(item_num(s)). % TODO: for enumerations (avoid, use context info)
 icmd_type(cartouche(d)).
 icmd_type(optional_cartouche(d)).
+icmd_type(note(d)).
 icmd_type(alert(d)).
 icmd_type(idx_anchor(t,t,t,t,t)). % an anchor for entries in the index
 icmd_type(end_document).

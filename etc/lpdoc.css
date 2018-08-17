@@ -178,13 +178,21 @@ span.lpdoc-predtag {
     color: #1d609a;
 }
 
-.lpdoc-alert {
-    border: 1px solid #f27d8f;
-    border-left: 5px solid #f27d8f;
+.lpdoc-note {
+    border: 1px solid #ebf3f9;
+    border-left: 5px solid #b6cbdc;
     padding: 8px;
     border-radius: 3px;
-    color: #c52121;
-    background: #fff5f5;
+    color: #000000;
+    background: #f5f8f9;
+}
+.lpdoc-alert {
+    border: 1px solid #f9ebed;
+    border-left: 5px solid #ff8282;
+    padding: 8px;
+    border-radius: 3px;
+    color: #000000;
+    background: #fffafa;
 }
 
 div.lpdoc-twocolumns {

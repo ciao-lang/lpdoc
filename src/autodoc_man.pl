@@ -44,6 +44,7 @@ rw_command(env_('itemize', X),     _, [raw_fc, raw(".(l F"), raw_nleb, X, raw_fc
 rw_command(env_('enumerate', X),   _, [raw_fc, raw(".(l F"), raw_nleb, X, raw_fc, raw(".)l"), raw_nleb]) :- !.
 rw_command(env_('description', X), _, [raw_fc, raw(".(l F"), raw_nleb, X, raw_fc, raw(".)l"), raw_nleb]) :- !.
 rw_command(env_('cartouche', X),   _, [raw_fc, raw_nleb, X, raw_fc, raw_nleb]) :- !.
+rw_command(env_('note', X),        _, [raw_fc, raw_nleb, X, raw_fc, raw_nleb]) :- !.
 rw_command(env_('alert', X),       _, [raw_fc, raw_nleb, X, raw_fc, raw_nleb]) :- !.
 rw_command(env_('verbatim', X),    _, [raw_fc, raw(".DS"), raw_nleb, X, raw_fc, raw(".DE"), raw_nleb]) :- !.
 rw_command(item(S), _, NBody) :- !, % (items for lists and descriptions)

@@ -873,6 +873,13 @@ escapeseq --> "@{"
    @item{@tt{@@end@{cartouche@}}} @cindex{@@end@{cartouche@} command}
    marks the end of a section of text in a @concept{framed box}.
 
+   @item{@tt{@@begin@{note@}}} @cindex{@@begin@{note@}
+   command} marks the beginning of a section of text in a
+   @index{framed box}, for note messages.
+
+   @item{@tt{@@end@{note@}}} @cindex{@@end@{note@} command}
+   marks the end of the note message.
+
    @item{@tt{@@begin@{alert@}}} @cindex{@@begin@{alert@}
    command} marks the beginning of a section of text in a
    @index{framed box}, for alert messages.
@@ -1243,6 +1250,8 @@ stringcommand(begin("verbatim") ).
 stringcommand(end("verbatim")   ).
 stringcommand(begin("cartouche")).
 stringcommand(end("cartouche")  ).
+stringcommand(begin("note")).
+stringcommand(end("note")  ).
 stringcommand(begin("alert")).
 stringcommand(end("alert")  ).
 stringcommand(section(B)        ) :- string(B).

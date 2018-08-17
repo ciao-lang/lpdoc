@@ -83,6 +83,7 @@ rw_command(env_('itemize', X),     _, htmlenv(ul, X)) :- !.
 rw_command(env_('enumerate', X),   _, htmlenv(ol, X)) :- !.
 rw_command(env_('description', X), _, htmlenv(dl, X)) :- !.
 rw_command(env_('cartouche', X),   _, cartouche(X)) :- !.
+rw_command(env_('note', X), _, note(X)) :- !.
 rw_command(env_('alert', X), _, alert(X)) :- !.
 rw_command(env_('verbatim', X),     _, htmlenv(pre, [class="lpdoc-codeblock"], X)) :- !.
 rw_command(item(S), _DocSt, NBody) :- !, % (items for lists and descriptions)
@@ -233,6 +234,8 @@ rw_command(cartouche(X), _DocSt, R) :- !,
 	R = htmlenv(div, [class="lpdoc-cartouche"], X).
 rw_command(optional_cartouche(X), _DocSt, R) :- !,
 	R = cartouche(X).
+rw_command(note(X), _DocSt, R) :- !,
+	R = htmlenv(div, [class="lpdoc-note"], X).
 rw_command(alert(X), _DocSt, R) :- !,
 	R = htmlenv(div, [class="lpdoc-alert"], X).
 rw_command(bibitem(Label,Ref), _DocSt, R) :- !,

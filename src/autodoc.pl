@@ -976,7 +976,7 @@ stability_text(prod, normal, "Apt for production use (but please report any bugs
 
 :- pred stability_text_wrapper(+,+,+,-).
 
-stability_text_wrapper(normal,Stability,Text,[raw_nl,
+stability_text_wrapper(normal,Stability,Text,[raw_nl, % TODO: use note/1 block?
                           noindent(""),
 	                  bf(string_esc("Stability: [")),
 			  bf(string_esc(StabilityS)),
