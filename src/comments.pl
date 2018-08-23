@@ -271,7 +271,8 @@ doc_id_type(summary,   single, docstr). % ignore,note
 @end{verbatim}
      ".
 
-doc_id_type(module, single, docstr). % note
+%doc_id_type(module, single, docstr). % note
+doc_id_type(module, multiple, docstr). % note % TODO: This allows splitting doc(module,...) (e.g., for using condcomp). Implement properly (preserve order of decls, etc.)
 :- decl doc(CommentType,CommentText) => =(module) * docstring
 
    # "Provides the main comment text for the module or
