@@ -14,13 +14,12 @@
 @end{alert}
    ").
 
-% ISO-Prolog compatibility libraries
+:- use_module(engine(stream_basic)).
 :- use_module(library(write), [write/2, writeq/2, write_term/3]).
-
-% Other libraries
 :- use_module(library(operators)).
 :- use_module(library(format)).
 :- use_module(library(pathnames), [path_basename/2]).
+:- use_module(library(lists), [member/2]).
 
 % Local libraries
 :- use_module(lpdoc(autodoc_state)).
@@ -419,6 +418,8 @@ section_select_prop(P, SecProps0, SecProps) :-
 
 % TODO: I got a segmentation fault with fastrw! Do not work with single big terms
 
+:- use_module(engine(prolog_flags), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
+
 :- export(doctree_save/2).
 :- pred doctree_save(+atm, +doctree).
 doctree_save(RFile, R) :-
@@ -426,6 +427,7 @@ doctree_save(RFile, R) :-
 	open(RFile, write, ROS),
 % TODO: faster, but breaks at some point
 %	fast_write(ROS, R),
+% TODO: use displayq/2?
 	writeq(ROS, R), write(ROS, '.'),
 	close(ROS),
 	pop_prolog_flag(write_strings).

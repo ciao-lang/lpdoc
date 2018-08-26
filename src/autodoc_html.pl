@@ -13,7 +13,7 @@
 :- use_module(lpdoc(autodoc_images)).
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(autodoc_messages), [autodoc_message/3]).
-:- use_module(library(lists), [append/3, list_concat/2]).
+:- use_module(library(lists), [member/2, append/3, list_concat/2]).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(dict)).
 :- use_module(library(pathnames), [path_basename/2]).

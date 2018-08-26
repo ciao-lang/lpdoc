@@ -34,6 +34,8 @@
 :- reexport(library(compiler/c_itf_internal), [location_t/1]).
 :- reexport(library(format),[format_control/1]).
 
+:- use_module(engine(stream_basic), [sourcename/1]).
+
 :- use_module(lpdoc(autodoc_settings),[setting_value_or_default/2,autodoc_option/1]).
 
 % Ciao libraries

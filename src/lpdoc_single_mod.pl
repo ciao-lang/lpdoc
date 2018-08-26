@@ -8,6 +8,7 @@
    existing manual.").
 
 :- use_module(library(pathnames)).
+:- use_module(engine(stream_basic), [absolute_file_name/2]).
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(persdb/datadir), [ensure_datadir/2]).
 :- use_module(library(bundle/bundle_paths), [bundle_path/4]).

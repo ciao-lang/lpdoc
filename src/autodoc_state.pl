@@ -28,9 +28,10 @@
 	[path_dirname/2, path_basename/2,
 	 path_concat/3, path_split/3,
 	 path_splitext/3]).
-:- use_module(library(lists),
-	    [append/3, reverse/2, length/2, list_concat/2, select/3]).
+:- use_module(library(lists), [member/2, append/3, reverse/2, length/2, list_concat/2]).
 :- use_module(library(terms), [atom_concat/2]).
+
+:- use_module(engine(prolog_flags), [prolog_flag/3]).
 
 % Local libraries
 :- use_module(library(doccfg/doccfg_props), [supported_option/1]).
@@ -264,8 +265,6 @@ docst_opt(Opt, DocSt) :-
 	docst_opts(DocSt, Opts),
 	member(Opt, Opts), !.
 
-:- use_module(library(lists), [select/3]).
-
 :- export(docst_currmod_is_main/1).
 docst_currmod_is_main(DocSt) :-
 	docst_currmod(DocSt, Name),
@@ -341,6 +340,8 @@ docst_mdata_assertz(Entry, DocSt) :-
 	docst_currmod(DocSt, Name),
 	assertz_fact(docst_mdata(Entry, Name)).
 
+:- use_module(engine(prolog_flags), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
+
 :- export(docst_mdata_save/1).
 docst_mdata_save(DocSt) :-
 	docst_currmod(DocSt, Name),
@@ -362,6 +363,7 @@ docst_mdata_save(DocSt) :-
 
 % TODO: missing docst_mdata_restore; it is put in docst_gdata_restore
 
+:- use_module(engine(stream_basic)).
 :- use_module(library(write), [writeq/2,write/2]).
 :- use_module(library(read), [read/2]).
 
@@ -433,6 +435,8 @@ docst_gdata_clean(DocSt) :-
 
 :- doc(section, "Global-scope mvar").
 % TODO: at this moment, only bibliography
+
+:- use_module(engine(prolog_flags), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
 
 % TODO: docst_gvar_save and docst_gvar_restore are not good names...
 :- export(docst_gvar_save/2).

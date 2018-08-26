@@ -4,9 +4,10 @@
 :- doc(author, "Jose F. Morales").
 
 :- use_module(library(system), [file_exists/1]).
+:- use_module(engine(stream_basic), [fixed_absolute_file_name/3]).
 :- use_module(library(stream_utils), [file_to_string/2]).
 :- use_module(library(pathnames), [path_concat/3]).
-:- use_module(library(lists), [append/3]).
+:- use_module(library(lists), [member/2, append/3]).
 
 :- include(library(pillow/ops)).
 :- use_module(library(pillow/html), [html_template/3]).

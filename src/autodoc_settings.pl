@@ -7,6 +7,7 @@
    documentation configurations (modules implementing
    @lib{doccfg}).").
 
+:- use_module(engine(stream_basic), [fixed_absolute_file_name/3]).
 :- use_module(library(pathnames), [path_concat/3]).
 :- use_module(library(aggregates)).
 :- use_module(lpdoc(autodoc_messages),[autodoc_message/3]).
@@ -48,7 +49,7 @@ set_opt(X) :- throw(error(unknown_opt(X), set_opt/1)).
 %   that setting.
 
 :- use_module(lpdoc(doccfg_holder)).
-:- use_module(library(lists), [append/3]).
+:- use_module(library(lists), [member/2, append/3]).
 
 add_name_value(Name, Value) :-
 	data_facts:assertz_fact(name_value(Name, Value)).

@@ -4,6 +4,8 @@
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 
+:- use_module(engine(stream_basic)).
+:- use_module(engine(io_basic)).
 :- use_module(lpdoc(autodoc_messages)).
 :- use_module(library(system), [file_exists/1]).
 
@@ -31,6 +33,7 @@ read_file(File, Content) :-
 read_file(File, []) :-
 	autodoc_message(error,"file ~w not found", [File]).
 
+% TODO: duplicate of read_to_end/2?
 read_stream(IS, Content) :-
 	get_code(IS, N),
 	( N = -1 ->

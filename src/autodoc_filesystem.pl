@@ -18,6 +18,7 @@
 	 path_is_absolute/1]).
 :- use_module(library(system), [file_exists/1]).
 :- use_module(library(terms), [atom_concat/2]).
+:- use_module(library(lists), [member/2]).
 
 %% ---------------------------------------------------------------------------
 

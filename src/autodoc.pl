@@ -54,6 +54,7 @@
 
 :- use_module(library(format), [format_to_string/3]).
 :- use_module(library(aggregates), [findall/3]).
+:- use_module(engine(stream_basic)).
 :- use_module(library(read), [read/2]).
 
 % Ciao libraries
@@ -71,7 +72,7 @@
 :- use_module(library(pathnames),
 	[path_basename/2, path_dirname/2, path_splitext/3, path_concat/3]).
 :- use_module(library(lists),
-	[append/3, reverse/2, length/2, list_concat/2, select/3]).
+	[member/2, append/3, reverse/2, length/2, list_concat/2, select/3]).
 :- use_module(library(terms), [atom_concat/2]).
 
 % ---------------------------------------------------------------------------

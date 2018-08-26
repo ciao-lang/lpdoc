@@ -11,7 +11,7 @@
    ").
 
 :- use_module(library(dict)).
-:- use_module(library(lists), [reverse/2, append/3]).
+:- use_module(library(lists), [member/2, reverse/2, append/3]).
 :- use_module(library(aggregates), [findall/3]).
 
 :- use_module(lpdoc(autodoc_state)).

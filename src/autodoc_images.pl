@@ -18,6 +18,7 @@
 :- use_module(lpdoc(autodoc_settings)).
 :- use_module(lpdoc(autodoc_messages)).
 
+:- use_module(library(lists), [member/2]).
 :- use_module(library(system), [copy_file/3]).
 :- use_module(library(system_extra), [warn_on_nosuccess/1]).
 :- use_module(library(process), [process_call/3]).
@@ -25,6 +26,8 @@
 :- use_module(library(errhandle), [error_protect/1]).
 
 % ---------------------------------------------------------------------------
+
+:- use_module(engine(stream_basic)).
 :- use_module(library(format)).
 
 :- export(locate_and_convert_image/4).

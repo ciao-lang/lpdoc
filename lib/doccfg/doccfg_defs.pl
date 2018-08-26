@@ -9,6 +9,7 @@
 % \author Jose F. Morales
 
 :- use_module(library(doccfg/doccfg_props)).
+:- use_module(engine(stream_basic), [sourcename/1]).
 
 % ----------------------------------------------------------------------------
 % Paths 

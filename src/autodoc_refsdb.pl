@@ -84,7 +84,7 @@ clean_current_refs(DocSt) :-
 :- doc(section, "Section Trees (Table of Contents)").
 
 :- use_module(library(aggregates), [findall/3]).
-:- use_module(library(lists), [append/3]).
+:- use_module(library(lists), [member/2, append/3]).
 
 :- export(secttree/1).
 :- regtype secttree/1 # "A tree of sections".

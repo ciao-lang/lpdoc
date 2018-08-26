@@ -7,6 +7,7 @@
    images, CSS files, JavaScript code, etc.) to be used in the output
    of the HTML backend.").
 
+:- use_module(library(lists), [member/2]).
 :- use_module(library(pathnames), [path_basename/2]).
 :- use_module(library(system), [file_exists/1, copy_file/3]).
 

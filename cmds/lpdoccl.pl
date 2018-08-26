@@ -26,6 +26,7 @@ available when invoking @apl{lpdoc}:
 :- use_module(library(messages), [error_message/2]).
 :- use_module(library(format), [format/3]).
 :- use_module(library(toplevel), [toplevel/1]). % (for built-in toplevel)
+:- use_module(engine(prolog_flags), [set_prolog_flag/2]).
 
 :- use_module(lpdoc(docmaker), [doc_cmd/3]).
 
@@ -134,6 +135,7 @@ lpdoc_cmd(Cmd, [InFile]) :-
 
 % ---------------------------------------------------------------------------
 
+:- use_module(engine(io_aux), [message/1]).
 :- include(lpdoc(version_auto)). % Version information
 
 usage :-

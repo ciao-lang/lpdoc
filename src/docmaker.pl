@@ -12,7 +12,7 @@
 :- use_module(library(compiler), [use_module/1]).
 
 %% Ciao packages and libraries
-:- use_module(library(lists), [list_concat/2, append/3]).
+:- use_module(library(lists), [member/2, list_concat/2, append/3]).
 :- use_module(library(stream_utils)).
 :- use_module(library(pathnames), [path_concat/3, path_dirname/2, path_splitext/3]).
 
@@ -312,6 +312,7 @@ clean(all) :- clean_all. % leaves nothing
 % Detect if file is a doccfg module based on the first term
 % (see source_tree.pl)
 
+:- use_module(engine(stream_basic)).
 :- use_module(library(read), [read/2]).
 
 peek_doccfg(FileName) :-
