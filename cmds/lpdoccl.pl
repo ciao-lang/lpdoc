@@ -135,12 +135,12 @@ lpdoc_cmd(Cmd, [InFile]) :-
 
 % ---------------------------------------------------------------------------
 
-:- use_module(engine(io_aux), [message/1]).
+:- use_module(engine(messages_basic), [message/2]).
 :- include(lpdoc(version_auto)). % Version information
 
 usage :-
 	usage_message(Str),
-	message([$$(Str)]).
+	message(user, [$$(Str)]).
 
 % ---------------------------------------------------------------------------
 
