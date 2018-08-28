@@ -297,6 +297,7 @@ lpdoc_toplevel(Opts2) :-
 	),
 	Opts1 = [
 		   '-u', lpdoc(docmaker),
+		   '-u', engine(prolog_flags),
 		   '-e', 'set_prolog_flag(quiet, off)'
                |Opts2],
 	toplevel:toplevel(Opts).
