@@ -7,12 +7,9 @@
 
 :- doc(module, "This module defines the intermediate tree
    representation @regtype{doctree/1} for documentation and its
-   related operations.
+   related operations.").
 
-@begin{alert}   
-@bf{Note: This part needs better documentation. -- JFMC}
-@end{alert}
-   ").
+% TODO: improve the documentation
 
 :- use_module(engine(stream_basic)).
 :- use_module(library(write), [write/2, writeq/2, write_term/3]).

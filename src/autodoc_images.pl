@@ -7,11 +7,9 @@
 	This module defines the handling of image commands.
         It defines predicates to locate and convert images in the
 	different formats required for documentation.
-
-@begin{alert}   
-@bf{Note: This part needs better documentation. -- JFMC}
-@end{alert}
    ").
+
+% TODO: improve the documentation
 
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_filesystem)).

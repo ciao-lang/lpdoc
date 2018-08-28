@@ -3,12 +3,9 @@
 :- doc(title,"Indexing Commands (Definition and Formatting)").
 :- doc(author,"Jose F. Morales").
 
-:- doc(module, "This module defines index commands and formatting.
+:- doc(module, "This module defines index commands and formatting.").
 
-@begin{alert}   
-@bf{Note: This part needs better documentation. -- JFMC}
-@end{alert}
-   ").
+% TODO: improve the documentation
 
 :- use_module(library(dict)).
 :- use_module(library(lists), [member/2, reverse/2, append/3]).

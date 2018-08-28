@@ -140,13 +140,13 @@ lpdoc -t Format --view file.pl
 which will open a default viewer application for the specified format
 and file.
 
-@begin{alert}
+@begin{note}
 For HTML documentation (specially when it is part of
 @concept{bundle}s) we encourage the use of the @apl{ciao-serve}
 command, which starts a local HTTP server and provides access to
 dynamic documentation parts (such as search, and advanced index
 options).
-@end{alert} 
+@end{note} 
 
 @subsection{Accessing info manuals} 
 
