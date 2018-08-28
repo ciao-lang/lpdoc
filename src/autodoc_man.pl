@@ -122,6 +122,10 @@ rw_command(Command, _DocSt, NewAll) :-
 rw_command(section_env(SecProps, _SectLabel, TitleR, Body), _DocSt, R) :- !,
 	fmt_structuring(SecProps, TitleR, SectR),
 	R = [SectR, Body].
+rw_command(note(X), _DocSt, R) :- !,
+	R = X.
+rw_command(alert(X), _DocSt, R) :- !,
+	R = X.
 rw_command(bibitem(Label,_Ref), _DocSt, R) :- !,
 	R = [item(bf([string_esc("["), string_esc(Label), string_esc("]")]))]. % TODO: use item_env
 rw_command(idx_anchor(_, _, _, _, R0), _, R) :- !, R = R0.
