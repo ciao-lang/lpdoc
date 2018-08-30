@@ -572,7 +572,7 @@ doc_id_type(nodoc, multiple, term). % ignore
      @item @em{Example:}
      @end{itemize}
 @begin{verbatim}
-:- doc(nodoc,assertions).
+:- doc(nodoc,regtypes).
 @end{verbatim}
      ".
 
