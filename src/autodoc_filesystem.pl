@@ -12,6 +12,7 @@
 :- use_module(lpdoc(autodoc_structure)).
 :- use_module(lpdoc(autodoc_state), [backend_id/1]).
 
+:- use_module(engine(data_facts)).
 :- use_module(library(aggregates)).
 :- use_module(library(pathnames),
 	[path_split/3, path_concat/3, path_get_relative/3,

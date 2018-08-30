@@ -11,6 +11,7 @@
 
 % TODO: improve the documentation
 
+:- use_module(engine(data_facts)).
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_filesystem)).
 :- use_module(lpdoc(autodoc_settings)).

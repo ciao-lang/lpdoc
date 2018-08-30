@@ -7,6 +7,7 @@
    documentation configurations (modules implementing
    @lib{doccfg}).").
 
+:- use_module(engine(data_facts)).
 :- use_module(engine(stream_basic), [fixed_absolute_file_name/3]).
 :- use_module(library(pathnames), [path_concat/3]).
 :- use_module(library(aggregates)).

@@ -5,6 +5,7 @@
 :- doc(title, "Translation for doccfg").
 :- doc(author, "Jose F. Morales").
 
+:- use_module(engine(data_facts)).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(lists), [member/2, append/3]).
 

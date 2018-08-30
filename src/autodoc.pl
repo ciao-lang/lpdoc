@@ -53,9 +53,10 @@
 % ---------------------------------------------------------------------------
 
 :- use_module(library(format), [format_to_string/3]).
-:- use_module(library(aggregates), [findall/3]).
 :- use_module(engine(stream_basic)).
 :- use_module(library(read), [read/2]).
+:- use_module(engine(data_facts)).
+:- use_module(library(aggregates), [findall/3]).
 
 % Ciao libraries
 :- use_module(library(compiler), [use_module/1]).
