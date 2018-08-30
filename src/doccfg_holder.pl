@@ -2,7 +2,7 @@
 % (Holder for doccfg modules)
 
 :- use_module(engine(hiord_rt), [call/1]).
-:- use_module(engine(prolog_flags), [prolog_flag/3]).
+:- use_module(engine(runtime_control), [prolog_flag/3]).
 
 :- export(call_unknown/1).
 % TODO: Use interfaces?

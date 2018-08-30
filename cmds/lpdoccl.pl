@@ -26,7 +26,7 @@ available when invoking @apl{lpdoc}:
 :- use_module(library(messages), [error_message/2]).
 :- use_module(library(format), [format/3]).
 :- use_module(library(toplevel), [toplevel/1]). % (for built-in toplevel)
-:- use_module(engine(prolog_flags), [set_prolog_flag/2]).
+:- use_module(engine(runtime_control), [set_prolog_flag/2]).
 
 :- use_module(lpdoc(docmaker), [doc_cmd/3]).
 
@@ -297,7 +297,7 @@ lpdoc_toplevel(Opts2) :-
 	),
 	Opts1 = [
 		   '-u', lpdoc(docmaker),
-		   '-u', engine(prolog_flags),
+		   '-u', engine(runtime_control),
 		   '-e', 'set_prolog_flag(quiet, off)'
                |Opts2],
 	toplevel:toplevel(Opts).

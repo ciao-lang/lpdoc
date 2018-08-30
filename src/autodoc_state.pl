@@ -31,7 +31,7 @@
 :- use_module(library(lists), [member/2, append/3, reverse/2, length/2, list_concat/2]).
 :- use_module(library(terms), [atom_concat/2]).
 
-:- use_module(engine(prolog_flags), [prolog_flag/3]).
+:- use_module(engine(runtime_control), [prolog_flag/3]).
 
 % Local libraries
 :- use_module(library(doccfg/doccfg_props), [supported_option/1]).
@@ -340,7 +340,7 @@ docst_mdata_assertz(Entry, DocSt) :-
 	docst_currmod(DocSt, Name),
 	assertz_fact(docst_mdata(Entry, Name)).
 
-:- use_module(engine(prolog_flags), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
+:- use_module(engine(runtime_control), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
 
 :- export(docst_mdata_save/1).
 docst_mdata_save(DocSt) :-
@@ -436,7 +436,7 @@ docst_gdata_clean(DocSt) :-
 :- doc(section, "Global-scope mvar").
 % TODO: at this moment, only bibliography
 
-:- use_module(engine(prolog_flags), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
+:- use_module(engine(runtime_control), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
 
 % TODO: docst_gvar_save and docst_gvar_restore are not good names...
 :- export(docst_gvar_save/2).

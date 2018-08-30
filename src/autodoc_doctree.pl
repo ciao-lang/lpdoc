@@ -415,7 +415,7 @@ section_select_prop(P, SecProps0, SecProps) :-
 
 % TODO: I got a segmentation fault with fastrw! Do not work with single big terms
 
-:- use_module(engine(prolog_flags), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
+:- use_module(engine(runtime_control), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
 
 :- export(doctree_save/2).
 :- pred doctree_save(+atm, +doctree).

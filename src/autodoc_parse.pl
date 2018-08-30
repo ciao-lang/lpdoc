@@ -551,7 +551,7 @@ handle_incl_file(Mode, RelFile, DocSt, Verb, RContent) :-
 :- use_module(library(vndict), [complete_dict/3, varnamesl2dict/2]).
 :- use_module(library(io_port_reify), [io_once_port_reify/3]).
 :- use_module(library(port_reify), [port_call/1]).
-:- use_module(engine(prolog_flags), [current_prolog_flag/2, set_prolog_flag/2]). % TODO: find a better solution?
+:- use_module(engine(runtime_control), [current_prolog_flag/2, set_prolog_flag/2]). % TODO: find a better solution?
 
 portray_to_string(Functor, Arity, Content) :-
 	Functor \== 0,
