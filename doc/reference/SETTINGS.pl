@@ -10,7 +10,6 @@
 filepath := '../readmes'.
 filepath := '../../src'.
 filepath := '../../examples'.
-filepath := at_bundle(core, 'doc/common'). % (for InPrelude.lpdoc)
 filepath := at_bundle(core, 'library/doccomments'). 
 filepath := ~ciaofilepath_common.
 
