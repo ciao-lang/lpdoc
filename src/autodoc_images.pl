@@ -1,4 +1,4 @@
-:- module(autodoc_images, [], [dcg, assertions, regtypes, fsyntax]). 
+:- module(autodoc_images, [], [dcg, assertions, regtypes, fsyntax, datafacts]). 
 
 :- doc(title,"Image Handling").
 :- doc(author,"Jose F. Morales").
@@ -11,7 +11,6 @@
 
 % TODO: improve the documentation
 
-:- use_module(engine(data_facts)).
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_filesystem)).
 :- use_module(lpdoc(autodoc_settings)).

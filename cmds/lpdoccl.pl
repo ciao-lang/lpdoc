@@ -1,4 +1,4 @@
-:- module(lpdoccl, [], [assertions, dcg]).
+:- module(lpdoccl, [], [assertions, dcg, datafacts]).
 
 :- doc(title,"The LPdoc top-level and command-line interface").
 :- doc(author, "Manuel Hermenegildo").
@@ -22,7 +22,6 @@ available when invoking @apl{lpdoc}:
 @end{verbatim}
 ").
 
-:- use_module(engine(data_facts)).
 :- use_module(library(errhandle), [handle_error/2]).
 :- use_module(library(messages), [error_message/2]).
 :- use_module(library(format), [format/3]).

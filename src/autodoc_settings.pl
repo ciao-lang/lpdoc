@@ -1,4 +1,4 @@
-:- module(autodoc_settings, [], [dcg, assertions, regtypes, fsyntax]). 
+:- module(autodoc_settings, [], [dcg, assertions, regtypes, fsyntax, datafacts]). 
 
 :- doc(title, "Current documentation settings").
 :- doc(author, "Jose F. Morales").
@@ -7,7 +7,6 @@
    documentation configurations (modules implementing
    @lib{doccfg}).").
 
-:- use_module(engine(data_facts)).
 :- use_module(engine(stream_basic), [fixed_absolute_file_name/3]).
 :- use_module(library(pathnames), [path_concat/3]).
 :- use_module(library(aggregates)).
@@ -53,7 +52,7 @@ set_opt(X) :- throw(error(unknown_opt(X), set_opt/1)).
 :- use_module(library(lists), [member/2, append/3]).
 
 add_name_value(Name, Value) :-
-	data_facts:assertz_fact(name_value(Name, Value)).
+	assertz_fact(name_value(Name, Value)).
 
 % read all values
 % TODO: findall of get_value should be equivalent

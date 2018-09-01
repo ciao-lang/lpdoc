@@ -1,4 +1,4 @@
-:- module(autodoc_filesystem, [], [dcg, assertions, regtypes, basicmodes, fsyntax, hiord]).
+:- module(autodoc_filesystem, [], [dcg, assertions, regtypes, basicmodes, fsyntax, hiord, datafacts]).
 
 :- doc(title, "Filesystem Abstraction").
 
@@ -12,7 +12,6 @@
 :- use_module(lpdoc(autodoc_structure)).
 :- use_module(lpdoc(autodoc_state), [backend_id/1]).
 
-:- use_module(engine(data_facts)).
 :- use_module(library(aggregates)).
 :- use_module(library(pathnames),
 	[path_split/3, path_concat/3, path_get_relative/3,
@@ -48,9 +47,9 @@ cleanup_vpath :-
 
 :- export(add_vpath/1).
 add_vpath(Path) :-
-	( data_facts:current_fact(vpath(Path)) ->
+	( current_fact(vpath(Path)) ->
 	    true
-	; data_facts:assertz_fact(vpath(Path))
+	; assertz_fact(vpath(Path))
 	).
 
 :- export(find_file/2).

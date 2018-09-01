@@ -1,4 +1,4 @@
-:- module(_, [], [assertions, isomodes, fsyntax]).
+:- module(_, [], [assertions, isomodes, fsyntax, datafacts]).
 
 :- doc(title, "Assets for the HTML Backend").
 :- doc(author, "Jose F. Morales").
@@ -7,7 +7,6 @@
    images, CSS files, JavaScript code, etc.) to be used in the output
    of the HTML backend.").
 
-:- use_module(engine(data_facts)).
 :- use_module(library(lists), [member/2]).
 :- use_module(library(pathnames), [path_basename/2]).
 :- use_module(library(system), [file_exists/1, copy_file/3]).

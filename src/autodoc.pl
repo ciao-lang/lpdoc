@@ -1,4 +1,4 @@
-:- module(autodoc, [], [assertions, regtypes, dcg, basicmodes, fsyntax]).
+:- module(autodoc, [], [assertions, regtypes, dcg, basicmodes, fsyntax, datafacts]).
 
 :- doc(title, "Documentation Generation Library").
 :- doc(author, "Manuel Hermenegildo").
@@ -55,7 +55,6 @@
 :- use_module(library(format), [format_to_string/3]).
 :- use_module(engine(stream_basic)).
 :- use_module(library(read), [read/2]).
-:- use_module(engine(data_facts)).
 :- use_module(library(aggregates), [findall/3]).
 
 % Ciao libraries
@@ -2647,9 +2646,6 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
    defined in modules)").
 
 :- doc(bug, "generalize @@iso command (for other labels other than ISO)").
-
-:- doc(bug, "add declarations so that, e.g., @tt{data_facts} can
-   document @tt{:- data}.").
 
 :- doc(subsection, "Known Bugs").
 

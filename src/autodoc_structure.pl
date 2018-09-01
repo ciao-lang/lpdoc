@@ -1,9 +1,8 @@
-:- module(autodoc_structure, [], [dcg, assertions, regtypes, basicmodes, fsyntax]).
+:- module(autodoc_structure, [], [dcg, assertions, regtypes, basicmodes, fsyntax, datafacts]).
 
 :- doc(title,"Handling the Document Structure").
 :- doc(author,"Jose F. Morales").
 
-:- use_module(engine(data_facts)).
 %:- use_module(lpdoc(autodoc)).
 :- use_module(library(pathnames), [path_splitext/3, path_basename/2]).
 :- use_module(library(aggregates), [findall/3]).

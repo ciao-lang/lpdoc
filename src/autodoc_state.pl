@@ -1,4 +1,4 @@
-:- module(autodoc_state, [], [dcg, assertions, regtypes, basicmodes, fsyntax]).
+:- module(autodoc_state, [], [dcg, assertions, regtypes, basicmodes, fsyntax, datafacts]).
 
 :- doc(title, "Internal State for Documentation Generation").
 :- doc(author, "Manuel Hermenegildo").
@@ -12,7 +12,6 @@
 %% Order below is still important (at least in current Ciao version):
 
 % Ciao libraries
-:- use_module(engine(data_facts)).
 :- use_module(library(aggregates), [findall/3, setof/3, (^)/2]).
 :- use_module(library(compiler), [use_module/1]).
 :- use_module(library(assertions/assrt_lib), [

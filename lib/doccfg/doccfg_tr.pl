@@ -1,11 +1,10 @@
-:- module(doccfg_tr, [doccfg_sent/3], [assertions]).
+:- module(doccfg_tr, [doccfg_sent/3], [assertions, datafacts]).
 
 % TODO: translate into "modules implementing the doccfg interface"
 % TODO: move to interfaces or its own module
 :- doc(title, "Translation for doccfg").
 :- doc(author, "Jose F. Morales").
 
-:- use_module(engine(data_facts)).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(lists), [member/2, append/3]).
 
