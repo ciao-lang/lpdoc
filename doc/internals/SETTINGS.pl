@@ -4,7 +4,7 @@
 %  \author Manuel Hermenegildo
 %  \author Jose F. Morales
 
-:- include(ciao_docsrc(common/'LPDOCCOMMON')).
+:- include(core_docsrc(common/'LPDOCCOMMON')).
 
 filepath := '../readmes'.
 filepath := '../../src'.

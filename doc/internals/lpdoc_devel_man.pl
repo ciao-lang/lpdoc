@@ -18,12 +18,12 @@
 :- doc(credits, "Manuel Hermenegildo").
 :- doc(credits, "Jose F. Morales").
 
-% :- include(ciao_docsrc(common/'ClipAddress')).
+% :- include(core_docsrc(common/'ClipAddress')).
 
 :- doc(copyright, "Copyright @copyright{} 1996-2018 Manuel
 Hermenegildo and Jos@'{e} Francisco Morales.
 
-@include{DocCopyright.lpdoc}
+@include{FreeDocLicense.lpdoc}
 ").
 
 :- doc(summary, "This is the LPdoc @concept{internals manual},
