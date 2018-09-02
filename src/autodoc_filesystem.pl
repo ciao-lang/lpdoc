@@ -1,6 +1,6 @@
 :- module(autodoc_filesystem, [], [dcg, assertions, regtypes, basicmodes, fsyntax, hiord, datafacts]).
 
-:- doc(title, "Filesystem Abstraction").
+:- doc(title, "Filesystem abstraction").
 
 :- doc(author, "Jose F. Morales").
 

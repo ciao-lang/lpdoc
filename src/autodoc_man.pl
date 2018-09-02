@@ -1,7 +1,7 @@
 :- module(autodoc_man, [], [assertions, regtypes, fsyntax]).
 % (Nothing is exported, because everything works using hooks)
 
-:- doc(title,"Man Pages (man) Backend").
+:- doc(title,"Man Pages (man) backend").
 :- doc(author,"Jose F. Morales").
 :- doc(author,"Manuel Hermenegildo").
 

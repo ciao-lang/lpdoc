@@ -1,6 +1,6 @@
 :- module(autodoc_refsdb, [], [dcg, assertions, regtypes]). 
 
-:- doc(title,"Database of Documentation References").
+:- doc(title,"Database of documentation references").
 :- doc(author,"Jose F. Morales").
 % TODO: I am not happy with the name of this module
 

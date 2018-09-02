@@ -1,6 +1,6 @@
 :- module(autodoc_state, [], [dcg, assertions, regtypes, basicmodes, fsyntax, datafacts]).
 
-:- doc(title, "Internal State for Documentation Generation").
+:- doc(title, "Internal state for documentation generation").
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 

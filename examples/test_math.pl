@@ -2,7 +2,7 @@
 
 :- use_module(library(lists)).
 
-:- doc(title, "Testing Mathematical Notation in LPdoc").
+:- doc(title, "Testing mathematical notation in LPdoc").
 :- doc(author, "Jose F. Morales").
 
 %@defmathcmd{@neck}{@textbf{:-}}

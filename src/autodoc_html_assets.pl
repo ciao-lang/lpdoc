@@ -1,6 +1,6 @@
 :- module(_, [], [assertions, isomodes, fsyntax, datafacts]).
 
-:- doc(title, "Assets for the HTML Backend").
+:- doc(title, "Assets for the HTML backend").
 :- doc(author, "Jose F. Morales").
 
 :- doc(module, "Predicates to manage asset data (file hierarchies for

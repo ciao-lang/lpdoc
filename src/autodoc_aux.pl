@@ -1,6 +1,6 @@
 :- module(autodoc_aux, [], [assertions, regtypes, basicmodes, fsyntax]).
 
-:- doc(title, "Auxiliary Definitions").
+:- doc(title, "Auxiliary definitions").
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 

@@ -2,6 +2,6 @@
 
 :- doc(filetype, part).
 
-:- doc(title,"LPdoc Backends").
+:- doc(title,"LPdoc backends").
 
 %% :- doc(module,"...").

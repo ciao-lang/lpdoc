@@ -97,7 +97,7 @@ doc_id_type(title, single, docstr). % warning, note (manpage)
      @item @em{Example:}
      @end{itemize}
 @begin{verbatim}
-:- doc(title,""Documentation-Oriented Assertions"").
+:- doc(title,""Documentation-oriented assertions"").
 @end{verbatim}
      ".
 

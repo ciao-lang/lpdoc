@@ -1,6 +1,6 @@
 :- module(autodoc_images, [], [dcg, assertions, regtypes, fsyntax, datafacts]). 
 
-:- doc(title,"Image Handling").
+:- doc(title,"Image handling").
 :- doc(author,"Jose F. Morales").
 
 :- doc(module, "

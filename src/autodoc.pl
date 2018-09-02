@@ -1,6 +1,6 @@
 :- module(autodoc, [], [assertions, regtypes, dcg, basicmodes, fsyntax, datafacts]).
 
-:- doc(title, "Documentation Generation Library").
+:- doc(title, "Documentation generation library").
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 

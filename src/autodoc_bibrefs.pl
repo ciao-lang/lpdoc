@@ -4,7 +4,7 @@
 	 ],
 	[dcg, assertions, regtypes]). 
 
-:- doc(title, "Resolution of Bibliographical References").
+:- doc(title, "Resolution of bibliographical references").
 
 :- doc(author, "Manuel Hermenegildo (original version)").
 :- doc(author, "Jose F. Morales").

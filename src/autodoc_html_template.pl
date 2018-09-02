@@ -1,6 +1,6 @@
 :- module(_, [], [assertions, fsyntax]).
 
-:- doc(title, "Template Support for the HTML Backend").
+:- doc(title, "Template support for the HTML backend").
 :- doc(author, "Jose F. Morales").
 
 :- use_module(library(system), [file_exists/1]).

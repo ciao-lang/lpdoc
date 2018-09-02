@@ -1,6 +1,6 @@
 :- module(docmaker, [], [assertions, regtypes, dcg, basicmodes, fsyntax]).
 
-:- doc(title, "Driver for Documentation Generation").
+:- doc(title, "Driver for documentation generation").
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "Jose F. Morales").
 

@@ -2,7 +2,7 @@
 	[error_text/3],
 	[assertions, regtypes, basicmodes]).
 
-:- doc(title, "(Parsing) Error Messages").
+:- doc(title, "Error messages (parsing)").
 :- doc(author, "Manuel Hermenegildo").
 
 :- doc(module, "These texts are the basically the errors generated

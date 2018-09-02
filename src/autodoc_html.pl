@@ -1,7 +1,7 @@
 :- module(autodoc_html, [], [assertions, regtypes, fsyntax]).
 % (Nothing is exported, because everything works using hooks)
 
-:- doc(title, "HTML Backend").
+:- doc(title, "HTML backend").
 :- doc(author, "Jose F. Morales").
 
 :- use_module(lpdoc(autodoc_state)).

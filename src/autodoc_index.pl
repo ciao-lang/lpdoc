@@ -1,6 +1,6 @@
 :- module(autodoc_index, [], [dcg, assertions, regtypes]). 
 
-:- doc(title,"Indexing Commands (Definition and Formatting)").
+:- doc(title,"Indexing commands (definition and formatting)").
 :- doc(author,"Jose F. Morales").
 
 :- doc(module, "This module defines index commands and formatting.").

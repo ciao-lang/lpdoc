@@ -1,7 +1,7 @@
 :- module(autodoc_texinfo, [], [assertions, regtypes, fsyntax]).
 % (Nothing is exported, because everything works using hooks)
 
-:- doc(title,"Texinfo Backend").
+:- doc(title,"Texinfo backend").
 :- doc(author,"Manuel Hermenegildo").
 :- doc(author,"Jose F. Morales").
 

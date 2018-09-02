@@ -6,7 +6,7 @@
 %% :- doc(filetype,user).
 
 %% "doc" declarations provide additional information
-:- doc(title,"An Example of a Simple File").  
+:- doc(title,"An example of a simple file").  
 :- doc(author,"Bob Kowalski").  
 :- doc(module,"A general comment on the file.").
 

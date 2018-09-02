@@ -19,7 +19,7 @@
 :- ensure_loaded(foo).
 
 %% "commment" declarations provide additional information
-:- doc(title,"tmp-lpdoc Output for the Example").  
+:- doc(title,"tmp-lpdoc output for the example").  
 
 :- doc(author,"Alan Robinson").  
 :- doc(author,"David H.D. Warren").  

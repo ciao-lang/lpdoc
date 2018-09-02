@@ -16,7 +16,7 @@
 :- ensure_loaded(foo).
 
 %% "doc" declarations provide additional information
-:- doc(title,"Auto Documenter Output for the Example Module").  
+:- doc(title,"Auto documenter output for the example module").  
 
 :- doc(author,"Anonymous Author 1").  
 :- doc(author,"Anonymous Author 2").  

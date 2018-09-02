@@ -3,7 +3,7 @@
 :- doc(author,"Manuel Hermenegildo (original version)").
 :- doc(author,"Jose F. Morales").
 
-:- doc(title,"Documentation Abstract Syntax Tree").
+:- doc(title,"Documentation abstract syntax tree").
 
 :- doc(module, "This module defines the intermediate tree
    representation @regtype{doctree/1} for documentation and its
