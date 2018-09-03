@@ -136,8 +136,8 @@ ensure_lpdoc_etc_defined :-
 	  fail
 	).
 
-%:- dynamic file_search_path/2.
 %:- multifile file_search_path/2.
+%:- dynamic(file_search_path/2). % (just declaration, dynamic not needed in this module)
 
 :- use_module(library(system), [file_exists/1]).
 
@@ -205,7 +205,7 @@ load_vpaths(InFile) :-
 	).
 
 :- multifile file_search_path/2.
-:- dynamic file_search_path/2.
+:- dynamic(file_search_path/2). % (just declaration, dynamic not needed in this module)
 
 % Obtain a resolved filepath (use ext_absolute_file_name/2 and make it relative to InDir if needed)
 resolved_filepath(InDir, P) :-
