@@ -238,8 +238,9 @@ div.lpdoc-nav li {
 div.lpdoc-main {
     background-color:#fff;
     color: #000000;
-    padding: 1px 20px 30px 20px;
-    border-right: 1px solid #dedede; /* right-sidebar */
+    padding: 1px 20px 0px 20px;
+    /* padding: 1px 20px 30px 20px; */
+    /* border-right: 1px solid #dedede; */ /* right-sidebar */
 }
 
 div.lpdoc-sidebar {
@@ -258,13 +259,15 @@ div.lpdoc-clearer {
 }
 
 div.lpdoc-footer {
-    font-size: 12px;
+    font-size: 11px;
+    /* font-size: 75%; */
     color: #888;
-    background: #f8f8f8;
+    border-top: 1px solid #eee;
+    /* background: #f8f8f8; */
     width: 100%;
     padding: 3px 0 3px 0;
+    margin-top: 30px;
     text-align: center;
-/*    font-size: 75%;*/
 }
 
 div.lpdoc-footer a {
@@ -285,8 +288,7 @@ div.lpdoc-page {
 }
 
 /* Document with left sidebar */
-.leftbar {
-}
+.leftbar {}
 .leftbar > div.lpdoc-main {
     margin-left: 230px;
 }
@@ -299,8 +301,7 @@ div.lpdoc-page {
 }
 
 /* Document with right sidebar */
-.rightbar {
-}
+.rightbar {}
 .rightbar > div.lpdoc-main {
     margin-right: 230px;
 }
@@ -310,6 +311,45 @@ div.lpdoc-page {
     width: 230px;
     height: 100%;
     position: relative;
+}
+
+/* Document with left sidebar */
+.fixleftbar {}
+.fixleftbar > div.lpdoc-main {
+    margin-left: 230px;
+}
+.fixleftbar > div.lpdoc-sidebar {
+    box-sizing: border-box; /* include padding in width */
+    float: left;
+    width: 230px;
+    height: 100%;
+    position: fixed;
+    overflow-y: scroll;
+    top: 0;
+    bottom: 0;
+    border-right: 1px solid #eee;
+}
+
+/* Document with right sidebar */
+.fixrightbar {}
+.fixrightbar > div.lpdoc-main {
+    margin-right: 230px;
+}
+.fixrightbar > div.lpdoc-sidebar {
+    box-sizing: border-box; /* include padding in width */
+    float: fixright;
+    width: 230px;
+    height: 100%;
+    position: fixed;
+    overflow-y: scroll;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid #eee;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -380,16 +420,25 @@ div.lpdoc-sidebar p {
 div.lpdoc-sidebar ul {
     margin-left: 0px;
     list-style-type: none;
+    padding-left: 16px;
+    margin: 0px;
+}
+
+/* ul immediate child of sidebar */
+div.lpdoc-sidebar > ul {
+    margin-left: 0px;
+    list-style-type: none;
     padding-left: 0px;
     margin: 0px;
-    /* padding-left:3ex; */
-    /* list-style-type: square; */
 }
 
 div.lpdoc-sidebar li {
     list-style-type: none;
-    padding-left: 8px;
-    margin: 0px;
+    padding-left: 0px;
+    /* margin: 0px; */
+    /* (tighter when names are split into several lines) */
+    line-height: 1.0;
+    margin: 6px 0px 6px 0px;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -397,16 +446,16 @@ div.lpdoc-sidebar li {
 
 div.lpdoc-cover-address {
     line-height:1.3em;
-    font-size:12px;
+    font-size: 11px;
     float:right;
-    padding: 16px;
+    /* padding: 16px; */
     color: #888;
 }
 
 div.lpdoc-cover-authors {
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.3em;
-    padding: 16px;
+    /* padding: 16px; */
     float:right;
     text-align:right;
     color: #888;
@@ -417,22 +466,22 @@ div.lpdoc-cover-logo {
 }
 
 div.lpdoc-cover-title {
-    padding: 16px;
+    /* padding: 16px; */
     margin: 0px;
+    margin-bottom: 16px;
     background: white;
     color: #4263ab;
 }
 
 div.lpdoc-cover-subtitle-extra {
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.3em;
-    padding: 16px;
+    /* padding: 16px; */
     border-radius: 8px;
     color: #888;
 }
 
-div.lpdoc-cover-h1 {
-    margin-top:0px;
+h1.lpdoc-cover-h1 {
     margin-bottom:0px;
 }
 
@@ -441,14 +490,19 @@ div.lpdoc-cover-h1 {
 
 @media (max-width: 700px) {
     /* Reset sidebar position */
-    .leftbar > div.lpdoc-main {
-	margin-left: 0;
-    }
-    .rightbar > div.lpdoc-main {
-	margin-right: 0;
-    }
+    .leftbar > div.lpdoc-main { margin-left: 0; }
+    .rightbar > div.lpdoc-main { margin-right: 0; }
     .leftbar > div.lpdoc-sidebar,
     .rightbar > div.lpdoc-sidebar {
+	float: none;
+	width: auto;
+	position: relative;
+    }
+
+    .fixleftbar > div.lpdoc-main { margin-left: 0; }
+    .fixrightbar > div.lpdoc-main { margin-right: 0; }
+    .fixleftbar > div.lpdoc-sidebar,
+    .fixrightbar > div.lpdoc-sidebar {
 	float: none;
 	width: auto;
 	position: relative;

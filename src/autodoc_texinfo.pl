@@ -81,9 +81,6 @@ rw_command(ref_link(Link, Text), _DocSt, R) :- !,
 	; SectLabel = Text % just in case the reference was not found
 	),
 	R = [raw("@ref"), raw("{"), raw(SectLabel), raw("}")].
-rw_command(cite_link(_, Text), _DocSt, R) :- !,
-	% (already resolved)
- 	R = [raw(Text)].
 rw_command(sp(NS), _, NewCommand) :- !,
 	NewCommand = infocmd("sp", raw(NS)).
 rw_command(p(""),        _, [raw_fc, raw_nleb]) :- !.
@@ -249,10 +246,9 @@ rw_command(alert(X), _DocSt, R) :- !,
 	R = infoenv("cartouche", X).
 rw_command(bibitem(Label,_Ref), _DocSt, R) :- !,
 	R = [item(bf([string_esc("["), string_esc(Label), string_esc("]")]))]. % TODO: use item_env
-rw_command(idx_anchor(Indices, Label, Key, _OutLink, Text), _DocSt, R) :- !,
-	R = [backend_idx(Indices, Label, Key), Text].
-rw_command(backend_idx(Indices, _, Key), DocSt, R) :- !,
-	fmt_backend_idx(Indices, Key, DocSt, R).
+rw_command(idx_anchor(Mode, Type, _Label, Key, _OutLink, Text), DocSt, R) :- !,
+	Indices = ~idx_get_indices(Mode, Type),
+	R = [~fmt_backend_idx(Indices, Key, DocSt), Text].
 rw_command(copyright_page(CopyrightR), _DocSt, R) :-
 	R = [backend_comment("Copyright page"),
 	     infocmd("page"),
@@ -277,7 +273,11 @@ rw_command(quotation(X), _DocSt, R) :- !,
 rw_command(setpagenumber(N), _DocSt, R) :- !,
 	format_to_string("~d", [N], Codes),
 	R = infocmd("pageno", raw(Codes)).
-rw_command(backend_printindex(IndexId), _DocSt, R) :- !,
+rw_command(backend_printindex(IdxName), _DocSt, R) :- !,
+	( typeindex(IdxName, IndexId, _, _, _) ->
+	    true
+	; throw(error(wrong_idxname(IdxName), rw_command/3))
+	),
 	atom_codes(IndexId, IndexIdS),
 	R = infocmd("printindex", raw(IndexIdS)).
 rw_command(pred_in_toc(PN, Type), _DocSt, R) :-
@@ -293,16 +293,16 @@ rw_command(pred_in_toc(PN, Type), _DocSt, R) :-
 rw_command(left_and_right(Left, Right), _DocSt, R) :- !,
 	R = [Left, hfill, Right].
 rw_command(navigation_env(_, _), _DocSt, R) :- !, R = [].
-rw_command(defpred(IdxLabel, Type, Text, PN, HeadR, Body), DocSt, R) :- !,
+rw_command(defpred(_IdxLabel, Type, Text, PN, HeadR, Body), DocSt, R) :- !,
 	( docst_opt(shorttoc, DocSt) ->
 	    % Do not put the predicates in the table of contents
 	    R1 = []
 	; R1 = pred_in_toc(PN, Type)
 	),
 	PN = F/A, format_to_string("~w/~w", [F, A], S),
-	idx_get_indices(def, Type, Indices),
+	Indices = ~idx_get_indices(def, Type),
 	R = [R1,
-             backend_idx(Indices, IdxLabel, string_esc(S)),
+             ~fmt_backend_idx(Indices, string_esc(S), DocSt),
 	     infoenv("deffn", [raw(Text), raw(" "), string_esc(S), raw(":")], [HeadR, Body])].
 rw_command(defassrt(_Status, StatusStr, UsageStr, HeadR, DescR, UsageProps), _DocSt, R) :- !,
 	join_status_and_usage(StatusStr, UsageStr, HeaderStr),

@@ -530,9 +530,13 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	  ExtraR = []
 	),
 	fmt_introduction(IntroExtraR, DocSt, IntroR, AfterIntroR),
-	fmt_components(DocSt, ComponentsR),
-	fmt_biblio(DocSt, BiblioR),
-	fmt_indices(DocSt, IndicesR),
+	ComponentsR = ~fmt_components(DocSt),
+	BiblioR = ~fmt_biblio(DocSt),
+	IndicesR = ~fmt_indices(DocSt),
+	( docst_backend(DocSt, html) ->
+	    SearchR = ~fmt_search(DocSt)
+	; SearchR = []
+	),
 	%
 	cover_prop(CopyrightR, GlobalVers, DocSt, CoverProp),
 	SecProps00 = [CoverProp, level(0)],
@@ -545,7 +549,7 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	doctree_simplify([SummaryR, CopyrightR2,
                           TocR,
                           IntroR, AfterIntroR, ExtraR, ComponentsR,
-			  BiblioR, IndicesR], DocR),
+			  BiblioR, IndicesR, SearchR], DocR),
 	%
 	fmt_file_top_section(SecProps00, DocR, DocSt, ModR).
 fmt_module(DocSt, Version, GlobalVers, ModR) :-
@@ -559,10 +563,12 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	fmt_stability(DocSt, StabilityR0),
         add_lines(StabilityR0, StabilityR1),
 	%
-	get_doc(module, note, DocSt, CommentR0),
-	add_lines(CommentR0, CommentR1),
+	%%%SUMM fmt_summary([], DocSt, SummaryR),
+	get_doc(module, note, DocSt, ModCommentR0),
+	add_lines(ModCommentR0, ModCommentR1),
 	%
-	CommentR2 = [AuthorR2, VerR, StabilityR1, CommentR1],
+	%%%SUMM CommentR2 = [AuthorR2, VerR, StabilityR1, SummaryR],
+	CommentR2 = [AuthorR2, VerR, StabilityR1, ModCommentR1],
 	%
 	docst_filetype(DocSt, FileType),
 	( docst_backend(DocSt, texinfo), FileType = part ->
@@ -570,9 +576,10 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	    CommentR = optional_cartouche(CommentR2)
 	; CommentR = CommentR2
 	),
-	% Show TOC (when not displayed on the sidebar)
-	TocR = show_toc(toc_view(no)),
+	% Show subparts (first level of TOC subtree)
+	TocR = show_toc(subparts),
 	%
+	%%%SUMM doc_interface(DocSt, ModCommentR1, InterfaceR),
 	doc_interface(DocSt, InterfaceR),
 	fmt_appendix(DocSt, AppendixR),
 	fmt_acknowledges(DocSt, AckR),
@@ -639,12 +646,13 @@ fmt_introduction(IntroExtra, DocSt, IntroR, AfterIntroR) :-
 	fmt_stability(DocSt, StabilityR0),
         add_lines(StabilityR0, StabilityR1),
         % 
+	%%%SUMM doc_interface(DocSt, [], InterfaceR),
 	doc_interface(DocSt, InterfaceR),
-	get_doc(module, note, DocSt, CommentR),
-	add_lines(CommentR, CommentR2),
+	get_doc(module, note, DocSt, ModCommentR),
+	add_lines(ModCommentR, ModCommentR2),
 	%
 	IntroProps0 = [level(1),subfile('intro')],
-	IntroR0 = [StabilityR1, CommentR2, InterfaceR|IntroRest],
+	IntroR0 = [StabilityR1, ModCommentR2, InterfaceR|IntroRest],
 	( custom_html_layout ->
 	    % TODO: generalize
 	    % Do not emit a section for the introduction
@@ -790,7 +798,7 @@ fmt_biblio(DocSt, BiblioR) :-
 	).
 
 % The section where bibliography goes.
-% TODO: indices are not generated here, but the section where they go
+% NOTE: indices are not generated here (see `show_biblio` command)
 gen_biblio_section(_DocSt, BiblioR) :-
 	Title = "References", 
 	BiblioR = section_env([unnumbered,level(1),subfile('refs'),is_special(references)],
@@ -802,8 +810,40 @@ gen_biblio_section(_DocSt, BiblioR) :-
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Index Sections").
+:- doc(subsection, "Search (dynamic)").
+% NOTE: only in HTML
 
+fmt_search(DocSt, SearchR) :- docst_backend(DocSt, html), !,
+	SearchR = ~gen_search_section(DocSt).
+fmt_search(_DocSt, []).
+
+% Section for search component
+gen_search_section(_DocSt) := SearchR :-
+	get_idxsub(global, SubName),
+	search_msg(ITitle, IComment),
+	add_lines(IComment, IComment2),
+	SearchR = section_env(
+          [unnumbered,level(1),subfile(SubName),is_special(search)],
+           global_label(_), 
+           string_esc(ITitle), 
+           [
+	     IComment2,
+	     show_index(global)
+	   ]).
+
+% TODO: currently like global index
+search_msg("Search this manual",
+[string_esc("This is a global index containing pointers to places where concepts, 
+ predicates, modes, properties, types, applications, etc., are defined or referred to
+ in the text of the document.")]).
+
+% ---------------------------------------------------------------------------
+
+:- doc(subsection, "Index Sections (static)").
+% NOTE: not in HTML (use search instead)
+
+fmt_indices(DocSt, IndicesR) :-	docst_backend(DocSt, html), !,
+	IndicesR = [].
 fmt_indices(DocSt, IndicesR) :-
 	all_indices(DocSt, Indices),
 	gen_index_sections(Indices, DocSt, IndicesR).
@@ -819,7 +859,7 @@ gen_index_sections([IdxName|Is], DocSt, [IndexR|IsR]) :-
 %       (then they go inline)
 gen_index_section(IdxName, _DocSt, IndexR) :-
 	get_idxsub(IdxName, SubName),
-	typeindex(IdxName, IndexId, _, ITitle, IComment),
+	typeindex(IdxName, _, _, ITitle, IComment),
 	add_lines(IComment, IComment2),
 	IndexR = section_env(
           [unnumbered,level(1),subfile(SubName),is_special(index)],
@@ -827,7 +867,7 @@ gen_index_section(IdxName, _DocSt, IndexR) :-
            string_esc(ITitle), 
            [
 	     IComment2,
-	     show_index(IndexId)
+	     show_index(IdxName)
 	   ]).
 
 % ---------------------------------------------------------------------------
@@ -1120,8 +1160,17 @@ change(_).
 
 :- doc(subsection, "Module Inferface Formatting").
 
+%%%SUMM :- pred doc_interface/3 # "Document the module interface.".
 :- pred doc_interface/2 # "Document the module interface.".
 
+%%%SUMM doc_interface(DocSt, ModCommentR, R) :-
+%%%SUMM 	docst_filetype(DocSt, FileType),
+%%%SUMM 	( FileType = application
+%%%SUMM 	; FileType = documentation
+%%%SUMM 	; FileType = part
+%%%SUMM 	),
+%%%SUMM 	!,
+%%%SUMM 	R = [ModCommentR].
 doc_interface(DocSt, R) :-
 	docst_filetype(DocSt, FileType),
 	( FileType = application
@@ -1130,6 +1179,7 @@ doc_interface(DocSt, R) :-
 	),
 	!,
 	R = [].
+%%%SUMM doc_interface(DocSt, ModCommentR, R) :-
 doc_interface(DocSt, R) :-
 	docst_mvar_get(DocSt, fileinfo, FileSt),
 	FileSt = fileinfo(M, Base),
@@ -1200,7 +1250,10 @@ doc_interface(DocSt, R) :-
 	),
 	%
 	% Everything:
-	R = [ModuleUsageR, DeclsR, ModesR, ExportsR, MultifilesR, InternalsR, ModuleDepsR].
+	R = [ModuleUsageR,
+%%%SUMM	     ModCommentR,
+	     DeclsR, ModesR, ExportsR, MultifilesR, InternalsR,
+	     ModuleDepsR].
 
 filetype_include_or_package(include).
 filetype_include_or_package(package).

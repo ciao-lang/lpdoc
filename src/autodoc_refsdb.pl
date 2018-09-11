@@ -1,4 +1,4 @@
-:- module(autodoc_refsdb, [], [dcg, assertions, regtypes]). 
+:- module(autodoc_refsdb, [], [dcg, assertions, regtypes, fsyntax]). 
 
 :- doc(title,"Database of documentation references").
 :- doc(author,"Jose F. Morales").
@@ -12,6 +12,7 @@
 :- use_module(lpdoc(autodoc_doctree)).
 :- use_module(lpdoc(autodoc_structure)).
 :- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_messages)).
 
 % ---------------------------------------------------------------------------
 
@@ -81,6 +82,28 @@ clean_current_refs(DocSt) :-
 
 % ---------------------------------------------------------------------------
 
+:- export(pretty_cite/3).
+:- pred pretty_cite(Ref, DocSt, Text)
+   # "Obtain citation text @var{Text} for @var{Ref} using the default
+     bibliography style".
+
+pretty_cite(Ref, DocSt, Text) :-
+	( docst_mvar_get(DocSt, biblio_pairs, RefPairs) ->
+	    true
+	; throw(error(no_biblio_pairs, cite_idx/4))
+	),
+	% TODO: make RefPairs a dictionary so that this can be faster
+	% note: Label is the textual representation for the cite (e.g. [JS99])
+	( member((Label0,Ref), RefPairs) ->
+	    Text = Label0
+	; Text = "?", % Unknown cite
+	  % TODO: Improve warning message
+	  atom_codes(RefAtom, Ref),
+	  autodoc_message(error, "unresolved bibliographical reference '~w'", [RefAtom])
+	).
+
+% ---------------------------------------------------------------------------
+
 :- doc(section, "Section Trees (Table of Contents)").
 
 :- use_module(library(aggregates), [findall/3]).
@@ -107,6 +130,7 @@ get_secttree_([sect(Props,Link,T)|Ss], Ss0, BaseLevel, BaseName, Rs) :-
 	Link = link_to(N, _),
 	% Determine if it is a subsection based on level or parent relationship
 	section_prop(level(L), Props),
+	% \+ section_prop(is_special(search), Props), % TODO: ad-hoc, better way?
 	( \+ doclink_is_local(Link), docstr_node(N, _, Parent, Mode) ->
 	    Parent = BaseName, NextN = N
 	; L > BaseLevel, NextN = '__local__', Mode = normal
@@ -136,9 +160,10 @@ get_nav(Tree, Curr, Nav, CurrTree) :-
 	  % Find @var{Curr} (alongside previous and next nodes) in the
 	  % list of nodes @var{Nodes}
 	  doclink_at(CurrLink, Curr),
-	  Curr0 = df_item(CurrLink, CurrTree0, RootPath),
+	  Curr0 = df_item(CurrLink, CurrTitle, CurrTree0, RootPath),
 	  member123(Prev0, Curr0, Next0, Nodes) ->
-	    reverse(RootPath, CurrPath),
+	    % (Include current)
+	    CurrPath = ~reverse([step(CurrLink,CurrTitle)|RootPath]),
 	    CurrTree = CurrTree0,
 	    first_link(CurrPath, Top),
 	    first_link(RootPath, Up),
@@ -154,14 +179,14 @@ get_nav(_Tree, _Curr, Nav, CurrTree) :-
 	CurrTree = [].
 
 df_link(X, Link) :-
-        ( X = [df_item(Link0, _, _)] -> Link = Link0 ; Link = no_link ).
+        ( X = [df_item(Link0, _, _, _)] -> Link = Link0 ; Link = no_link ).
 
 first_link(Path, Link) :-
 	( Path = [step(Link0,_)|_] -> Link = Link0 ; Link = no_link ).
 
 :- use_module(library(lists), [reverse/2]).
 
-% Obtain the list of df_item(Link,Sub,Path), using a depth-first traversal, where
+% Obtain the list of df_item(Link,Title,Sub,Path), using a depth-first traversal, where
 % Path is the path from the tree root to Node, Link is the link in the node, and
 % Sub is the subtree of the node.
 % 
@@ -170,7 +195,7 @@ tree_df([], _, Xs, Xs).
 tree_df([toc_node(Link,T,_Props,Sub)|Ts], RootPath0, Xs, Xs0) :-
 	( doclink_is_local(Link) ->
 	    Xs = Xs2
-	; Xs = [df_item(Link, Sub, RootPath0)|Xs2]
+	; Xs = [df_item(Link,T,Sub,RootPath0)|Xs2]
 	),
 	RootPath = [step(Link,T)|RootPath0],
 	tree_df(Sub, RootPath, Xs2, Xs1),

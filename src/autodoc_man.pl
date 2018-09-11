@@ -128,7 +128,7 @@ rw_command(alert(X), _DocSt, R) :- !,
 	R = X.
 rw_command(bibitem(Label,_Ref), _DocSt, R) :- !,
 	R = [item(bf([string_esc("["), string_esc(Label), string_esc("]")]))]. % TODO: use item_env
-rw_command(idx_anchor(_, _, _, _, R0), _, R) :- !, R = R0.
+rw_command(idx_anchor(_, _, _, _, _, R0), _, R) :- !, R = R0.
 rw_command(simple_link(_,_,_,_), _, nop) :- !.
 rw_command(man_page(TitleR, Version, AuthorRs, AddressRs, StabilityR, SummaryR, UsageR, CopyrightR), DocSt, R) :- !,
         fmt_man(TitleR, Version, AuthorRs, AddressRs, StabilityR, SummaryR, UsageR, CopyrightR, DocSt, R).

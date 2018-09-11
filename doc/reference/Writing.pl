@@ -15,7 +15,7 @@ This section includes some details for writing proper documentation in
 @apl{lpdoc}, improving the layout of manuals, @concept{usage tips},
 and @concept{troubleshooting} advice.
 
-@subsection{Documenting source files} 
+@section{Documenting source files} 
 
 While @apl{lpdoc} can produce useful documentation from the interface
 of the source file, the quality of the documentation generated can be
@@ -70,10 +70,12 @@ meant for @apl{lpdoc} are simply ignored by the compiler, making it
 possible to compile programs documented using assertions and comments
 in such systems and at the same time generate documentation using
 @apl{lpdoc} (as well as making other uses of the assertions such as
-checking tehm statically and/or dynamically).  It is also possible to
+checking tehm statically and/or dynamically). 
+
+@comment{It is also possible to
 compiling @apl{lpdoc} itself under (C)LP systems other than the
-@apl{Ciao}m under which @apl{lpdoc} is developed (this has has been
-done already for a number of Prolog and (C)LP systems).
+@apl{Ciao} under which @apl{lpdoc} is developed (this has has been
+done already for a number of Prolog and (C)LP systems).}
 
 @comment{A simple compatibility library is available in order to make
 it possible to compile programs documented using assertions and

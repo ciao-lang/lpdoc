@@ -49,8 +49,6 @@ rw_command(ref_link(Link, Text), DocSt, R) :- !,
 	fmt_link(default, no_label, Link, DocSt, string_esc(Text), R).
 rw_command(missing_link(Text), DocSt, R) :- !,
 	fmt_link('lpdoc-missing', no_label, no_link, DocSt, string_esc(Text), R).
-rw_command(cite_link(Link, Text), DocSt, R) :- !,
-	fmt_link(default, no_label, Link, DocSt, string_esc(Text), R).
 % TODO: 'sp' replaced by just 'p', which yield better documents
 rw_command(sp(_), _, R) :- !, R = raw("<p>").
 %rw_command(sp(NS), _, R) :- !,
@@ -238,10 +236,14 @@ rw_command(note(X), _DocSt, R) :- !,
 	R = htmlenv(div, [class="lpdoc-note"], X).
 rw_command(alert(X), _DocSt, R) :- !,
 	R = htmlenv(div, [class="lpdoc-alert"], X).
-rw_command(bibitem(Label,Ref), _DocSt, R) :- !,
+rw_command(bibitem(Label,Ref), DocSt, R) :- !,
+	Type = cite,
+	IdxLabel = local_label(Ref),
+	OutLink = ~get_use_outlink(Type, Ref, DocSt),
 	R0 = [string_esc("["), string_esc(Label), string_esc("]")],
-	R = [item(htmlenv(strong, [id=Ref], R0))]. % TODO: use item_env?
-rw_command(idx_anchor(_Indices, IdxLabel, _Key, OutLink, Text), DocSt, R) :- !,
+	R1 = ~fmt_link('lpdoc-idx-anchor', IdxLabel, OutLink, DocSt, R0),
+	R = [item(htmlenv(strong, [id=Ref], R1))]. % TODO: use item_env?
+rw_command(idx_anchor(_Mode, _Type, IdxLabel, _Key, OutLink, Text), DocSt, R) :- !,
 	fmt_link('lpdoc-idx-anchor', IdxLabel, OutLink, DocSt, Text, R).
 rw_command(cover_title(TitleR, SubtitleRs), _DocSt, R) :- !,
 	R = htmlenv(div, [class="lpdoc-cover-title"], [
@@ -265,18 +267,15 @@ rw_command(navigation_env(Left, Right), _DocSt, R) :- !,
                htmlenv(span, Left)])].
 rw_command(defpred(IdxLabel, Type, Text, PN, HeadR, Body), DocSt, R) :- !,
 	PN = F/A, format_to_string("~w/~w", [F, A], S),
-	( get_idxbase(Type, DocSt, IdxBase) ->
-	    OutLink = link_to(IdxBase, local_label(S))
-	; % TODO: warning?
-	  OutLink = no_link
-	),
+	%
+	OutLink = ~get_use_outlink(Type, S, DocSt),
+	R0 = idx_anchor(def, Type, IdxLabel, string_esc(S), OutLink, string_esc(S)),
+	%
 	fmt_usage_decl(HeadR, UsageDecl),
-	idx_get_indices(def, Type, Indices),
 	R = [htmlenv(div, [
                htmlenv(div, [class="lpdoc-defname"], [
                  htmlenv(span, [class="lpdoc-predtag"], [raw(Text)]),
-		 idx_anchor(Indices, IdxLabel, string_esc(S), OutLink, string_esc(S))
-%	         string_esc(S)
+		 R0
                ]),
 %	       linebreak,
                htmlenv(div, [class="lpdoc-deftext"], [UsageDecl, Body])
@@ -438,13 +437,12 @@ valid_layout(tmpl_layout(_, _, _)).
 % :- trait doclayout.
 :- discontiguous layout_toc/2.
 :- discontiguous layout_has_colophon/2.
-:- discontiguous layout_has_navbars/2.
 :- discontiguous layout_sidebar_pos/2. % (fail if no sidebar)
 :- discontiguous layout_icon/2.
 :- discontiguous layout_css_url/2.
 
 layout_toc(embedded, R) :- !, R = []. % no toc
-layout_toc(nav_sidebar_main, R) :- R = show_toc(toc_view(yes)).
+layout_toc(nav_sidebar_main, R) :- R = show_toc(sidebar).
 layout_toc(website_layout(_), R) :- !, R = show_toc(vertical_menu).
 layout_toc(tmpl_layout(_, _, _), R) :- !, R = show_toc(vertical_menu).
 
@@ -453,14 +451,10 @@ layout_has_colophon(nav_sidebar_main).
 layout_has_colophon(website_layout(_)).
 layout_has_colophon(tmpl_layout(_,_,_)) :- fail.
 
-layout_has_navbars(embedded) :- fail.
-layout_has_navbars(nav_sidebar_main).
-layout_has_navbars(website_layout(_)) :- fail.
-layout_has_navbars(tmpl_layout(_,_,_)) :- fail.
-
 layout_sidebar_pos(embedded, _) :- fail.
-%layout_sidebar_pos(nav_sidebar_main, left).
-layout_sidebar_pos(nav_sidebar_main, right). % TODO: make it customizable
+% TODO: make it customizable
+layout_sidebar_pos(nav_sidebar_main, fixleft).
+%layout_sidebar_pos(nav_sidebar_main, right).
 layout_sidebar_pos(website_layout(_), right).
 layout_sidebar_pos(tmpl_layout(_,_,_), _) :- fail.
 
@@ -477,6 +471,14 @@ layout_css_url(website_layout(Opts), URL) :-
 layout_css_url(tmpl_layout(_, _, CssList), URL) :-
 	member(URL, CssList).
 
+layout_fixed_sidebar(Layout) :-
+	layout_sidebar_pos(Layout, SidebarPos),
+	fixed_sidebar_pos(SidebarPos),
+	!.
+
+fixed_sidebar_pos(fixleft).
+fixed_sidebar_pos(fixright).
+
 % ---------------------------------------------------------------------------
 
 % Title for page (header metadata, for browser window, search results, etc.)
@@ -491,8 +493,6 @@ fmt_page_title(SecProps, TitleR, DocSt, R) :-
 	).
 
 fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
-	fmt_nav(DocSt, SectPathR, UpPrevNextR),
-	%
 	get_layout(Layout),
 	% Title
 	fmt_page_title(SecProps, TitleR, DocSt, PageTitleR),
@@ -501,7 +501,7 @@ fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	% Main content holder
 	fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR),
 	%
-	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, TitleR, MainR, DocSt, R),
+	fmt_layout(Layout, SidebarR, TitleR, MainR, DocSt, R),
 	fmt_headers(Layout, PageTitleR, R, ModR).
 
 % Format the main logo (if any)
@@ -521,7 +521,7 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 	    ImgSrc = ~atom_codes(~img_url(SectImg)),
 	    PreSect = htmlenv(div, [style="text-align: center;"], 
                               htmlenv1(img, [src=ImgSrc, class="lpdoc-section-image"]))
-	; sec_is_cover(SecProps) -> PreSect = []
+	%% ; sec_is_cover(SecProps) -> PreSect = []
 	; fmt_main_logo(DocSt, PreSect)
 	),
 	%
@@ -544,7 +544,7 @@ fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR) :-
 	).
 
 % Format a module as a cover
-fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
+fmt_cover(SecProps, TitleR, BodyR, _DocSt, R) :-
 	section_prop(coversec(SubtitleRs,
 	                      SubtitleExtraRs,
 	                      AuthorRs,
@@ -565,13 +565,13 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
 	  AddressRs2 = htmlenv(div, [class="lpdoc-cover-address"], AddressRs1)
 	),
 	% Document skeleton
-	fmt_main_logo(DocSt, MainLogoR),
+	%% fmt_main_logo(DocSt, MainLogoR),
 	R = [
 	  htmlenv(div, [
             linebreak, % add some margin here
-	    htmlenv(div, [class="lpdoc-cover-logo"], [
-	      MainLogoR
-            ]),
+	    %% htmlenv(div, [class="lpdoc-cover-logo"], [
+	    %%   MainLogoR
+            %% ]),
 	    cover_title(TitleR, SubtitleRs),
 	    AddressRs2,
 	    htmlenv(div, [class="lpdoc-cover-authors"], [
@@ -584,37 +584,33 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, R) :-
 	    htmlenv(div, [class="lpdoc-clearer"], [])
 	  ]),
 	  raw_nl,
+	  linebreak, % add some margin here
+	  linebreak, % add some margin here
 	  BodyR
         ].
 
 % Navigation, sidebar, and main contents
-fmt_layout(tmpl_layout(_, LayoutTmpl, _), _SectPathR, _UpPrevNextR, SidebarR, TitleR, MainR, _DocSt, R) :- !,
+fmt_layout(tmpl_layout(_, LayoutTmpl, _), SidebarR, TitleR, MainR, _DocSt, R) :- !,
 	R = [html_template_internal(LayoutTmpl, [
                sidebar = SidebarR,
 	       title = TitleR,
 	       content = MainR])].
-fmt_layout(embedded, _SectPathR, _UpPrevNextR, _SidebarR, _TitleR, MainR, _DocSt, R) :- !,
+fmt_layout(embedded, _SidebarR, _TitleR, MainR, _DocSt, R) :- !,
 	R = MainR.
-fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :-
+fmt_layout(Layout, SidebarR, _TitleR, MainR, DocSt, R) :-
 	fmt_topbar(Layout, DocSt, TopBarR),
-	( layout_has_colophon(Layout) -> colophon(DocSt, ColophonR)
-	; ColophonR = []
-	),
-	( layout_has_navbars(Layout) ->
-	    NavTopR = navigation_env(SectPathR, UpPrevNextR),
-	    NavBottomR = navigation_env(raw("&nbsp;"), UpPrevNextR) % (same without SectPathR)
-	; NavTopR = [],
-	  NavBottomR = []
-	),
 	( layout_sidebar_pos(Layout, SidebarPos),
 	  ( SidebarPos = left -> PageClass = "lpdoc-page leftbar"
 	  ; SidebarPos = right -> PageClass = "lpdoc-page rightbar"
+	  ; SidebarPos = fixleft -> PageClass = "lpdoc-page fixleftbar"
+	  ; SidebarPos = fixright -> PageClass = "lpdoc-page fixrightbar"
 	  ; fail
 	  ) ->
 	    sidebar_toogle(SidebarToogleR)
 	; PageClass = "lpdoc-page",
 	  SidebarToogleR = []
 	),
+	footers(DocSt, Layout, FooterInnerR, FooterOuterR),
 	doctree_simplify([%
 	     TopBarR, % top bar
 	     % NavTopR, % navigation at top
@@ -622,14 +618,29 @@ fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR, _TitleR, MainR, DocSt, R) :
                SidebarToogleR,
 	       htmlenv(div, [id="sidebar", class="lpdoc-sidebar"], SidebarR),
 	       htmlenv(div, [class="lpdoc-main"], [
-	         NavTopR, % navigation before main
-                 MainR
+	         % NavTopR, % navigation before main
+                 MainR,
+		 FooterInnerR % footer (for fixed sidebar)
                ]),
 	       htmlenv(div, [class="lpdoc-clearer"], [])
              ]),
 	     % NavBottomR, % navigation at bottom
-	     ColophonR % footer
+	     FooterOuterR % footer (for nonfixed sidebar)
             ], R).
+
+% Footers (depending on layout)
+footers(DocSt, Layout, FooterInnerR, FooterOuterR) :-
+	( layout_has_colophon(Layout) ->
+	    colophon(DocSt, FooterR),
+	    ( layout_fixed_sidebar(Layout) ->
+	        FooterInnerR = FooterR,
+		FooterOuterR = []
+	    ; FooterInnerR = [],
+	      FooterOuterR = FooterR
+	    )
+	; FooterInnerR = [],
+	  FooterOuterR = []
+	).
 
 % Top bar (optional, for logo, search box, etc.)
 fmt_topbar(website_layout(_), _DocSt, R) :- !,
@@ -703,6 +714,10 @@ fmt_section(SecProps, SectLabel, TitleR, Body, _DocSt, R) :-
 	fmt_structuring(SecProps, TitleR, StrR),
 	R = htmlenv(div, [id=Id], [StrR, Body]).
 
+fmt_structuring(SecProps, _TitleR, R) :-
+	% No title in summary at cover
+	section_prop(summary_section, SecProps), !,
+	R = [].
 fmt_structuring(SecProps, TitleR, R) :-
 	( section_prop(level(Level), SecProps) ->
 	    ( Level = 1 -> Cmd = h1
@@ -761,52 +776,6 @@ html_escape([X|S0], [X|S]) :- !,
 html_escape([], []).
 
 % ---------------------------------------------------------------------------
-% Format the navigation links
-% (path to the root node, links to the previous and next nodes)
-
-fmt_nav(DocSt, PathR, UpPrevNextR):-
-	( docst_mvar_get(DocSt, nav, Nav) ->
-	    true
-	; throw(error(no_navigation, fmt_nav/3))
-	),
-	Nav = nav(Path, _Top, Up, Prev, Next),
-	navpath_links(Path, Path2),
-	sep_list(Path2, raw(" &raquo; "), PathR0),
-	( PathR0 = [] -> PathR = raw("&nbsp;") ; PathR = [PathR0, raw(" &raquo; ")] ),
-	% % Triangles as arrows (it does not look nice in some devices)
-	% UpUnicode = raw("&#x25B2;"),
-	% LeftUnicode = raw("&#x25C4;"),
-	% RightUnicode = raw("&#x25BA;"),
-	%
-	% Arrows (it looks nicer in most devices)
-	UpUnicode = raw("&#x2191;"),
-	LeftUnicode = raw("&#x2190;"),
-	RightUnicode = raw("&#x2192;"),
-	navlink(Up, UpUnicode, UpR),
-	navlink(Prev, LeftUnicode, PrevR),
-	navlink(Next, RightUnicode, NextR),
-	UpPrevNextR = [UpR, PrevR, NextR].
-
-% :- regtype step := step(..., ...).
-% :- regtype path := ~list(step).
-% :- pred pathlink/2 :: path * list(doctree).
-navpath_links([], []).
-navpath_links([step(Link, Title)|Path], [R|Rs]) :-
-	R = [simple_link(default, no_label, Link, Title)],
-	navpath_links(Path, Rs).
-
-navlink(Link, Text, R) :-
-	navlink_style(Link, Style),
-	R = simple_link(Style, no_label, Link, Text).
-
-navlink_style(no_link, Style) :- !, Style = 'lpdoc-navbutton-disabled'. % deactivated link
-navlink_style(_, 'lpdoc-navbutton').
-
-% sep_list(As, Sep, Bs): Bs contains the elements of As separarted with Sep
-sep_list([], _, []) :- !.
-sep_list([A], _, [A]) :- !.
-sep_list([A|As], Sep, [A,Sep|Bs]) :-
-	sep_list(As, Sep, Bs).
 
 % Toogle button for sidebar
 % TODO: use fmt_link?

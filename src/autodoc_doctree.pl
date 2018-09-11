@@ -211,10 +211,10 @@ icmd_type(section_env(t,t,td,td)).
 % TODO: we are more specific than just 'references'
 icmd_type(component_link(t)).
 icmd_type(idx_env(t,t,t,d,d)). % index command
+icmd_type(idx_cite(t)). % indexed citations (list of cite_item/2 inside, each with one label)
 % dependency with a separated section (depending on the backend, it may include
 % or not the contents of the separated section)
 icmd_type(backend_include_component(t)).
-icmd_type(backend_idx(t,t,t)).
 icmd_type(hfill).
 icmd_type(linebreak). % break the current line (should it be like "@p @noindent"?)
 % a line formatted like subsection titles (bigger/stronger fonts)
@@ -230,7 +230,7 @@ icmd_type(cartouche(d)).
 icmd_type(optional_cartouche(d)).
 icmd_type(note(d)).
 icmd_type(alert(d)).
-icmd_type(idx_anchor(t,t,t,t,t)). % an anchor for entries in the index
+icmd_type(idx_anchor(t,t,t,t,t,t)). % an anchor for entries in the index
 icmd_type(end_document).
 icmd_type(copyright_page(d)).
 icmd_type(cover_title(d,t)). % the title and optional subtitle (second argument is list(d))
@@ -245,7 +245,6 @@ icmd_type(show_toc(t)). % show the table of contents (or part of it)
 icmd_type(show_biblio).
 icmd_type(simple_link(t,t,t,s)).
 icmd_type(menu_link(t,s)). % (for texinfo)
-icmd_type(cite_link(t,s)).
 icmd_type(ref_link(t,s)).
 icmd_type(missing_link(s)).
 icmd_type(pred_in_toc(t,t)).
@@ -558,6 +557,8 @@ doctree_scan_refs(component_link(Base), DocSt) :-
 doctree_scan_refs(idx_env(Mode, Type, IdxLabel, Ref, _Body), DocSt) :-
 	!,
 	add_idx_entry(Mode, Type, IdxLabel, Ref, DocSt).
+doctree_scan_refs(idx_cite(Cs), DocSt) :- !,
+	add_idx_cite(Cs, DocSt).
 doctree_scan_refs(defpred(IdxLabel, Type, _, PN, _, Body), DocSt) :-
 	!,
 	% TODO: This logic is repeated in each backend
@@ -569,13 +570,6 @@ doctree_scan_refs(defpred(IdxLabel, Type, _, PN, _, Body), DocSt) :-
 doctree_scan_refs(defauthor(IdxLabel, Name, _Text), DocSt) :-
 	!,
 	add_idx_entry(def, author, IdxLabel, Name, DocSt).
-doctree_scan_refs(cite(Ref), DocSt) :- !,
-	%% bibtex generates an error like this
-	%% The top-level auxiliary file: ciaorefs.aux
-	%% White space in argument---line 33 of file bla bla bla
-	%% : \citation{att-var-iclp,ciao-manual-tr,
-	remove_spaces(Ref, RefClean),
-	docst_mdata_assertz(citation(RefClean), DocSt).
 doctree_scan_refs(Command, DocSt) :-
 	functor(Command, Cmd, A),
 	functor(BT, Cmd, A),
@@ -629,11 +623,11 @@ add_idx_entry(Mode, Type, IdxLabel, Key, DocSt) :-
 	doctree_to_rawtext(Key, DocSt, Key2),
 	docst_mdata_assertz(idx(Mode, Type, IdxLabel, Key2), DocSt).
 
-remove_spaces([],     []).
-remove_spaces([32|R], RC) :- !,
-	remove_spaces(R, RC).
-remove_spaces([A|R], [A|RC]) :-
-	remove_spaces(R, RC).
+add_idx_cite([], _DocSt).
+add_idx_cite([cite_item(IdxLabel,Ref)|Cs], DocSt) :-
+	add_idx_entry(use, cite, IdxLabel, raw_string(Ref), DocSt),
+	docst_mdata_assertz(citation(Ref), DocSt),
+	add_idx_cite(Cs, DocSt).
 
 % (first pass)
 % TODO: See write_as_subfile
@@ -880,7 +874,7 @@ rewrite_cmd(defauthor(IdxLabel, Name, Text), DocSt, R) :- !,
 	Mode = def, Type = author, Ref = Name, Body = Text,
 	fmt_idx_env(Mode, Type, IdxLabel, Ref, Body, DocSt, R).
 rewrite_cmd(show_toc(TOCKind), DocSt, R) :- !,
-	fmt_toc(TOCKind, DocSt, R).
+	R = ~fmt_toc(TOCKind, DocSt).
 rewrite_cmd(show_biblio, DocSt, R) :- !,
 	( docst_mvar_get(DocSt, biblio_doctree, RefsR0) ->
 	    ( RefsR0 = [] ->
@@ -892,16 +886,16 @@ rewrite_cmd(show_biblio, DocSt, R) :- !,
 	  % written before the bibliography is resolved.
 	  R = string_esc("[ERROR - NO BIBLIOGRAPHY]")
 	).
-rewrite_cmd(show_index(IndexId), DocSt, R) :- !,
+rewrite_cmd(show_index(IdxName), DocSt, R) :- !,
 	docst_backend(DocSt, Backend),
 	( Backend = html ->
 	    % format the index ourselves
-	    fmt_index(IndexId, DocSt, R)
+	    fmt_index(IdxName, DocSt, R)
 	; % let the backend print the index
-	  R = backend_printindex(IndexId)
+	  R = backend_printindex(IdxName)
 	).
-rewrite_cmd(cite(Ref), DocSt, R) :- !,
-	fmt_cite(Ref, DocSt, R).
+rewrite_cmd(idx_cite(Cs), DocSt, R) :- !,
+	fmt_idx_cite(Cs, DocSt, R).
 rewrite_cmd(ref(Ref), DocSt, R) :- !,
 	fmt_ref(Ref, DocSt, R).
 % TODO: include here general shared internal commands
@@ -1135,55 +1129,29 @@ version_string(Version, Str) :-
 
 :- doc(subsection, "Formatting Cites and References").
 
-:- pred fmt_cite(Ref, DocSt, R) 
-# "Process (resolve) a bibliographical citation".
-fmt_cite(Ref0, DocSt, R) :-
-	( docst_mvar_get(DocSt, biblio_pairs, RefPairs) ->
-	    remove_spaces(Ref0, Ref),
-	    comma_split(Ref, Refs),
-	    resolve_cites(Refs, RefPairs, DocSt, R1),
-	    R = [string_esc("["), R1, string_esc("]")]
-	; throw(error(no_biblio_pairs, fmt_cite/3))
-	).
+% TODO: it may be different for other backends that resolve cites
+%   themselves (e.g., latex)
 
-% Split comma-separated string list of strings
-comma_split([], []) :- !.
-comma_split(S0, [R|Rs]) :-
-	comma_split_(S0, S1, R),
-	comma_split(S1, Rs).
+:- pred fmt_idx_cite(Cs, DocSt, R) 
+# "Add @tt{idx_env/5} for each bibliographical citation in @var{Cs}".
+fmt_idx_cite(Cs, DocSt, R) :-
+	R1 = ~cite_idxs(Cs, DocSt),
+	R = [string_esc("["), R1, string_esc("]")].
 
-comma_split_([], [], []).
-comma_split_([X|Xs], Zs, R) :-
-	( X = 0', -> Zs = Xs, R = []
-	; R = [X|R0], comma_split_(Xs, Zs, R0)
-	).
-
-resolve_cites([], _, _, []).
-resolve_cites([C|Cs], RefPairs, DocSt, Rs) :-
-	resolve_cite(C, RefPairs, DocSt, R),
-	Rs = [R|Rs0],
+cite_idxs([], _, []).
+cite_idxs([C|Cs], DocSt, [R|Rs0]) :-
+	cite_idx(C, DocSt, R),
 	( Cs = [] ->
 	    Rs0 = []
 	; Rs0 = [string_esc(",")|Rs1],
-	  resolve_cites(Cs, RefPairs, DocSt, Rs1)
+	  cite_idxs(Cs, DocSt, Rs1)
 	).
 
-% TODO: Move part of this predicate to autodoc_refsdb
-resolve_cite(C, RefPairs, _DocSt, R) :-
-	% TODO: make RefPairs a dictionary so that this can be faster
-	% note: Label is the textual representation for the cite (e.g. [JS99])
-	( member((Label0,Ref), RefPairs),
-	  Ref = C ->
-	    Text = Label0,
-	    get_mainmod(MainBase),
-	    get_subbase(MainBase, 'refs', RefsBase),
-	    CiteLink = link_to(RefsBase, local_label(Ref)),
-	    R = cite_link(CiteLink, Text)
-	; R = string_esc("{UNKNOWNCITE?}"),
-	  % TODO: Improve warning message
-	  atom_codes(RefAtom, C),
-	  autodoc_message(error, "unresolved bibliographical reference '~w'", [RefAtom])
-	).
+cite_idx(cite_item(IdxLabel, Ref), DocSt, R) :-
+	Text = ~pretty_cite(Ref, DocSt),
+	RefR = raw_string(Ref),
+	TextR = string_esc(Text),
+ 	R = idx_env(use, cite, IdxLabel, RefR, TextR).
 
 % ---------------------------------------------------------------------------
 
@@ -1220,10 +1188,9 @@ resolve_ref(Ref, FullTree, R) :-
 
 % TODO: change names
 :- regtype toc_kind/1.
-toc_kind := toc_view(_S) % Each of the TOC views located in a page:
-                            %   (_S=yes) == we are in the sidebar
+toc_kind := subparts      % First level of TOC subtree
+          | sidebar       % Sidebar navigation
           | single(_)     % Special, single section (e.g. toc, copyright, etc.)
-          | global_links  % Global links (toc, references, etc.)
           | full          % Global (all except local contents)
           | vertical_menu % Vertical menu (for web pages)
           | global        % Global (all except local contents, hide childs)
@@ -1231,39 +1198,32 @@ toc_kind := toc_view(_S) % Each of the TOC views located in a page:
           | indices.      % Indices
 
 % TODO: include the navigation buttons as views here?
-fmt_toc(toc_view(Sidebar), DocSt, R) :- !,
+fmt_toc(sidebar, DocSt, R) :- !, % (only for HTML)
+	% Seach input, navigation for global, local, and special sections
+	Rs = ~fmt_search_input(DocSt),
+	Rn = ~fmt_sectnav(DocSt),
+	Rl = ~fmt_localsect(DocSt),
+	Rc = ~fmt_customsect(DocSt),
+	% (All)
+	doctree_simplify([
+	    linebreak, % TODO: (add somewhere else)
+	    Rs, Rn, Rl, Rc], R).
+fmt_toc(subparts, DocSt, R) :- !,
 	docst_backend(DocSt, Backend),
-	show_subparts_in_maintext(DocSt, SubpartsInMaintext),
-	% TODO: add copyright, etc?
-        % TODO: SubpartsInMaintext should be obtained from DocSt
-        ( Backend = html, SubpartsInMaintext = no, Sidebar = yes ->
-	    fmt_toc(global_links, DocSt, R0),
-	    fmt_toc(local, DocSt, R1),
-	    fmt_toc(global, DocSt, R2),
-	    fmt_toc(indices, DocSt, R3),
-	    doctree_simplify([R1,R2,R0,R3], R)
-        ; Backend = html, SubpartsInMaintext = yes, Sidebar = yes ->
-	    fmt_toc(global_links, DocSt, R0),
-	    fmt_toc(indices, DocSt, R3),
-	    doctree_simplify([R0,R3], R)
-        ; Backend = texinfo, Sidebar = no, docst_currmod_is_main(DocSt) ->
-	    fmt_toc(global_and_indices, DocSt, R2),
-	    doctree_simplify([R2], R)
-        ; Backend = texinfo, Sidebar = no ->
-	    fmt_toc(global, DocSt, R2),
-	    doctree_simplify([R2], R)
-        ; SubpartsInMaintext = no, Sidebar = no ->
-	    doctree_simplify([], R)
-        ; SubpartsInMaintext = yes, Sidebar = no ->
-	    fmt_toc(global, DocSt, R2),
-	    doctree_simplify([R2], R)
-	; throw(error(not_in_domain_toc_view(Backend, SubpartsInMaintext, Sidebar), fmt_toc/3))
+	show_subparts(DocSt, SubpartsInText),
+        ( Backend = texinfo ->
+	    ( docst_currmod_is_main(DocSt) ->
+	        Rg = ~fmt_toc(global_and_indices, DocSt)
+	    ; Rg = ~fmt_toc(global, DocSt)
+	    ),
+	    doctree_simplify([Rg], R)
+        ; ( SubpartsInText = yes ->
+	      Rg = ~fmt_toc(global, DocSt)
+	  ; Rg = []
+	  ),
+	  doctree_simplify([Rg], R)
 	).
-fmt_toc(global_links, DocSt, R) :- !,
-        Title = string_esc("Global Links"),
-	fmt_toc_custom([toc, changelog, bugs, references, copyright], DocSt, Ri),
-        R = [subsection_title(Title), itemize_env(bullet, Ri)].
-fmt_toc(TOCKind, DocSt, R) :- TOCKind = single(Kind), !,
+fmt_toc(single(Kind), DocSt, R) :- !,
         % TODO: This is a ugly and slow hack; copy nav implementation
 	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
 	    true
@@ -1277,7 +1237,7 @@ fmt_toc(TOCKind, DocSt, R) :- TOCKind = single(Kind), !,
 	    R = simple_link(default, no_label, Link, T)
 	; R = []
 	).
-fmt_toc(TOCKind, DocSt, R) :- TOCKind = vertical_menu, !,
+fmt_toc(vertical_menu, DocSt, R) :- !,
 	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
 	    true
 	; throw(error(menu_not_computed, fmt_toc/3))
@@ -1297,17 +1257,12 @@ fmt_toc(TOCKind, DocSt, R) :- TOCKind = vertical_menu, !,
 	    R = [itemize_env(menu, R0)]
 	; R = []
 	).
-fmt_toc(TOCKind, DocSt, R) :- TOCKind = global_and_indices, !,
+fmt_toc(global_and_indices, DocSt, R) :- !,
 	% TODO: ad-hoc for texinfo backend (simplify)
-	docst_backend(DocSt, Backend),
-	get_toc_tree(global, DocSt, TreeG),
-	fmt_toc_tree(TreeG, Backend, global, Rg),
-	get_toc_tree(indices, DocSt, TreeI),
-	fmt_toc_tree(TreeI, Backend, indices, Ri),
+	Rg = ~fmt_toc_tree(global, DocSt),
+	Ri = ~fmt_toc_tree(indices, DocSt),
 	( \+ doctree_is_empty(Ri) ->
-	    doctree_simplify([Rg,
-                              raw_nl, raw("Indexes"), raw_nl, raw_nl,
-                              Ri], R0)
+	    doctree_simplify([Rg, raw_nl, raw("Indexes"), raw_nl, raw_nl, Ri], R0)
 	; R0 = Rg
 	),
 	( \+ doctree_is_empty(R0) ->
@@ -1315,60 +1270,20 @@ fmt_toc(TOCKind, DocSt, R) :- TOCKind = global_and_indices, !,
 	; R = []
 	).
 fmt_toc(TOCKind, DocSt, R) :-
-	% TODO: ad-hoc for texinfo (simplify)
-	docst_backend(DocSt, Backend),
-	Backend = texinfo,
-	!,
-	get_toc_tree(TOCKind, DocSt, Tree),
-	fmt_toc_tree(Tree, Backend, TOCKind, R0),
-	fmt_toc_env(R0, DocSt, TOCKind, R).
-fmt_toc(TOCKind, DocSt, R) :-
-	docst_backend(DocSt, Backend),
-	get_toc_tree(TOCKind, DocSt, Tree),
-	fmt_toc_tree(Tree, Backend, TOCKind, R0),
-	fmt_toc_env(R0, DocSt, TOCKind, R).
+	R0 = ~fmt_toc_tree(TOCKind, DocSt),
+	R = ~fmt_toc_env(R0, DocSt, TOCKind).
 
-get_toc_tree(TOCKind, DocSt, Tree) :-
-        toc_source(TOCKind, Source),
-	( docst_mvar_lookup(DocSt, Source, Tree0) ->
-	    true
-	; throw(error(menu_not_computed, fmt_toc/3))
-	),
-	( Source = full_toc_tree -> 
-	    % Remove the root node
-	    Tree0 = [toc_node(_,_,_,Tree)]
-	; Tree = Tree0
+show_subparts(DocSt, InText) :-
+	docst_filetype(DocSt, FileType),
+	( subparts_in_text(FileType) ->
+	    InText = yes
+	; InText = no
 	).
 
-show_subparts_in_maintext(DocSt, SubpartsInMaintext) :-
-	( docst_filetype(DocSt, FileType),
-	  subparts_in_maintext(FileType) ->
-	    SubpartsInMaintext = yes
-	; SubpartsInMaintext = no
-	).
-
-subparts_in_maintext(application).
-% subparts_in_maintext(documentation). % No, these files are bigger!
-subparts_in_maintext(part).
-
-% ---------------------------------------------------------------------------
-
-% Format the node tree as a table of contents. Different views are
-% obtained depending on @var{TOCKind}.
-fmt_toc_tree([], _Backend, _, []).
-fmt_toc_tree([toc_node(Link,T,Props,Subs)|Ss], Backend, TOCKind, Rs) :-
-        % TODO: Use Props to implement views for indices, etc.
-	( toc_link_filter(TOCKind, Props, Link, Recursive) ->
-	    Rs = [R|Rs0],
-	    ( Recursive = yes ->
-	        fmt_toc_tree(Subs, Backend, TOCKind, SubRs)
-	    ; SubRs = []
-	    ),
-	    fmt_toc_link(Backend, default, Link, T, SubRs, R)
-	; Rs = Rs0
-        ),
-	% Continue with the rest of nodes
-	fmt_toc_tree(Ss, Backend, TOCKind, Rs0).
+% TODO: show always in text?
+subparts_in_text(application).
+% subparts_in_text(documentation). % No, these files are bigger!
+subparts_in_text(part).
 
 % Enclose the result of fmt_toc_tree in a proper environment
 % (this separation is useful for texinfo menus)
@@ -1389,28 +1304,39 @@ fmt_toc_env(R0, DocSt, TOCKind, R) :-
 	R1 = [itemize_env(bullet, R0)].
 
 % ---------------------------------------------------------------------------
+% Format as a tree the table of contents given by @var{TOCKind}.
 
-% Format the node tree as a vertical menu (for web pages)
-fmt_vertical_menu([], _, _Depth, []).
-fmt_vertical_menu([toc_node(Link,T,Props,Subs)|Ss], Name, Depth, Rs) :-
-	( % TODO: same condition than in 'full' toc?
-          \+ doclink_is_local(Link),
-	  \+ section_prop(is_special(_), Props) ->
+fmt_toc_tree(TOCKind, DocSt) := R :-
+	docst_backend(DocSt, Backend),
+	R = ~fmt_toc_tree_(~get_toc_tree(TOCKind, DocSt), Backend, TOCKind).
+
+get_toc_tree(TOCKind, DocSt, Tree) :-
+        toc_source(TOCKind, Source),
+	( docst_mvar_lookup(DocSt, Source, Tree0) ->
+	    true
+	; throw(error(menu_not_computed, fmt_toc/3))
+	),
+	( Source = full_toc_tree -> 
+	    % Remove the root node
+	    Tree0 = [toc_node(_,_,_,Tree)]
+	; Tree = Tree0
+	).
+
+% Format the node tree.
+fmt_toc_tree_([], _Backend, _) := [].
+fmt_toc_tree_([toc_node(Link,T,Props,Subs)|Ss], Backend, TOCKind) := Rs :-
+        % TODO: Use Props to implement views for indices, etc.
+	( toc_link_filter(TOCKind, Props, Link, Recursive) ->
 	    Rs = [R|Rs0],
-	    Depth1 is Depth + 1,
-	    fmt_vertical_menu(Subs, Name, Depth1, SubRs),
-	    ( Link = link_to(Name, _) -> Style = 'selmenu'
-	    ; Link = no_link -> Style = 'phonymenu'
-	    ; Style = 'unselmenu'
+	    ( Recursive = yes ->
+	        SubRs = ~fmt_toc_tree_(Subs, Backend, TOCKind)
+	    ; SubRs = []
 	    ),
-	    ( Depth = 0 -> T2 = bf(T) ; T = T2 ), % use bold for first level
-	    fmt_toc_link(html, Style, Link, T2, SubRs, R)
+	    fmt_toc_link(Backend, default, Link, T, SubRs, R)
 	; Rs = Rs0
         ),
 	% Continue with the rest of nodes
-	fmt_vertical_menu(Ss, Name, Depth, Rs0).
-
-% ---------------------------------------------------------------------------
+	Rs0 = ~fmt_toc_tree_(Ss, Backend, TOCKind).
 
 fmt_toc_link(texinfo, _Style, Link, Title, SubRs, R) :- !,
 	R = [menu_link(Link, Title)|R0],
@@ -1438,11 +1364,159 @@ menustyle(unselmenu).
 menustyle(phonymenu).
 
 % ---------------------------------------------------------------------------
+% Format search input box/link (for HTML)
 
-% A customized TOC 
+fmt_search_input(_DocSt) := Rs :-
+	Rs = [simple_link(default, no_label, ~search_link, string_esc("Search...")),
+	      linebreak].
+
+% Link to the search
+search_link(R) :-
+	% TODO: 'no_label' is wrong (it works because it is ignored in HTML backend)
+	% SearchBase = ~get_subbase(~get_mainmod, 'search'),
+	% TODO: Do not use 'global'
+	R = link_to(~get_subbase(~get_mainmod, ~get_idxsub(global)), no_label).
+
+% ---------------------------------------------------------------------------
+% Format section navigation (arrows, path, children) for sidebar (only HTML)
+
+fmt_sectnav(DocSt) := R :-
+	% TOC and navigation arrows
+	Rt = simple_link(default, no_label, ~fulltoc_link, string_esc("TOC")),
+	UpPrevNextR = ~fmt_navlinks(DocSt),
+	% Children items
+	RnItems = ~fmt_toc_tree(global, DocSt), % TODO: rename 'global' by children?
+	( doctree_is_empty(RnItems) -> Rn = []
+	; Rn = [raw(" &#9662;"), itemize_env(bullet, RnItems)]
+	),
+	% Section navigation (path and children)
+	SectPathR = ~fmt_navpath(Rn, DocSt),
+	R = [navigation_env(Rt, UpPrevNextR),
+	     htmlenv(hr, []),
+	     itemize_env(bullet, SectPathR)].
+
+% Link to the fulltoc
+fulltoc_link(R) :-
+	% TODO: 'no_label' is wrong (it works because it is ignored in HTML backend)
+	R = link_to(~get_subbase(~get_mainmod, 'fulltoc'), no_label).
+
+% Format the navigation path
+% (links to the parent, the previous and the next nodes)
+fmt_navpath(Rn, DocSt) := PathR :-
+	( docst_mvar_get(DocSt, nav, Nav) ->
+	    true
+	; throw(error(no_navigation, fmt_nav/3))
+	),
+	Nav = nav(Path, _Top, _Up, _Prev, _Next),
+	navpath_links(Path, Path2),
+	nav_items(Path2, raw(" &raquo;<br/> "), Rn, PathR0),
+	( PathR0 = [] -> PathR = raw("&nbsp;") 
+	; PathR = PathR0
+	).
+
+% :- regtype step := step(..., ...).
+% :- regtype path := ~list(step).
+% :- pred pathlink/2 :: path * list(doctree).
+navpath_links([], []).
+navpath_links([step(Link, Title)], [R]) :- !,
+	% (last in bold)
+	R = [simple_link(default, no_label, Link, bf(Title))].
+navpath_links([step(Link, Title)|Path], [R|Rs]) :-
+	R = [simple_link(default, no_label, Link, Title)],
+	navpath_links(Path, Rs).
+
+% nav_items(As, Suff, SuffLast, Bs): Add items for each element in As,
+%   adding Suff for all the items except the last one, and SuffLast
+%   for the last one.
+nav_items([], _, _, []) :- !.
+nav_items([A], _, SuffLast, [item_env(default, [A,SuffLast])]) :- !.
+nav_items([A|As], Suff, SuffLast, [item_env(default, [A,Suff])|Bs]) :-
+	nav_items(As, Suff, SuffLast, Bs).
+
+% ---------------------------------------------------------------------------
+% Format the navigation links (for HTML)
+% (links to the parent, the previous and the next nodes)
+
+fmt_navlinks(DocSt) := UpPrevNextR :-
+	( docst_mvar_get(DocSt, nav, Nav) ->
+	    true
+	; throw(error(no_navigation, fmt_nav/3))
+	),
+	Nav = nav(_Path, _Top, Up, Prev, Next),
+	% % Triangles as arrows (it does not look nice in some devices)
+	% UpUnicode = raw("&#x25B2;"),
+	% LeftUnicode = raw("&#x25C4;"),
+	% RightUnicode = raw("&#x25BA;"),
+	%
+	% Arrows (it looks nicer in most devices)
+	UpUnicode = raw("&#x2191;"),
+	LeftUnicode = raw("&#x2190;"),
+	RightUnicode = raw("&#x2192;"),
+	navlink(Up, UpUnicode, UpR),
+	navlink(Prev, LeftUnicode, PrevR),
+	navlink(Next, RightUnicode, NextR),
+	UpPrevNextR = [UpR, PrevR, NextR].
+
+navlink(Link, Text, R) :-
+	Style = ~navlink_style(Link),
+	R = simple_link(Style, no_label, Link, Text).
+
+navlink_style(no_link) := Style :- !, Style = 'lpdoc-navbutton-disabled'. % deactivated link
+navlink_style(_) := 'lpdoc-navbutton'.
+
+% ---------------------------------------------------------------------------
+% Format the node tree as a vertical menu (for web pages, only HTML)
+
+fmt_vertical_menu([], _, _Depth, []).
+fmt_vertical_menu([toc_node(Link,T,Props,Subs)|Ss], Name, Depth, Rs) :-
+	( % TODO: same condition than in 'full' toc?
+          \+ doclink_is_local(Link),
+	  \+ section_prop(is_special(_), Props) ->
+	    Rs = [R|Rs0],
+	    Depth1 is Depth + 1,
+	    fmt_vertical_menu(Subs, Name, Depth1, SubRs),
+	    ( Link = link_to(Name, _) -> Style = 'selmenu'
+	    ; Link = no_link -> Style = 'phonymenu'
+	    ; Style = 'unselmenu'
+	    ),
+	    ( Depth = 0 -> T2 = bf(T) ; T = T2 ), % use bold for first level
+	    fmt_toc_link(html, Style, Link, T2, SubRs, R)
+	; Rs = Rs0
+        ),
+	% Continue with the rest of nodes
+	fmt_vertical_menu(Ss, Name, Depth, Rs0).
+
+% ---------------------------------------------------------------------------
+% Local sections (on this page)
+
+fmt_localsect(DocSt) := Rl :-
+	( docst_currmod_is_main(DocSt) -> % Not in cover
+	    Rl = []
+	; RlItems = ~fmt_toc_tree(local, DocSt),
+	  ( doctree_is_empty(RlItems) -> Rl = []
+	  ; Rl = [htmlenv(hr, []),
+	          em(string_esc("ON THIS PAGE")),
+		  itemize_env(bullet, RlItems)]
+	  )
+	).
+
+% ---------------------------------------------------------------------------
+% Special sections
+
+fmt_customsect(DocSt) := Rc :-
+	( docst_currmod_is_main(DocSt) -> % Only in cover
+	  Rc = [htmlenv(hr, []),
+	        itemize_env(bullet,
+		            ~fmt_toc_custom([changelog,
+			                     bugs,
+					     references,
+					     copyright], DocSt))]
+	; Rc = []
+	).
+
 fmt_toc_custom([], _, []).
 fmt_toc_custom([N|Ns], DocSt, Rs) :-
-	fmt_toc(single(N), DocSt, R),
+	R = ~fmt_toc(single(N), DocSt),
 	( doctree_is_empty(R) ->
 	    Rs = Rs0
 	; Rs = [item_env(default, R)|Rs0] % TODO: to item_env?
@@ -1451,8 +1525,8 @@ fmt_toc_custom([N|Ns], DocSt, Rs) :-
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Kinds of Table of Contents").
-% This defines properties of different kinds of table of contents (TOC)
+:- doc(subsection, "Views of Table of Contents").
+% This defines properties of different views of the table of contents (TOC)
 
 % Title
 :- discontiguous(toc_title/3).
@@ -1468,9 +1542,9 @@ toc_link_filter(full, Props, Link, yes) :-
         \+ doclink_is_local(Link),
 	\+ section_prop(is_special(_), Props).
 
-% TOC for global links (separate pages)
+% TOC for global links (to other pages)
 % TODO: use different names depending on filetype
-toc_title(global, application, string_esc("Parts of this manual")).
+toc_title(global, application, string_esc("Parts of this manual")) :- !.
 toc_title(global, part, string_esc("Subparts")) :- !.
 toc_title(global, documentation, string_esc("Subparts")) :- !.
 toc_title(global, module, string_esc("Submodules")) :- !.
@@ -1482,9 +1556,10 @@ toc_link_filter(global, Props, Link, no) :-
 	\+ section_prop(is_special(_), Props).
 
 % TOC for local links (same page)
-toc_title(local, module, string_esc("Module Sections")) :- !.
-toc_title(local, package, string_esc("Package Sections")) :- !.
-toc_title(local, _, string_esc("Sections")) :- !.
+%toc_title(local, module, string_esc("Module Sections")) :- !.
+%toc_title(local, package, string_esc("Package Sections")) :- !.
+%toc_title(local, _, string_esc("Sections")) :- !.
+toc_title(local, _, string_esc("ON THIS PAGE")) :- !.
 toc_source(local, curr_toc_tree).
 toc_link_filter(local, _Props, Link, yes) :-
         doclink_is_local(Link). 
@@ -1515,7 +1590,7 @@ insert_show_toc(R0, _DocSt, R) :-
 % Insert 'show_toc' in the right place
 insert_show_toc_(R0, R) :-
 	R0 = section_env(PrevSecProps, SectLabel, TitleR, Body0),
-	Toc = show_toc(toc_view(no)),
+	Toc = show_toc(subparts),
 	doctree_insert_before_subfile_section(Body0, Toc, Body),
 %	doctree_insert_end(Body0, Toc, Body),
 	R = section_env(PrevSecProps, SectLabel, TitleR, Body).

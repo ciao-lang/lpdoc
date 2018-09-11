@@ -196,6 +196,9 @@ input_transition(Token, Stack, State, Rs, Rs0) :-
 string_token(string_esc(_)).
 string_token(string_verb(_)).
 
+% Note: the important part here is adding a IdxLabel to the
+%   token such that we can refer to it (for back-references).
+%   
 normalize_token(Token0, Token) :-
 	Token0 =.. [Cmd, Body],
 	is_index_cmd(Cmd),
