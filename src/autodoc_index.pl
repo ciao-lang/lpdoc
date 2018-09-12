@@ -143,7 +143,6 @@ codetype(decl).
 codetype(op).
 codetype(modedef).
 codetype(file).
-codetype(global). % TODO: remove
 codetype(code). % TODO: guess the code type?
 
 % ---------------------------------------------------------------------------
