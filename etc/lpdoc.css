@@ -278,6 +278,8 @@ div.lpdoc-footer a {
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Source Sans Pro', sans-serif;
     line-height: 1.3em;
+    font-weight: 600;
+    color: #2e4985;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -473,7 +475,7 @@ div.lpdoc-cover-title {
     margin: 0px;
     margin-bottom: 16px;
     background: white;
-    color: #4263ab;
+    color: #2e4985;
 }
 
 div.lpdoc-cover-subtitle-extra {
