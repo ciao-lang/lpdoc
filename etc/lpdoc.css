@@ -419,7 +419,8 @@ div.lpdoc-sidebar p {
 
 div.lpdoc-sidebar ul {
     margin-left: 0px;
-    list-style-type: none;
+    list-style-type: circle;
+    color: #cfdaef;
     padding-left: 16px;
     margin: 0px;
 }
@@ -428,12 +429,13 @@ div.lpdoc-sidebar ul {
 div.lpdoc-sidebar > ul {
     margin-left: 0px;
     list-style-type: none;
+    color: #0645ad;
     padding-left: 0px;
     margin: 0px;
 }
 
 div.lpdoc-sidebar li {
-    list-style-type: none;
+    /* list-style-type: circle; */
     padding-left: 0px;
     /* margin: 0px; */
     /* (tighter when names are split into several lines) */
@@ -449,6 +451,7 @@ div.lpdoc-cover-address {
     font-size: 11px;
     float:right;
     /* padding: 16px; */
+    padding-left: 16px;
     color: #888;
 }
 
