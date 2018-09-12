@@ -216,14 +216,16 @@ rw_command(subsection_title(X), _DocSt, R) :- !,
 	R = htmlenv(h2, X).
 rw_command(twocolumns(X), _DocSt, R) :- !,
 	R = htmlenv(div, [class="lpdoc-twocolumns"], X).
-rw_command(itemize_env(menu, Xs), _DocSt, R) :- get_layout(tmpl_layout(_, _, _)), !,
-	R = htmlenv(ul, [class="nav nav-pills nav-stacked"], Xs). % TODO: only for bootstrap framework CSS
 rw_command(itemize_env(none, Xs), _DocSt, R) :- !,
 	R = htmlenv(ul, [class="lpdoc-itemize-none"], Xs).
 rw_command(itemize_env(plain, Xs), _DocSt, R) :- !,
 	R = htmlenv(ul, [class="lpdoc-itemize-plain"], Xs).
 rw_command(itemize_env(minus, Xs), _DocSt, R) :- !,
 	R = htmlenv(ul, [class="lpdoc-itemize-minus"], Xs).
+rw_command(itemize_env(menu, Xs), _DocSt, R) :- get_layout(tmpl_layout(_, _, _)), !,
+	R = htmlenv(ul, [class="nav nav-pills nav-stacked"], Xs). % TODO: only for bootstrap framework CSS
+rw_command(itemize_env(sectpath, Xs), _DocSt, R) :- !, % TODO: special case
+	R = htmlenv(ul, [class="lpdoc-itemize-sectpath"], Xs).
 rw_command(itemize_env(_, Xs), _DocSt, R) :- !,
 	R = htmlenv(ul, Xs).
 rw_command(description_env(Xs), _DocSt, R) :- !,

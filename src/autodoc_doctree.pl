@@ -1394,7 +1394,7 @@ fmt_sectnav(DocSt) := R :-
 	SectPathR = ~fmt_navpath(Rn, DocSt),
 	R = [navigation_env(Rt, UpPrevNextR),
 	     htmlenv(hr, []),
-	     itemize_env(bullet, SectPathR)].
+	     itemize_env(sectpath, SectPathR)].
 
 % Link to the fulltoc
 fulltoc_link(R) :-

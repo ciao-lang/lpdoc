@@ -426,20 +426,20 @@ div.lpdoc-sidebar p {
     margin-left: 0px;
 }
 
+/* ul for sectpath in sidebar */
+div.lpdoc-sidebar ul.lpdoc-itemize-sectpath {
+    margin-left: 0px;
+    list-style-type: none;
+    color: #0645ad;
+    padding-left: 0px;
+    margin: 0px;
+}
+
 div.lpdoc-sidebar ul {
     margin-left: 0px;
     list-style-type: circle;
     color: #cfdaef;
     padding-left: 16px;
-    margin: 0px;
-}
-
-/* ul immediate child of sidebar */
-div.lpdoc-sidebar > ul {
-    margin-left: 0px;
-    list-style-type: none;
-    color: #0645ad;
-    padding-left: 0px;
     margin: 0px;
 }
 
