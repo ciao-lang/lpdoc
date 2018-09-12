@@ -1206,7 +1206,6 @@ fmt_toc(sidebar, DocSt, R) :- !, % (only for HTML)
 	Rc = ~fmt_customsect(DocSt),
 	% (All)
 	doctree_simplify([
-	    linebreak, % TODO: (add somewhere else)
 	    /*Rs,*/ Rn, Rl, Rc], R).
 fmt_toc(subparts, DocSt, R) :- !,
 	docst_backend(DocSt, Backend),

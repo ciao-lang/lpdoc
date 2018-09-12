@@ -504,14 +504,6 @@ fmt_top_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	fmt_layout(Layout, SidebarR, TitleR, MainR, DocSt, R),
 	fmt_headers(Layout, PageTitleR, R, ModR).
 
-% Format the main logo (if any)
-fmt_main_logo(DocSt, R) :-
-	( docst_gdata_query(DocSt, main_logo(Logo)) ->
-	    atom_codes(Logo, LogoS),
-	    R = image(LogoS)
-	; R = []
-	).
-
 % Format the sidebar
 fmt_sidebar(Layout, SecProps, DocSt, R) :-
 	% Optional image on sidebar
@@ -521,13 +513,31 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 	    ImgSrc = ~atom_codes(~img_url(SectImg)),
 	    PreSect = htmlenv(div, [style="text-align: center;"], 
                               htmlenv1(img, [src=ImgSrc, class="lpdoc-section-image"]))
-	%% ; sec_is_cover(SecProps) -> PreSect = []
-	; fmt_main_logo(DocSt, PreSect)
+	% ; sec_is_cover(SecProps) -> PreSect = ~fmt_sidebar_cover_logo(DocSt) %(nocoverlogo)
+	; PreSect = ~fmt_sidebar_logo(DocSt)
 	),
 	%
 	layout_toc(Layout, TocR),
 	%
 	doctree_simplify([PreSect, TocR], R).
+
+% Format the sidebar logo (if any)
+fmt_sidebar_logo(DocSt, R) :-
+	( docst_gdata_query(DocSt, main_logo(Logo)) ->
+	    R = ~fmt_sidebar0([image(~atom_codes(Logo), "auto", "100%")])
+	; R = []
+	).
+
+% % Format the cover sidebar logo (blank space if we have logo)
+% fmt_sidebar_cover_logo(DocSt, R) :-
+% 	( docst_gdata_query(DocSt, main_logo(_)) ->
+% 	    R = ~fmt_sidebar0([raw("&nbsp;")])
+% 	; R = []
+% 	).
+
+fmt_sidebar0(R) :=
+    % (Limit height to 40px)
+    htmlenv(div, [style="height: 40px; margin-left: auto; margin-right: auto"], R).
 
 % Format main content holder
 fmt_main(Layout, SecProps, SectLabel, TitleR, BodyR, DocSt, MainR) :-
@@ -564,14 +574,12 @@ fmt_cover(SecProps, TitleR, BodyR, _DocSt, R) :-
 	; sep_nl(AddressRs, AddressRs1),
 	  AddressRs2 = htmlenv(div, [class="lpdoc-cover-address"], AddressRs1)
 	),
+	% CoverLogoR = ~fmt_cover_logo(DocSt),
 	% Document skeleton
-	%% fmt_main_logo(DocSt, MainLogoR),
 	R = [
 	  htmlenv(div, [
             linebreak, % add some margin here
-	    %% htmlenv(div, [class="lpdoc-cover-logo"], [
-	    %%   MainLogoR
-            %% ]),
+	    % CoverLogoR,
 	    cover_title(TitleR, SubtitleRs),
 	    AddressRs2,
 	    htmlenv(div, [class="lpdoc-cover-authors"], [
@@ -588,6 +596,15 @@ fmt_cover(SecProps, TitleR, BodyR, _DocSt, R) :-
 	  linebreak, % add some margin here
 	  BodyR
         ].
+
+% % Format the cover logo (if any)
+% fmt_cover_logo(DocSt, R) :-
+% 	( docst_gdata_query(DocSt, main_logo(Logo)) ->
+% 	    R = htmlenv(div, [class="lpdoc-cover-logo"], [
+% 	          image(~atom_codes(Logo))
+%                 ])
+% 	; R = []
+% 	).
 
 % Navigation, sidebar, and main contents
 fmt_layout(tmpl_layout(_, LayoutTmpl, _), SidebarR, TitleR, MainR, _DocSt, R) :- !,
