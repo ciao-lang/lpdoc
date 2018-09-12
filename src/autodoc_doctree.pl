@@ -1200,14 +1200,14 @@ toc_kind := subparts      % First level of TOC subtree
 % TODO: include the navigation buttons as views here?
 fmt_toc(sidebar, DocSt, R) :- !, % (only for HTML)
 	% Seach input, navigation for global, local, and special sections
-	Rs = ~fmt_search_input(DocSt),
+	% Rs = ~fmt_search_input(DocSt),
 	Rn = ~fmt_sectnav(DocSt),
 	Rl = ~fmt_localsect(DocSt),
 	Rc = ~fmt_customsect(DocSt),
 	% (All)
 	doctree_simplify([
 	    linebreak, % TODO: (add somewhere else)
-	    Rs, Rn, Rl, Rc], R).
+	    /*Rs,*/ Rn, Rl, Rc], R).
 fmt_toc(subparts, DocSt, R) :- !,
 	docst_backend(DocSt, Backend),
 	show_subparts(DocSt, SubpartsInText),
@@ -1366,9 +1366,11 @@ menustyle(phonymenu).
 % ---------------------------------------------------------------------------
 % Format search input box/link (for HTML)
 
-fmt_search_input(_DocSt) := Rs :-
-	Rs = [simple_link(default, no_label, ~search_link, string_esc("Search...")),
-	      linebreak].
+% TODO: right now it is just a magnifying glass; no input box yet
+
+% fmt_search_input(_DocSt) := Rs :-
+% 	Rs = [simple_link(default, no_label, ~search_link, string_esc("Search...")),
+% 	      linebreak].
 
 % Link to the search
 search_link(R) :-
@@ -1448,6 +1450,9 @@ fmt_navlinks(DocSt) := UpPrevNextR :-
 	% LeftUnicode = raw("&#x25C4;"),
 	% RightUnicode = raw("&#x25BA;"),
 	%
+	% Magnifying glass (for search)
+	MagUnicode = raw("&#x1F50D;"), % TODO: replace by a proper search input box?
+	navlink(~search_link, MagUnicode, SearchR),
 	% Arrows (it looks nicer in most devices)
 	UpUnicode = raw("&#x2191;"),
 	LeftUnicode = raw("&#x2190;"),
@@ -1455,7 +1460,7 @@ fmt_navlinks(DocSt) := UpPrevNextR :-
 	navlink(Up, UpUnicode, UpR),
 	navlink(Prev, LeftUnicode, PrevR),
 	navlink(Next, RightUnicode, NextR),
-	UpPrevNextR = [UpR, PrevR, NextR].
+	UpPrevNextR = [UpR, PrevR, NextR, SearchR].
 
 navlink(Link, Text, R) :-
 	Style = ~navlink_style(Link),
