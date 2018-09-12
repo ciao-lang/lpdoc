@@ -178,6 +178,13 @@ span.lpdoc-predtag {
     color: #1d609a;
 }
 
+/* ul immediate child of cartouche */
+.lpdoc-cartouche > ul {
+    margin: 8px;
+    padding: 0px;
+    list-style-type: none;
+}
+
 .lpdoc-note {
     border: 1px solid #ebf3f9;
     border-left: 5px solid #b6cbdc;
