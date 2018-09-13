@@ -663,10 +663,10 @@ footers(DocSt, Layout, FooterInnerR, FooterOuterR) :-
 
 % Top bar (optional, for logo, search box, etc.)
 fmt_topbar(website_layout(_), _DocSt, R) :- !,
-	% TODO: Generalize
-%	LogoImg = 'ciao2-96-shadow-reduced.png',
-	LogoImg = 'ciao2-small-shadow-reduced.png',
-	LogoSrc = ~atom_codes(~img_url(LogoImg)),
+	% TODO: generalize, any logo
+	% TODO: auto 2x images
+	LogoSrc = ~atom_codes(~img_url('ciao-logo.png')),
+	LogoSrc2x = ~append(~atom_codes(~img_url('ciao-logo@2x.png')), " 2x"),
 	IndexHRef = ~atom_codes(~prefix_htmlurl('index.html')),
 	%
 	fmt_html_template('google_search.html', [], SearchBoxR),
@@ -675,6 +675,8 @@ fmt_topbar(website_layout(_), _DocSt, R) :- !,
 	  SearchBoxR, % must precede the image (due to float:right)
 	  htmlenv(a, [href=IndexHRef], [
 	    htmlenv1(img, [src=LogoSrc,
+	                   srcset=LogoSrc2x,
+			   height="48px",
 	                   'ALT'="Ciao",
 			   class="lpdoc-logo"])
 	    ])
