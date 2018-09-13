@@ -819,23 +819,28 @@ fmt_search(_DocSt, []).
 
 % Section for search component
 gen_search_section(_DocSt) := SearchR :-
-	get_idxsub(global, SubName),
 	search_msg(ITitle, IComment),
 	add_lines(IComment, IComment2),
 	SearchR = section_env(
-          [unnumbered,level(1),subfile(SubName),is_special(search)],
+          [unnumbered,level(1),subfile('search'),is_special(search)],
            global_label(_), 
            string_esc(ITitle), 
            [
 	     IComment2,
-	     show_index(global)
+	     linebreak,
+	     htmlenv(input, [type="text", id="search-input"], []),
+	     htmlenv(div, [id="search-results"], []),
+	     htmlenv(div, [id="search-index", style="display:none"], [
+	       show_index(global)
+             ])
 	   ]).
 
-% TODO: currently like global index
+% TODO: add shortcuts to common selections
 search_msg("Search this manual",
-[string_esc("This is a global index containing pointers to places where concepts, 
- predicates, modes, properties, types, applications, etc., are defined or referred to
- in the text of the document.")]).
+[string_esc("Type below to search for where concepts, predicates,
+ modes, properties, types, applications, authors, etc., are defined or
+ referred to in this manual. Use "), tt(string_esc("_")),
+ string_esc(" to show all entries in the index.")]).
 
 % ---------------------------------------------------------------------------
 
@@ -869,6 +874,11 @@ gen_index_section(IdxName, _DocSt, IndexR) :-
 	     IComment2,
 	     show_index(IdxName)
 	   ]).
+
+% Obtain the subfile name for a given index 
+get_idxsub(IdxName, SubName) :-
+	typeindex(IdxName, IndexId, _, _, _),
+	atom_concat(IndexId, 'index', SubName).
 
 % ---------------------------------------------------------------------------
 

@@ -1374,9 +1374,7 @@ menustyle(phonymenu).
 % Link to the search
 search_link(R) :-
 	% TODO: 'no_label' is wrong (it works because it is ignored in HTML backend)
-	% SearchBase = ~get_subbase(~get_mainmod, 'search'),
-	% TODO: Do not use 'global'
-	R = link_to(~get_subbase(~get_mainmod, ~get_idxsub(global)), no_label).
+	R = link_to(~get_subbase(~get_mainmod, 'search'), no_label).
 
 % ---------------------------------------------------------------------------
 % Format section navigation (arrows, path, children) for sidebar (only HTML)

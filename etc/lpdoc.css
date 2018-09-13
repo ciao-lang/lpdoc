@@ -499,6 +499,24 @@ h1.lpdoc-cover-h1 {
 }
 
 /* --------------------------------------------------------------------------- */
+/* Search */
+
+#search-input {
+    font-family:  "Source Code Pro", monospace;
+    font-size: 14px;
+    line-height:1.0em;
+    padding: 8px;
+    background: #fff8dd;
+    border: 1px solid #fbe89d;
+    border-radius: 3px;
+    width: 80%;
+    box-sizing: border-box;
+}
+#search-input:focus {
+    outline: none;
+}
+
+/* --------------------------------------------------------------------------- */
 /* Mobile-friendly */
 
 @media (max-width: 700px) {

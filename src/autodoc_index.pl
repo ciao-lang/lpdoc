@@ -20,19 +20,6 @@
 
 %% ---------------------------------------------------------------------------
 
-:- export(get_idxsub/2).
-% Obtain the subfile name for a given index 
-get_idxsub(IdxName, SubName) :-
-	typeindex(IdxName, IndexId, _, _, _),
-	atom_concat(IndexId, 'index', SubName).
-
-% Obtain the base for a given index
-get_idxbase(IdxName, _DocSt) := IdxBase :-
-	get_idxsub(IdxName, SubName),
-	IdxBase = ~get_subbase(~get_mainmod, SubName).
-	
-%% ---------------------------------------------------------------------------
-
 % TODO: Is it better to define @var{Comment} as a docstring or a doctree?
 % TODO: are info Index names restricted to two characters?
 
@@ -64,9 +51,9 @@ typeindex(author, 'au',"" ,"Author Index",                     string_esc("")).
 typeindex(cite,   'bc',"" ,"Citation Index",          string_esc("")).
 %% Some versions of makeinfo get confused by this one (core dump!)
 typeindex(global, 'gl',"code","Global Index",
-[string_esc("This is a global index containing pointers to places where concepts, 
- predicates, modes, properties, types, applications, etc., are referred to
- in the text of the document.")
+[string_esc("This is a global index containing pointers to places
+ where concepts, predicates, modes, properties, types, applications,
+ authors, etc., are referred to in the text of the document.")
 % ,string_esc("Note that due to limitations of the "),
 % tt(string_esc("info")),
 % string_esc(" format unfortunately only the first reference will appear in
@@ -217,9 +204,9 @@ fmt_idx_env(Mode, Type, IdxLabel, Ref, Body, DocSt, R) :-
 % ---------------------------------------------------------------------------
 
 :- export(get_use_outlink/4).
-% Outlink to global index (shows other uses)
-get_use_outlink(_Type, Ref, DocSt) := OutLink :-
-	( get_idxbase(global, DocSt, IdxBase) ->
+% Outlink to search page (shows other uses)
+get_use_outlink(_Type, Ref, _DocSt) := OutLink :-
+	( IdxBase = ~get_subbase(~get_mainmod, 'search') ->
 	    OutLink = link_to(IdxBase, local_label(Ref))
 	; % TODO: warning?
 	  OutLink = no_link
