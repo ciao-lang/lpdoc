@@ -8,47 +8,15 @@
    @cindex{automatic documentation library}
 
    This library provides some predicates which generate documentation
-   automatically for a given module or application, using the
-   declarations and assertions used in the module itself as input (see
-   the @lib{assertions} library). By default, only the
-   @concept{exported predicates} of the module appear in the
-   documentation.  The predicates will be documented in the order in
-   which they appear in the @pred{module/1} or @pred{module/2}
-   declaration. @cindex{module declaration} 
-
-   @cindex{automatic documentation}
-
-   The idea of this package is on one hand to reuse the information
-   present in the assertions and on the other to help ensure that code
-   and documentation are kept as coherent as possible.  Hopefully,
-   keeping them close together should help in this always difficult
-   task.  The resulting documentation is somewhat rigidly structured,
-   but generally sufficient for a @em{reference} manual, provided a
-   little effort is put into the assertions and comments. The end
-   product understandably depends heavily on how much work is put into
-   adding additional comments to the source. Some documentation will
-   be generated in any case, but it is recommended that, at the
-   minimum, a module title and a comment for each of the exported
-   predicates be provided.
+   automatically for a given documenation component (module, package,
+   application, etc.), using the declarations and assertions used in
+   the source itself as input (see the @lib{assertions} library).
 
    The output format @cindex{documentation format} in which the
    documentation is generated is defined by the backend modules
    (@lib{autodoc_texinfo}, @lib{autodoc_html}, @lib{autodoc_man},
    etc.).
-
-   One of the main output formats supported is @tt{texinfo} (see The
-   GNU Texinfo Documentation System manual for more info), from which
-   printed manuals and several other printing and on-line formats can
-   be easily generated automatically (including info). There is also
-   some limited support for direct output in unix @tt{man} format. For
-   texinfo, the documentation for a module is a texinfo chapter,
-   suitable for inclusion in a wrapper ``main'' document file.
-
-   A principal use of this library is as one of the main components of
-   the @apl{lpdoc} autodocumenter.  Examples of the use of @apl{lpdoc}
-   are included in the @apl{lpdoc} source code. Other examples can be
-   found in the Ciao documentation directories (i.e., the Ciao manuals
-   themselves).  ").
+").
 
 % ---------------------------------------------------------------------------
 

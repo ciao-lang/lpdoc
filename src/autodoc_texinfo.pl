@@ -5,6 +5,15 @@
 :- doc(author,"Manuel Hermenegildo").
 :- doc(author,"Jose F. Morales").
 
+:- doc(module, "This module implements the output format backend for
+   @tt{texinfo} (see The GNU Texinfo Documentation System manual for
+   more info). This backend is is used to generate both ps/pdf and
+   info manuals.
+
+   In this backend the documentation for a module is a texinfo
+   chapter, suitable for inclusion in a wrapper ``main'' document
+   file.").
+
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_filesystem)).
 :- use_module(lpdoc(autodoc_structure)).

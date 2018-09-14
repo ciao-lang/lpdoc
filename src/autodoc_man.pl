@@ -5,6 +5,9 @@
 :- doc(author,"Jose F. Morales").
 :- doc(author,"Manuel Hermenegildo").
 
+:- doc(module, "This module implements some limited support for direct
+   output in unix @tt{man} format.").
+
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_doctree)).
 :- use_module(lpdoc(autodoc_images)).
