@@ -2412,10 +2412,10 @@ fmt_propcode(PM, Prop, DocSt, R) :-
 	    format_to_string("~w:~w", [PM, Prop], S)
 	; S = Ref
 	),
-	( docst_opt(no_propuses, DocSt) ->
-	    R = [string_esc(S)]
-	; R = [idx_env(use, prop, localnum_label(_), string_esc(Ref), string_esc(S))]
-	).
+	( docst_opt(no_propuses, DocSt) -> Mode = use_noidx
+	; Mode = use
+	),
+	R = [idx_env(Mode, prop, localnum_label(_), string_esc(Ref), string_esc(S))].
 
 fill_vardict([]).
 fill_vardict([X=V|Ds]) :-

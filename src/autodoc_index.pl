@@ -83,13 +83,16 @@ def_text(entry,   "entry point").
 
 :- export(idx_get_indices/3).
 % Note: indices change depending on the mode of indexing (defining vs. using)
+idx_get_indices(use_noidx, _Cmd, Indices) :- !,
+	% use not indexed
+	Indices = [].
 idx_get_indices(Mode, Cmd, Indices) :-
 	Indices = [global|Indices0],
 	( index_cmd(Cmd, Index, AlwaysDef, _) ->
 	    ( AlwaysDef = yes -> % any ocurrence acts as a definition
 	        Indices0 = [Index]
 	    ; Mode = def -> Indices0 = [Index]
-	    ; Mode = use -> Indices0 = []
+	    ; Indices0 = []
 	    )
 	; Indices0 = []
 	).
@@ -186,10 +189,10 @@ fmt_idx_env(Mode, Type, IdxLabel, Ref, Body, DocSt, R) :-
 	; Style = em -> R0 = [em(Body)]
 	),
 	doctree_to_rawtext(Ref, DocSt, RefLab),
-	% 'use' links go to the definition, 'def' links go to uses
-	( Mode = use ->
-	    OutLink = ~get_def_outlink(Type, RefLab, DocSt)
-	; OutLink = ~get_use_outlink(Type, RefLab, DocSt)
+	% 'def' links go to the uses, 'use' or 'use_noidx' go to definition
+	( Mode = def ->
+	    OutLink = ~get_use_outlink(Type, RefLab, DocSt)
+	; OutLink = ~get_def_outlink(Type, RefLab, DocSt)
 	),
 	%
 	( docst_backend(DocSt, texinfo) ->

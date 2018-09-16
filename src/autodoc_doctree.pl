@@ -619,9 +619,14 @@ ensure_fill_label(Title, DocSt, SectLabel) :-
 
 add_idx_entry(Mode, Type, IdxLabel, Key, DocSt) :-
 	ensure_fill_label(Key, DocSt, IdxLabel),
-	% TODO: Accents are lost here; use something richer than 'plaintext'? (e.g. unicode)
-	doctree_to_rawtext(Key, DocSt, Key2),
-	docst_mdata_assertz(idx(Mode, Type, IdxLabel, Key2), DocSt).
+	( Mode = use_noidx ->
+	    % do not index this use
+	    % TODO: better index representation (e.g., trigram) could make this irrelevant
+	    true
+	; % TODO: Accents are lost here; use something richer than 'plaintext'? (e.g. unicode)
+	  doctree_to_rawtext(Key, DocSt, Key2),
+	  docst_mdata_assertz(idx(Mode, Type, IdxLabel, Key2), DocSt)
+	).
 
 add_idx_cite([], _DocSt).
 add_idx_cite([cite_item(IdxLabel,Ref)|Cs], DocSt) :-
