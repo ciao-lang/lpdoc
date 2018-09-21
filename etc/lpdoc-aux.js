@@ -34,22 +34,53 @@
     results_div.innerHTML = ""; // clear results (so that query selector works)
     if (ntext == "") return;
 
-    var sel;
-    if (ntext == "_") {
-      sel = 'a[search_kwd]';
-    } else {
-      sel = 'a[search_kwd^="'+ntext+'"]'; /* TODO: escape ntext? */
+    var time0 = new Date();
+    var elems = document.querySelectorAll('a[search_kwd]');
+    var what;
+    var res = [];
+    if (ntext == "_") { /* all */
+      elems.forEach(function(elem) {
+	res.push(elem.parentNode);
+      });
+      what = "showing all entries";
+    } else if (ntext.match(/^[a-z0-9]$/i) !== null) { /* single alphanum character, only prefix */
+      elems.forEach(function(elem) {
+	var kwd = elem.getAttribute('search_kwd');
+	if (kwd.startsWith(ntext)) {
+	  res.push(elem.parentNode);
+	}
+      });
+      what = "only prefixes";
+    } else { /* first prefix, then substring */
+      elems.forEach(function(elem) {
+	var kwd = elem.getAttribute('search_kwd');
+	if (kwd.startsWith(ntext)) {
+	  res.push(elem.parentNode);
+	}
+      });
+      elems.forEach(function(elem) {
+	var kwd = elem.getAttribute('search_kwd');
+	if (!kwd.startsWith(ntext) && kwd.includes(ntext)) {
+	  res.push(elem.parentNode);
+	}
+      });
+      what = "prefixes and substrings";
     }
-    var elems = document.querySelectorAll(sel); /* TODO: escape? */
-    if (elems.length === 0) {
+    var time1 = new Date();
+    var time_diff = time1-time0; // in ms
+
+    if (res.length === 0) {
       results_div.innerHTML = "<br><b>No results found</b>";
     } else {
       var rbody = "";
-      elems.forEach(function(elem) {
-	var e = elem.parentNode;
-	rbody += "<li>" + e.innerHTML + "</li>";
+      res.forEach(function(elem) {
+	rbody += "<li>" + elem.innerHTML + "</li>";
       });
-      results_div.innerHTML = "<br><b>" + elems.length + " results:</b> <ul>"+rbody+"</ul>";
+      results_div.innerHTML =
+	"<br>" + 
+	"<b>" + res.length + " results (" + time_diff + " ms)</b> " +
+	"for " + what + ":" +
+	"<ul>"+rbody+"</ul>";
     }
   }
 
