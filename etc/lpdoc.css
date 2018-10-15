@@ -333,7 +333,7 @@ div.lpdoc-page {
     width: 230px;
     height: 100%;
     position: fixed;
-    overflow-y: scroll;
+    overflow-y: auto;
     top: 0;
     bottom: 0;
     border-right: 1px solid #eee;
@@ -350,7 +350,7 @@ div.lpdoc-page {
     width: 230px;
     height: 100%;
     position: fixed;
-    overflow-y: scroll;
+    overflow-y: auto;
     top: 0;
     bottom: 0;
     border-left: 1px solid #eee;
