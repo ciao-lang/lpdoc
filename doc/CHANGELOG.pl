@@ -1,3 +1,28 @@
+:- doc(version(3*1+0,2016/12/31,11:36*37+'CEST'), "
+   @begin{itemize}
+   @item Major improvements in HTML backend (which now is also mobile-friendly).
+   @item Built-in search in HTML manuals.
+   @item Do not generate @tt{.ps} or @tt{.dvi} by default.
+   @item (experimental) markdown-style documentation and documentation comments
+      \"%! \".
+   @end{itemize}
+").
+% 3.2
+
+:- doc(version(3*1+0,2016/12/31,11:36*37+'CEST'), "
+   @begin{itemize}
+   @item Simplified manual setting files.
+   @item LPdoc can be used as a library (simplified interface
+      @tt{lpdoc(docmaker)}, etc.).
+   @item Adding built-in toplevel (in addition to the command-line
+      interface).
+   @item The markup commands @tt{@@uref@{URL@}} and
+      @tt{@@uref@{Text@}@{URL@}} has been deprecated. Use
+      @tt{@@href@{URL@}} and @tt{@@href@{URL@}@{Text@}} instead.
+   @end{itemize}
+").
+% 3.1
+
 :- doc(version(3*0+0,2011/07/07,16:33*15+'CEST'), "
    @begin{itemize}
    @item Major redesign of the documentation generator:
