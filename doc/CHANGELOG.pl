@@ -16,7 +16,7 @@
    @item Adding built-in toplevel (in addition to the command-line
       interface).
    @item The markup commands @tt{@@uref@{URL@}} and
-      @tt{@@uref@{Text@}@{URL@}} has been deprecated. Use
+      @tt{@@uref@{Text@}@{URL@}} have been deprecated. Use
       @tt{@@href@{URL@}} and @tt{@@href@{URL@}@{Text@}} instead.
    @end{itemize}
 ").
