@@ -105,7 +105,7 @@
          @item Fixed image generation (now uses @tt{.png} files for
                HTML) (Jose Morales)
          @item New code for text escape fixed some problems, like
-               '@tt{@@/1}' operator not being displayed corretly in
+               '@tt{@@/1}' operator not being displayed correctly in
                Info. (Jose Morales)
          @item Colors for Prolog variables (in HTML). (Jose Morales)
          @item Added @tt{@@begin@{alert@}} environment for alert
@@ -187,7 +187,7 @@
                @tt{comment}) now allowed.  (Manuel Hermenegildo)
 
          @item Made xdvi viewer, ps viewer, and xdvi zoom size be
-               paramenters (the latter since new versions of xdvi
+               parameters (the latter since new versions of xdvi
                display sizes differently than old ones).  (Manuel
                Hermenegildo)
 
