@@ -1,4 +1,4 @@
-:- doc(version(3*1+0,2016/12/31,11:36*37+'CEST'), "
+:- doc(version(3*2+0,2018/12/06,11:25*08+'CEST'), "
    @begin{itemize}
    @item Major improvements in HTML backend (which now is also mobile-friendly).
    @item Built-in search in HTML manuals.
@@ -7,7 +7,6 @@
       \"%! \".
    @end{itemize}
 ").
-% 3.2
 
 :- doc(version(3*1+0,2016/12/31,11:36*37+'CEST'), "
    @begin{itemize}
@@ -21,7 +20,6 @@
       @tt{@@href@{URL@}} and @tt{@@href@{URL@}@{Text@}} instead.
    @end{itemize}
 ").
-% 3.1
 
 :- doc(version(3*0+0,2011/07/07,16:33*15+'CEST'), "
    @begin{itemize}
