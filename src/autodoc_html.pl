@@ -669,7 +669,7 @@ fmt_topbar(website_layout(_), _DocSt, R) :- !,
 	LogoSrc2x = ~append(~atom_codes(~img_url('ciao-logo@2x.png')), " 2x"),
 	IndexHRef = ~atom_codes(~prefix_htmlurl('index.html')),
 	%
-	fmt_html_template('google_search.html', [], SearchBoxR),
+	fmt_html_template('website_search.html', [], SearchBoxR),
 	%
 	R = htmlenv(div, [class="lpdoc-title"], [
 	  SearchBoxR, % must precede the image (due to float:right)
