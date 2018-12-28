@@ -47,6 +47,7 @@ parse_structure_(S0, Parent) :-
 	  Ss = [] % no descendants
 	),
 	( S1 = phony(S) -> Mode = phony
+	; S1 = phony_link(S, PhonyBase) -> Mode = phony_link(PhonyBase)
 	; S = S1, Mode = normal
 	),
 	% Remove extension (if present)

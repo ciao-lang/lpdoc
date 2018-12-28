@@ -352,7 +352,7 @@ fmt_link(Style, IdLabel, Link, DocSt, Text, R) :-
 	    % no link, use a span env
 	    R = htmlenv(span, Props, Text)
 	; % The outcoming link from this element (i.e. when clicking)
-	  doctree_to_href(Link, DocSt, HRef0),
+	  HRef0 = ~doctree_to_href(Link, DocSt),
 	  atom_codes(HRef1, HRef0),
 	  HRef = ~atom_codes(~prefix_htmlurl(HRef1)),
 	  Props1 = [href=HRef],
@@ -627,10 +627,13 @@ fmt_layout(Layout, SidebarR, _TitleR, MainR, DocSt, R) :-
 	  ; SidebarPos = fixright -> PageClass = "lpdoc-page fixrightbar"
 	  ; fail
 	  ) ->
-	    SidebarToogleR = ~sidebar_toogle,
+	    SidebarToggleR = ~sidebar_toggle,
 	    SidebarEnvR = htmlenv(div, [id="sidebar", class="lpdoc-sidebar"], SidebarR)
 	; PageClass = "lpdoc-page",
-	  SidebarToogleR = [],
+	  ( Layout = website_layout(_) -> % TODO: ad-hoc
+	      SidebarToggleR = ~sidebar_toggle
+	  ; SidebarToggleR = []
+	  ),
 	  SidebarEnvR = []
 	),
 	footers(DocSt, Layout, FooterInnerR, FooterOuterR),
@@ -638,7 +641,7 @@ fmt_layout(Layout, SidebarR, _TitleR, MainR, DocSt, R) :-
 	     TopBarR, % top bar
 	     % NavTopR, % navigation at top
 	     htmlenv(div, [class=PageClass], [
-               SidebarToogleR,
+               SidebarToggleR,
 	       SidebarEnvR,
 	       htmlenv(div, [class="lpdoc-main"], [
 	         % NavTopR, % navigation before main
@@ -766,10 +769,12 @@ doclabel_to_html_id(localnum_label(Label), Id) :- !,
 doclabel_to_html_id(_, Id) :- !, Id = "".
 
 % From a doclink, obtain a HTML href 
-doctree_to_href(Link, DocSt, HRef) :-
+doctree_to_href(Link, DocSt) := HRef :-
 	Link = link_to(Base, SectLabel), !,
 	docst_currmod(DocSt, Name),
-	( Base = Name ->
+	( Base = url(URL) ->
+	    atom_codes(URL, HRef)
+	; Base = Name ->
 	    HRef = HRef0
 	; Backend = html,
           absfile_for_subtarget(Base, Backend, cr, F0),
@@ -782,7 +787,7 @@ doctree_to_href(Link, DocSt, HRef) :-
 	    HRef0 = ""
 	; HRef0 = "#"||SectId
 	).
-doctree_to_href(no_link, _DocSt, "#").
+doctree_to_href(no_link, _DocSt) := "#".
 
 % ---------------------------------------------------------------------------
 
@@ -805,9 +810,9 @@ html_escape([], []).
 
 % ---------------------------------------------------------------------------
 
-% Toogle button for sidebar
+% Toggle button for sidebar
 % TODO: use fmt_link?
-sidebar_toogle(R) :-
+sidebar_toggle(R) :-
 	R = htmlenv(a, [href="#", id="sidebar-toggle-button", class="lpdoc-navbutton"], [
             htmlenv(span, [id="sidebar-button-arrow"], [raw("&#9776;")])
         ]).

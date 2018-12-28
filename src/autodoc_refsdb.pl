@@ -140,7 +140,9 @@ get_secttree_([sect(Props,Link,T)|Ss], Ss0, BaseLevel, BaseName, Rs) :-
 %	display(user_error, foundsub(L, N, Parent, BaseName)), nl(user_error),
 	get_secttree_(Ss, Ss1, L, NextN, SubRs),
 	( Mode = normal -> Link2 = Link 
-	; Link2 = no_link % (phony)
+	; Mode = phony_link(PhonyBase) -> Link2 = link_to(PhonyBase, no_label)
+	; % Mode = phony
+	  Link2 = no_link
 	),
 	R = toc_node(Link2,T,Props,SubRs),
 	Rs = [R|Rs1],

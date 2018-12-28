@@ -8,12 +8,22 @@
   /* Toogle sidebar (for mobile-friendly) */
   /* NOTE: need sidebar and sidebar-toogle-button */
   function setup_toggle() {
-    var element = document.getElementById('sidebar');
     var trigger = document.getElementById('sidebar-toggle-button');
-
+    /* Detect element to be toggled */
+    var element;
+    var toggle_class;
+    element = document.getElementById('sidebar');
+    toggle_class = 'sidebar-toggled';
+    if (element == null) {
+      element = document.getElementsByClassName('lpdoc-horiz-menu')[0];
+      toggle_class = 'lpdoc-horiz-menu-toggled';
+      if (element == null) {
+	return; /* Nothing to be toggled */
+      }
+    }
     trigger.addEventListener('click', function(e) {
       e.preventDefault();
-      element.classList.toggle('sidebar-toggled'); 
+      element.classList.toggle(toggle_class); 
       return false;
     });
   }

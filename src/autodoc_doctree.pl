@@ -1247,7 +1247,7 @@ fmt_toc(navmenu(MenuStyle), DocSt, R) :- !,
 	R0 = ~fmt_navmenu(Tree, Name, 0, MenuStyle),
 	( MenuStyle = horizontal -> % TODO: flag to add search box
 	    % horizontal menu, add search link
-	    SLink = link_to('/ciao/build/doc/ciao.html/ciaosearch', no_label),
+	    SLink = link_to(url('/ciao/build/doc/ciao.html/ciaosearch.html'), no_label),
 	    SearchR = item_env(unselmenu, simple_link('lpdoc-searchmenu', no_label, SLink, raw("&#x1F50D;"))),
 	    R1 = ~append(R0, [SearchR])
 	; R1 = R0
