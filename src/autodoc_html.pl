@@ -224,6 +224,8 @@ rw_command(itemize_env(minus, Xs), _DocSt, R) :- !,
 	R = htmlenv(ul, [class="lpdoc-itemize-minus"], Xs).
 rw_command(itemize_env(menu, Xs), _DocSt, R) :- get_layout(tmpl_layout(_, _, _)), !,
 	R = htmlenv(ul, [class="nav nav-pills nav-stacked"], Xs). % TODO: only for bootstrap framework CSS
+rw_command(itemize_env(horizontal_menu, Xs), _DocSt, R) :- !,
+	R = htmlenv(ul, [class="lpdoc-horiz-menu"], Xs).
 rw_command(itemize_env(sectpath, Xs), _DocSt, R) :- !, % TODO: special case
 	R = htmlenv(ul, [class="lpdoc-itemize-sectpath"], Xs).
 rw_command(itemize_env(_, Xs), _DocSt, R) :- !,
@@ -443,10 +445,10 @@ valid_layout(tmpl_layout(_, _, _)).
 :- discontiguous layout_icon/2.
 :- discontiguous layout_css_url/2.
 
-layout_toc(embedded, R) :- !, R = []. % no toc
-layout_toc(nav_sidebar_main, R) :- R = show_toc(sidebar).
-layout_toc(website_layout(_), R) :- !, R = show_toc(vertical_menu).
-layout_toc(tmpl_layout(_, _, _), R) :- !, R = show_toc(vertical_menu).
+layout_toc(embedded) := R :- !, R = []. % no toc
+layout_toc(nav_sidebar_main) := R :- !, R = show_toc(sidebar).
+layout_toc(website_layout(Opts)) := R :- !, ( member(vertical_navmenu, Opts) -> R = show_toc(navmenu(vertical)) ; R = [] ).
+layout_toc(tmpl_layout(_, _, _)) := R :- !, R = show_toc(navmenu(vertical)).
 
 layout_has_colophon(embedded) :- fail.
 layout_has_colophon(nav_sidebar_main).
@@ -457,7 +459,7 @@ layout_sidebar_pos(embedded, _) :- fail.
 % TODO: make it customizable
 layout_sidebar_pos(nav_sidebar_main, fixleft).
 %layout_sidebar_pos(nav_sidebar_main, right).
-layout_sidebar_pos(website_layout(_), right).
+layout_sidebar_pos(website_layout(Opts), right) :- member(vertical_navmenu, Opts), !.
 layout_sidebar_pos(tmpl_layout(_,_,_), _) :- fail.
 
 % (nondet)
@@ -519,7 +521,7 @@ fmt_sidebar(Layout, SecProps, DocSt, R) :-
 	; PreSect = ~fmt_sidebar_logo(DocSt)
 	),
 	%
-	layout_toc(Layout, TocR),
+	TocR = ~layout_toc(Layout),
 	%
 	doctree_simplify([PreSect, TocR], R).
 
@@ -625,9 +627,11 @@ fmt_layout(Layout, SidebarR, _TitleR, MainR, DocSt, R) :-
 	  ; SidebarPos = fixright -> PageClass = "lpdoc-page fixrightbar"
 	  ; fail
 	  ) ->
-	    sidebar_toogle(SidebarToogleR)
+	    SidebarToogleR = ~sidebar_toogle,
+	    SidebarEnvR = htmlenv(div, [id="sidebar", class="lpdoc-sidebar"], SidebarR)
 	; PageClass = "lpdoc-page",
-	  SidebarToogleR = []
+	  SidebarToogleR = [],
+	  SidebarEnvR = []
 	),
 	footers(DocSt, Layout, FooterInnerR, FooterOuterR),
 	doctree_simplify([%
@@ -635,7 +639,7 @@ fmt_layout(Layout, SidebarR, _TitleR, MainR, DocSt, R) :-
 	     % NavTopR, % navigation at top
 	     htmlenv(div, [class=PageClass], [
                SidebarToogleR,
-	       htmlenv(div, [id="sidebar", class="lpdoc-sidebar"], SidebarR),
+	       SidebarEnvR,
 	       htmlenv(div, [class="lpdoc-main"], [
 	         % NavTopR, % navigation before main
                  MainR,
@@ -661,25 +665,28 @@ footers(DocSt, Layout, FooterInnerR, FooterOuterR) :-
 	  FooterOuterR = []
 	).
 
-% Top bar (optional, for logo, search box, etc.)
-fmt_topbar(website_layout(_), _DocSt, R) :- !,
+% Top bar (optional, for logo, search box, horizontal navmenu, etc.)
+fmt_topbar(website_layout(Opts), _DocSt, R) :- !,
 	% TODO: generalize, any logo
 	% TODO: auto 2x images
 	LogoSrc = ~atom_codes(~img_url('ciao-logo.png')),
 	LogoSrc2x = ~append(~atom_codes(~img_url('ciao-logo@2x.png')), " 2x"),
 	IndexHRef = ~atom_codes(~prefix_htmlurl('index.html')),
 	%
-	fmt_html_template('website_search.html', [], SearchBoxR),
+	( member(vertical_navmenu, Opts) ->
+	    HorizNavMenuR = []
+	; HorizNavMenuR = [show_toc(navmenu(horizontal))]
+	),
 	%
 	R = htmlenv(div, [class="lpdoc-title"], [
-	  SearchBoxR, % must precede the image (due to float:right)
 	  htmlenv(a, [href=IndexHRef], [
 	    htmlenv1(img, [src=LogoSrc,
 	                   srcset=LogoSrc2x,
-			   height="48px",
+			   height="40px",
 	                   'ALT'="Ciao",
 			   class="lpdoc-logo"])
-	    ])
+	    ]),
+	  HorizNavMenuR
 	]).
 fmt_topbar(_, _DocSt, []).
 

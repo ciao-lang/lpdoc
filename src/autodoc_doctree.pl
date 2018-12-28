@@ -1197,7 +1197,7 @@ toc_kind := subparts      % First level of TOC subtree
           | sidebar       % Sidebar navigation
           | single(_)     % Special, single section (e.g. toc, copyright, etc.)
           | full          % Global (all except local contents)
-          | vertical_menu % Vertical menu (for web pages)
+          | navmenu(_)    % Navigation menu (for web pages)
           | global        % Global (all except local contents, hide childs)
           | local         % Local contents (current page)
           | indices.      % Indices
@@ -1241,24 +1241,23 @@ fmt_toc(single(Kind), DocSt, R) :- !,
 	    R = simple_link(default, no_label, Link, T)
 	; R = []
 	).
-fmt_toc(vertical_menu, DocSt, R) :- !,
-	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
-	    true
-	; throw(error(menu_not_computed, fmt_toc/3))
-	),
-	% Remove the root node
-	Tree0 = [toc_node(_,_,_,Tree1)],
-	% In a website layout, put root node as a separate link
-        ( custom_html_layout ->
-	    Tree0 = [toc_node(TLink,_,TProps,_)],
-	    Tree = [toc_node(TLink,string_esc("Home"),TProps,[])|Tree1]
-	; Tree = Tree1
-	),
-	%
+fmt_toc(navmenu(MenuStyle), DocSt, R) :- !,
+	Tree = ~get_menu_tree(DocSt, MenuStyle),
 	docst_currmod(DocSt, Name),
-	fmt_vertical_menu(Tree, Name, 0, R0),
-	( \+ doctree_is_empty(R0) ->
-	    R = [itemize_env(menu, R0)]
+	R0 = ~fmt_navmenu(Tree, Name, 0, MenuStyle),
+	( MenuStyle = horizontal -> % TODO: flag to add search box
+	    % horizontal menu, add search link
+	    SLink = link_to('/ciao/build/doc/ciao.html/ciaosearch', no_label),
+	    SearchR = item_env(unselmenu, simple_link('lpdoc-searchmenu', no_label, SLink, raw("&#x1F50D;"))),
+	    R1 = ~append(R0, [SearchR])
+	; R1 = R0
+	),
+	( \+ doctree_is_empty(R1) ->
+	    ( MenuStyle = horizontal ->
+	        R = [itemize_env(horizontal_menu, R1)]
+	    ; % MenuStyle = vertical
+	      R = [itemize_env(menu, R1)]
+	    )
 	; R = []
 	).
 fmt_toc(global_and_indices, DocSt, R) :- !,
@@ -1276,6 +1275,20 @@ fmt_toc(global_and_indices, DocSt, R) :- !,
 fmt_toc(TOCKind, DocSt, R) :-
 	R0 = ~fmt_toc_tree(TOCKind, DocSt),
 	R = ~fmt_toc_env(R0, DocSt, TOCKind).
+
+get_menu_tree(DocSt, MenuStyle) := Tree :-
+	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
+	    true
+	; throw(error(menu_not_computed, fmt_toc/3))
+	),
+	% Remove the root node
+	Tree0 = [toc_node(_,_,_,Tree1)],
+        ( custom_html_layout, MenuStyle = vertical -> % TODO: ad-hoc, fix
+	    % vertical menu, put root node as a separate link
+	    Tree0 = [toc_node(TLink,_,TProps,_)],
+	    Tree = [toc_node(TLink,string_esc("Home"),TProps,[])|Tree1]
+	; Tree = Tree1
+	).
 
 show_subparts(DocSt, InText) :-
 	docst_filetype(DocSt, FileType),
@@ -1336,19 +1349,19 @@ fmt_toc_tree_([toc_node(Link,T,Props,Subs)|Ss], Backend, TOCKind) := Rs :-
 	        SubRs = ~fmt_toc_tree_(Subs, Backend, TOCKind)
 	    ; SubRs = []
 	    ),
-	    fmt_toc_link(Backend, default, Link, T, SubRs, R)
+	    R = ~fmt_toc_link(Backend, default, Link, T, SubRs)
 	; Rs = Rs0
         ),
 	% Continue with the rest of nodes
 	Rs0 = ~fmt_toc_tree_(Ss, Backend, TOCKind).
 
-fmt_toc_link(texinfo, _Style, Link, Title, SubRs, R) :- !,
+fmt_toc_link(texinfo, _Style, Link, Title, SubRs) := R :- !,
 	R = [menu_link(Link, Title)|R0],
 	( SubRs = [] ->
 	    R0 = []
 	; throw(nested_texinfo_toc_not_implemented) % (not allowed, need flatten)
 	).
-fmt_toc_link(_, Style, Link, Title, SubRs, R) :- !,
+fmt_toc_link(_, Style, Link, Title, SubRs) := R :- !,
 	html_menustyle(Style, HtmlStyle), % TODO: ugly (should not be here)
 	R = [item_env(Style, simple_link(HtmlStyle, no_label, Link, Title))|R0], % TODO: to item_env?
 	( SubRs = [] ->
@@ -1472,26 +1485,26 @@ navlink_style(no_link) := Style :- !, Style = 'lpdoc-navbutton-disabled'. % deac
 navlink_style(_) := 'lpdoc-navbutton'.
 
 % ---------------------------------------------------------------------------
-% Format the node tree as a vertical menu (for web pages, only HTML)
+% Format the node tree as a navigation menu (for web pages, only HTML)
 
-fmt_vertical_menu([], _, _Depth, []).
-fmt_vertical_menu([toc_node(Link,T,Props,Subs)|Ss], Name, Depth, Rs) :-
+fmt_navmenu([], _, _Depth, _) := [].
+fmt_navmenu([toc_node(Link,T,Props,Subs)|Ss], Name, Depth, MenuStyle) := Rs :-
 	( % TODO: same condition than in 'full' toc?
           \+ doclink_is_local(Link),
 	  \+ section_prop(is_special(_), Props) ->
 	    Rs = [R|Rs0],
 	    Depth1 is Depth + 1,
-	    fmt_vertical_menu(Subs, Name, Depth1, SubRs),
+	    SubRs = ~fmt_navmenu(Subs, Name, Depth1, MenuStyle),
 	    ( Link = link_to(Name, _) -> Style = 'selmenu'
 	    ; Link = no_link -> Style = 'phonymenu'
 	    ; Style = 'unselmenu'
 	    ),
-	    ( Depth = 0 -> T2 = bf(T) ; T = T2 ), % use bold for first level
-	    fmt_toc_link(html, Style, Link, T2, SubRs, R)
+	    ( MenuStyle = vertical, Depth = 0 -> T2 = bf(T) ; T = T2 ), % use bold for first level in vertical menu
+	    R = ~fmt_toc_link(html, Style, Link, T2, SubRs)
 	; Rs = Rs0
         ),
 	% Continue with the rest of nodes
-	fmt_vertical_menu(Ss, Name, Depth, Rs0).
+	Rs0 = ~fmt_navmenu(Ss, Name, Depth, MenuStyle).
 
 % ---------------------------------------------------------------------------
 % Local sections (on this page)
