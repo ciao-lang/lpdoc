@@ -32,7 +32,7 @@ Version 3.1 (2016/12/31, 11:36:37 CEST)
         * Adding built-in toplevel (in addition to the command-line
           interface).
 
-        * The markup commands `@uref{URL}' and `@uref{Text}{URL}' has
+        * The markup commands `@uref{URL}' and `@uref{Text}{URL}' have
           been deprecated. Use `@href{URL}' and `@href{URL}{Text}'
           instead.
 
@@ -144,7 +144,7 @@ Version 3.0 (2011/7/7, 16:33:15 CEST)
                (Jose Morales)
 
              * New code for text escape fixed some problems, like
-               '`@/1'' operator not being displayed corretly in Info.
+               '`@/1'' operator not being displayed correctly in Info.
                (Jose Morales)
 
              * Colors for Prolog variables (in HTML). (Jose Morales)
@@ -230,7 +230,7 @@ Version 2.1 (2004/10/28, 16:38:17 CEST)
                `comment') now allowed. (Manuel Hermenegildo)
 
              * Made xdvi viewer, ps viewer, and xdvi zoom size be
-               paramenters (the latter since new versions of xdvi
+               parameters (the latter since new versions of xdvi
                display sizes differently than old ones). (Manuel
                Hermenegildo)
 
