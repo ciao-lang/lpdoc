@@ -157,11 +157,12 @@ ensure_lpdoc_etc_defined :-
 setting_value_or_default(Name, Value) :-
 	( get_value(Name, _) -> % Has some value
 	    get_value(Name, Value)
-	; ( Value = ~default_val(Name) ->
-            true
+	; ( Value0 = ~default_val(Name) ->
+              Value = Value0
 	  ; autodoc_message(error,
-	    "no ~w provided and no default value available.", [Name]),
-	    fail)
+	      "no ~w provided and no default value available.", [Name]),
+	    fail
+	  )
         ). 
 	
 
@@ -247,12 +248,7 @@ bibtex := 'bibtex'.
 :- export(tex/1).
 tex := 'tex'.
 
-%% Alternative (sometimes smarter about number of times it needs to run):
-%% tex := 'texi2dvi '.
-%% (but insists on checking the links, which is a pain...)
-
 %% The command that runs texindex in your system
-%% (Not needed if texi2dvi is installed)
 :- export(texindex/1).
 texindex := 'texindex'.
 

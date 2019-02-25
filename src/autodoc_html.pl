@@ -906,6 +906,9 @@ script_mathjax(X) :-
 :- use_module(library(system), [file_exists/1]).
 :- use_module(library(system_extra), [create_link/2]).
 
+:- multifile autodoc_is_operational_hook/2.
+autodoc_is_operational_hook(html, _).
+
 :- multifile autodoc_finish_hook/1.
 autodoc_finish_hook(html) :- finish_html.
 

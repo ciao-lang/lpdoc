@@ -130,17 +130,23 @@ load_doc_modules :-
 
 % Actions to generate documentation in some specific format
 gen_actions(all, Actions) :- !,
+	% All (operational) formats
         findall(Action,
 	        (setting_value(docformat, Format), % (nondet)
-		 action_for_format(Format, Action)),
+		 action_for_format(Format, Action),
+		 action_is_operational(Action)),
 		Actions).
 gen_actions(Format, Actions) :-
 	supported_file_format(Format),
         !,
 	action_for_format(Format, Action),
-	Actions = [Action].
+	( action_is_operational(Action) ->
+	    Actions = [Action]
+	; autodoc_message(error, "Output format '~w' is not operational, please check external dependencies",[Format]),
+	  Actions = [] % TODO: propagate error?
+	).
 gen_actions(Format, _Actions) :-
-	autodoc_message(error, "Output format '~w' is not supported.",[Format]).
+	autodoc_message(error, "Output format '~w' is not supported.",[Format]). % TODO: propagate error?
 
 % Action that generate one file format (not necessarily requested in the doccfg file)
 action_for_format(Format, Action) :-
@@ -151,6 +157,14 @@ action_for_format(Format, Action) :-
 	; Subtarget = cr -> get_mainmod_spec(Spec), Action = translate_doctree(Backend,Spec)
 	; throw(unknown_subtarget(Subtarget))
 	).
+
+action_is_operational(Action) :-
+	( Action = autodoc_finish(Backend) -> Alt = ''
+	; Action = autodoc_gen_alternative(Backend, Alt) -> true
+	),
+	!,
+	autodoc_is_operational(Backend, Alt).
+action_is_operational(_).
 
 % ===========================================================================
 :- doc(section, "Documentation Generation").

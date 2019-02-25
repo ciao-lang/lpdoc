@@ -240,6 +240,9 @@ fmt_structuring(SecProps, TitleR, R) :-
 
 % ===========================================================================
 
+:- multifile autodoc_is_operational_hook/2.
+autodoc_is_operational_hook(man, _).
+
 :- multifile autodoc_finish_hook/1.
 autodoc_finish_hook(man) :- true.
 

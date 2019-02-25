@@ -2,11 +2,6 @@
 
 :- doc(title,  "Bundle Hooks for LPdoc").
 
-% % ===========================================================================
-% :- doc(section, "Configuration rules").
-%
-% TODO: Add here detection of texinfo, makeinfo, etc.
-
 % ============================================================================
 :- doc(section, "Build rules").
 

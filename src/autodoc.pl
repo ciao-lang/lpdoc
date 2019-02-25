@@ -2598,14 +2598,20 @@ doctree_restore_and_write_norefs(Mod, OutFile, DocSt) :-
 
 :- doc(section, "Finish Document and Generate Alternative Output").
 
-:- multifile autodoc_finish_hook/1.
+% Check if all third-party external tools are available
+:- multifile autodoc_is_operational_hook/2.
+:- export(autodoc_is_operational/2).
+autodoc_is_operational(Backend, Alt) :- % (Alt='' for default)
+	autodoc_is_operational_hook(Backend, Alt).
 
+% Generate (main) output by this backend
+:- multifile autodoc_finish_hook/1.
 :- export(autodoc_finish/1).
 autodoc_finish(Backend) :-
 	autodoc_finish_hook(Backend).
 
+% Generate alternative output by this backend
 :- multifile autodoc_gen_alternative_hook/2.
-
 :- export(autodoc_gen_alternative/2).
 autodoc_gen_alternative(Backend, Alt) :-
 	autodoc_gen_alternative_hook(Backend, Alt).
