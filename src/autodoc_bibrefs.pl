@@ -2,7 +2,7 @@
 	[resolve_bibliography/1, 
          parse_commands/3 % TODO: a hack
 	 ],
-	[dcg, assertions, regtypes]). 
+	[dcg, assertions, regtypes, fsyntax]). 
 
 :- doc(title, "Resolution of bibliographical references").
 
@@ -25,6 +25,7 @@ dependency.").
 :- use_module(library(lists), [member/2, append/3]).
 :- use_module(library(format)).
 :- use_module(library(pathnames), [path_concat/3]).
+:- use_module(library(system), [find_executable/2, file_exists/1]).
 
 :- use_module(lpdoc(autodoc_state)).
 :- use_module(lpdoc(autodoc_doctree)).
@@ -82,21 +83,30 @@ get_resolved_refs(DocSt, RefsR, RefPairs) :-
 	%
 	write_bibtex_citations(DocSt, RAuxFile),
 	run_bibtex(Backend, TmpBase, RAuxFile, BblFile),
-	% Read BblFile and parse it
-	file_to_string(BblFile, RefsString0),
-	%
-	parse_commands(RefsString, RefsString0, []),
-	parse_docstring0(DocSt, RefsString, RefsR),
-	findall((Label,Ref), member(bibitem(Label, Ref), RefsR), RefPairs).
+	( file_exists(BblFile) ->
+	    % Read BblFile and parse it
+	    file_to_string(BblFile, RefsString0),
+	    %
+	    parse_commands(RefsString, RefsString0, []),
+	    parse_docstring0(DocSt, RefsString, RefsR),
+	    findall((Label,Ref), member(bibitem(Label, Ref), RefsR), RefPairs)
+	; % (empty if bbl is not found)
+	  RefsR = [],
+	  RefPairs = []
+	).
 
 run_bibtex(Backend, TmpBase, _RAuxFile, _BblFile) :-
 	% TODO: RAuxFile can be removed later
-	bibtex(BibTex),
-	% TODO: allowing errors here, fix
+	find_executable(~bibtex, Cmd),
+	!,
 	% This will take as input RAuxFile and output BblFile
 	cmd_logbase(Backend, 'run_bibtex', LogBase),
-	autodoc_process_call(path(BibTex), [TmpBase],
+	autodoc_process_call(Cmd, [TmpBase],
 	                     [logbase(LogBase), status(_)]).
+run_bibtex(_Backend, _TmpBase, _RAuxFile, _BblFile) :-
+	autodoc_message(error, % TODO: documentation will be wrong, mark status somewhere
+	    "'~w' command not found in path, skipping resolution of bibliographical references",
+	    [~bibtex]).
 
 :- use_module(lpdoc(autodoc_parse), [parse_docstring0/3]).
 
