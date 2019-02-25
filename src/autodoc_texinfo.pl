@@ -755,9 +755,9 @@ find_all_execs([]).
 find_all_execs([X|Xs]) :- find_executable(X,_), find_all_execs(Xs).
 
 alt_requires_cmd('') := [].
-alt_requires_cmd(dvi) := [~tex].
-alt_requires_cmd(ps) := [~tex, ~dvips].
-alt_requires_cmd(pdf) := [~tex, ~dvips, ~ps2pdf].
+alt_requires_cmd(dvi) := [~tex, ~texindex].
+alt_requires_cmd(ps) := [~tex, ~texindex, ~dvips].
+alt_requires_cmd(pdf) := [~tex, ~texindex, ~dvips, ~ps2pdf].
 alt_requires_cmd(info) := [~makeinfo].
 alt_requires_cmd(ascii) := [~makeinfo].
 
