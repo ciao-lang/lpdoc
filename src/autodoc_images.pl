@@ -101,6 +101,7 @@ cached_image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 %% which get stored in the executable on installation:
 :- use_module(library(system_extra), [del_file_nofail/1]).
 :- use_module(library(process), [process_call/3]).
+:- use_module(library(system), [find_executable/2]).
 
 image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 	atom_concat(SrcBase, SrcExt, Source),
@@ -126,8 +127,11 @@ image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 	    open(Target, write, O),
 	    format(O, "~n[Image file: ~w.eps]~n", [SrcBase]),
 	    close(O)
-        ; % TODO: use other commands?
-          process_call(path(~convertc), [Source, AbsFile], [])
+	; find_executable(~convertc, Cmd) -> % TODO: use other commands?
+	    warn_on_nosuccess(process_call(Cmd, [Source, AbsFile], [status(0)]))
+	; autodoc_message(error, % TODO: documentation will be wrong, mark status somewhere
+	        "'~w' command not found in path, skipping '~w' image conversion",
+		[~convertc, Source])
 %	; throw(error(unknown_target_ext(TargetExt), image_convert/5))
 	).
 
