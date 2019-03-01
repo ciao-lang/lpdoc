@@ -57,13 +57,13 @@
 %% :- doc(hide,[bar/1,baz/1]).
 
 %% This is a type definition in Prolog syntax: declaration and code
-:- true regtype bar(X) # "@var{X} is an acceptable kind of bar.".
+:- regtype bar(X) # "@var{X} is an acceptable kind of bar.".
 
 bar(night).
 bar(day).
 
 %% This is another type definition in Prolog syntax, with no comment.
-:- true regtype baz/1.
+:- regtype baz/1.
 
 baz(a).
 baz(b).

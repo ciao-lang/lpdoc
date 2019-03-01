@@ -2747,7 +2747,7 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 
 :- doc(bug, "Is this a bug or a wrong assertion (system.pl)? (old problem, fixed?)
 
-   :- true pred umask(OldMask, NewMask)
+   :- pred umask(OldMask, NewMask)
         : (var(OldMask), var(NewMask), OldMask == NewMask)
        $=>$ (int(OldMask), int(NewMask))
         # ""Gets the process file creation mask without changing it."".
