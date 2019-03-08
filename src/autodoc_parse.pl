@@ -9,7 +9,7 @@
 :- doc(author, "Jose F. Morales").
 
 :- use_module(library(lists), [append/3]).
-:- use_module(library(errhandle), [error_protect/2]).
+:- use_module(library(errhandle), [error_protect/1]).
 
 :- use_module(library(markdown/markdown_translate), [translate_markdown/2]).
 
@@ -532,8 +532,8 @@ handle_incl_command(Struct, _DocSt, _Verb, XNewComm) :-
 
 handle_incl_file(Mode, RelFile, DocSt, Verb, RContent) :-
 	( ( Mode = includeverbatim, % TODO: remove, add includecode instead?
-	    error_protect(find_doc_source(RelFile, File), fail)
-	  ; error_protect(find_file(RelFile, File), fail)
+	    error_protect(find_doc_source(RelFile, File))
+	  ; error_protect(find_file(RelFile, File))
 	  ),
 	  read_file(File, Content) ->
 	    autodoc_message(verbose, "-> Including file ~w in documentation string", [File]),
