@@ -21,7 +21,6 @@
 :- use_module(library(system_extra), [warn_on_nosuccess/1]).
 :- use_module(library(process), [process_call/3]).
 :- use_module(library(pathnames), [path_basename/2]).
-:- use_module(library(errhandle), [error_protect/1]).
 
 % ---------------------------------------------------------------------------
 
