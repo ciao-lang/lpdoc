@@ -21,7 +21,7 @@
     assertion_body/7,
     get_code_and_related_assertions_opts/6
    ]).
-:- use_module(library(compiler/c_itf)).
+:- use_module(library(compiler/c_itf_internal)).
 :- use_module(library(assertions/assertions_props),
 	    [predfunctor/1, propfunctor/1]).
 :- use_module(library(pathnames),

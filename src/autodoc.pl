@@ -36,7 +36,8 @@
 		get_code_and_related_assertions_opts/6,
 		use_pkg/2
 	    ]).
-:- use_module(library(compiler/c_itf)).
+:- use_module(library(compiler/c_itf), [c_itf_internal_pred/2]).
+:- use_module(library(compiler/c_itf_internal)).
 :- use_module(library(pathnames),
 	[path_basename/2, path_dirname/2, path_splitext/3, path_concat/3]).
 :- use_module(library(lists),
@@ -1169,7 +1170,7 @@ doc_interface(DocSt, R) :-
 	export_list(Base, DocSt, AllExports),
 	eliminate_hidden(AllExports, Exports),
 	% Multifiles
-	findall(F/A, def_multifile(Base, F, A, _), RMultifiles),
+	findall(F/A, def_multifile_no_internal(Base, F, A, _), RMultifiles),
 	eliminate_hidden(RMultifiles, Multifiles),
 	% Check if there are definitions to be documented
 	check_no_definitions(FileType, Exports, Multifiles, DocSt),
@@ -1232,6 +1233,10 @@ doc_interface(DocSt, R) :-
 %%%SUMM	     ModCommentR,
 	     DeclsR, ModesR, ExportsR, MultifilesR, InternalsR,
 	     ModuleDepsR].
+
+def_multifile_no_internal(Base,F,A,DefType) :-
+        def_multifile(Base,F,A,DefType),
+        \+ c_itf_internal_pred(F,A).
 
 filetype_include_or_package(include).
 filetype_include_or_package(package).
