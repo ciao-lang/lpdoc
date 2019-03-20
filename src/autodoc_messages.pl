@@ -31,7 +31,7 @@
 
 % ---------------------------------------------------------------------------
 
-:- reexport(library(compiler/c_itf_internal), [location_t/1]).
+:- reexport(library(compiler/c_itf), [location_t/1]).
 :- reexport(library(format),[format_control/1]).
 
 :- use_module(engine(stream_basic), [sourcename/1]).

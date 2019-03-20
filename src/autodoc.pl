@@ -36,8 +36,7 @@
 		get_code_and_related_assertions_opts/6,
 		use_pkg/2
 	    ]).
-:- use_module(library(compiler/c_itf), [c_itf_internal_pred/2]).
-:- use_module(library(compiler/c_itf_internal)).
+:- use_module(library(compiler/c_itf)).
 :- use_module(library(pathnames),
 	[path_basename/2, path_dirname/2, path_splitext/3, path_concat/3]).
 :- use_module(library(lists),
