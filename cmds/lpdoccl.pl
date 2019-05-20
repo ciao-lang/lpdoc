@@ -22,7 +22,7 @@ available when invoking @apl{lpdoc}:
 @end{verbatim}
 ").
 
-:- use_module(library(errhandle), [handle_error/3]).
+:- use_module(library(errhandle), [default_error_message/1]).
 :- use_module(library(messages), [error_message/2]).
 :- use_module(library(format), [format/3]).
 :- use_module(library(toplevel), [toplevel/1]). % (for built-in toplevel)
@@ -305,14 +305,9 @@ lpdoc_toplevel(Opts2) :-
 % ---------------------------------------------------------------------------
 :- doc(section, "Handle errors").
 
-handle_lpdoc_error(error(system_error(E, Goal))) :- !,
-	error_message("Execution of ~w returned ~w", [Goal, E]).
-handle_lpdoc_error(error(Error)) :- !,
-	error_message("Unknown error: ~w", [Error]).
-handle_lpdoc_error(error(Error, Where)) :- !,
-	handle_error(Error, Where, fail). % TODO: fail, abort or true?
 handle_lpdoc_error(autodoc_error(Format, Args)) :- !,
 	error_message(Format, Args).
-handle_lpdoc_error(Error) :-
-	error_message("Unknown error: ~w", [Error]).
+handle_lpdoc_error(E) :-
+	default_error_message(E),
+	fail. % TODO: fail, abort or true?
 
