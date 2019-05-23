@@ -1,4 +1,4 @@
-:- module(lpdoccl, [], [assertions, dcg, datafacts]).
+:- module(lpdoccl, [], [assertions, datafacts]).
 
 :- doc(title,"The LPdoc top-level and command-line interface").
 :- doc(author, "Manuel Hermenegildo").
