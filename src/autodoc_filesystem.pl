@@ -104,7 +104,8 @@ subtarget_is_final(fr, _) :- !.
 % Aux placed in the output dir (and not in the cache dir)
 aux_is_final(html) :- !.
 
-:- pred target_ext/3 : atm * subtarget * atm 
+:- pred target_ext/3 : atm * subtarget * term
+=> atm * subtarget * atm
    # "File extension for a format and subtarget.".
 % TODO: put everything in a temporary directory so that suffixes can be mixed?
 

@@ -81,6 +81,7 @@
 :- doc(doc/2,"This declaration provides one of the main means
    for adding @index{machine readable comments} to programs (the
    other one is adding @index{documentation strings} to assertions).").
+:- impl_defined(doc/2).
 
 doc_id_type(title, single, docstr). % warning, note (manpage)
 :- decl doc(CommentType,TitleText) => =(title) * docstring

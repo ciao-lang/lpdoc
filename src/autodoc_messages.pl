@@ -31,8 +31,8 @@
 
 % ---------------------------------------------------------------------------
 
-:- reexport(library(compiler/c_itf), [location_t/1]).
-:- reexport(library(format),[format_control/1]).
+:- use_module(library(compiler/c_itf), [location_t/1]).
+:- use_module(library(format),[format_control/1]).
 
 :- use_module(engine(stream_basic), [sourcename/1]).
 
@@ -162,9 +162,9 @@ autodoc_message(Type, Loc, Message, A, Module) :-
 %% ---------------------------------------------------------------------------
 
 :- pred optional_show_message__(Type, Loc, Text, ArgList, Module)
-	: autodoc_message_t * location_t * format_control * list * sourcename
+	: autodoc_message_t * term * format_control * list * sourcename
         # "Does the work.".
- 
+ % TODO: use location_t(Loc), use loc(unknown,0,0) as unknown location?
 optional_show_message__(Type, Loc, Message, A, Module) :-
 	( message_should_show(Type,LibType) -> 
 	  show_message__(LibType, Loc, Message, A, Module)

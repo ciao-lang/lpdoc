@@ -111,9 +111,10 @@ prepare_assets(_, _) :- !.
 
 % TODO: Add type to Opts (indices, lib-opts and paper-opts are missing!)
 :- export(get_autodoc_opts/3).
-:- pred get_autodoc_opts(Backend, Mod, Opts) : atm * atm * list(supported_option) #
-   "Get the list of documentation options @var{Opts} for the
-   @var{FileBase} file.".
+:- pred get_autodoc_opts(Backend, Mod, Opts) : atm * atm * term
+        => atm * atm * list(supported_option)
+        #"Get the list of documentation options @var{Opts} for the
+        @var{FileBase} file.".
 
 get_autodoc_opts(_Backend, Mod, Opts) :-
 	StartPage = ~setting_value_or_default(startpage),
@@ -426,9 +427,8 @@ get_last_local_version(Version, DocSt) :-
 % if applicable. 
 
 :- pred fmt_module(DocSt,Version,GlobalVers,ModR)
-        : docstate(DocSt),
-	  version_descriptor(Version), version_descriptor(GlobalVers),
-	  doctree(ModR).
+        : (docstate(DocSt), version_descriptor(Version),
+           version_descriptor(GlobalVers), doctree(ModR)).
 
 fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
 	docst_filetype(DocSt, FileType),
@@ -2218,7 +2218,8 @@ allvars([H|T]) :-
 :- use_module(library(assertions/assertions_props), [assrt_type/1]).
 
 :- pred assrt_type_text(PType,Text,Prefix,Postfix) 
-	: assrt_type * string * string * string
+        : (assrt_type(PType))
+       => (string(Text), string(Prefix), string(Postfix))
 	# "@var{Text} is an appropriate text for the header for
            @var{PType}.  Same for @var{Prefix} and @var{Postfix}".
 
