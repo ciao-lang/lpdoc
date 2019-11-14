@@ -47,78 +47,78 @@ listof_or_aorb(_) := ~aorb.
 :- prop long(L) # "@var{L} is rather long.".
 
 long(L) :- 
-	length(L,N),
-	N>100.
+    length(L,N),
+    N>100.
 
 %% Now, a series of assertions:
 :- entry p/3 
-	: ground * var * var 
-	# "This declares the entry mode of this exported predicate (i.e., 
-	  how it is called @em{from outside}).".
+    : ground * var * var 
+    # "This declares the entry mode of this exported predicate (i.e., 
+      how it is called @em{from outside}).".
 
 :- doc(p/3,"A @bf{general comment} on the predicate." ).
 %% Documenting some typical usages of the predicate
 :- pred p/3 
-	:  integer * integer * var 
-        => integer * integer * list 
-        +  (iso,no_fail) 
-        #  "This mode is nice.".
+    :  integer * integer * var 
+    => integer * integer * list 
+    +  (iso,no_fail) 
+    #  "This mode is nice.".
 :- pred p(Preds,Value,Assoc) 
-	:  var     * var     * list
-        => integer * integer * list 
-        +  no_fail # "This mode is also nice.".
+    :  var     * var     * list
+    => integer * integer * list 
+    +  no_fail # "This mode is also nice.".
 :- pred p/3 
-	=> list * integer * list 
-        +  (no_fail,no_fail) # "Just playing around.".
+    => list * integer * list 
+    +  (no_fail,no_fail) # "Just playing around.".
 :- calls p/3 
-	:  foo * bar * baz 
-        #  "This documents the calls only".
+    :  foo * bar * baz 
+    #  "This documents the calls only".
 
 :- pred q(A) 
-	:  list(A) 
-        => (list(A),ground(A)) 
-        +  no_fail
-        # "Foo".
+    :  list(A) 
+    => (list(A),ground(A)) 
+    +  no_fail
+    # "Foo".
 :- pred q(A) 
-	# "Not a bad use at all.".
+    # "Not a bad use at all.".
 
 :- pred q/2 
-	:  var * {ground,integer} 
-        => {ground,integer} * integer.
+    :  var * {ground,integer} 
+    => {ground,integer} * integer.
 :- pred q/2 
-	:: integer * list
-        #  "Non-moded types are best used this way.".
+    :: integer * list
+    #  "Non-moded types are best used this way.".
 
 :- pred p/1 : var => list.
  
 :- pred r(A) 
-	:  list(A) 
-        => (list(A,integer),ground(A)) 
-        +  no_fail 
-        #  "This uses parametric types".
+    :  list(A) 
+    => (list(A,integer),ground(A)) 
+    +  no_fail 
+    #  "This uses parametric types".
 
 :- doc(doinclude,s/1). %% Forces documentation even if not exported
 :- pred s(A) 
-	:  list(A) 
-        => (list(A),ground(A)) 
-        +  no_fail.
+    :  list(A) 
+    => (list(A),ground(A)) 
+    +  no_fail.
 
 :- modedef og(A) 
-	=> ground(A) 
-        #  "This is a @em{mode} definition: the output is ground.".
+    => ground(A) 
+    #  "This is a @em{mode} definition: the output is ground.".
 
 :- doc(doinclude,og/2).
 :- modedef og(A,T) 
-	:: regtype(A,T) 
-        => ground(A) 
-	# "This is a @em{parametric mode definition}.".
+    :: regtype(A,T) 
+    => ground(A) 
+    # "This is a @em{parametric mode definition}.".
 
 :- pred t(+A,-B,?C,@D,og(E)) 
-	:: list * list * integer * integer * list 
-        :  long(B)
-        => (ground(C),ground(A)) 
-        +  no_fail 
-        #  "This predicate uses @em{modes} extensively.".
+    :: list * list * integer * integer * list 
+    :  long(B)
+    => (ground(C),ground(A)) 
+    +  no_fail 
+    #  "This predicate uses @em{modes} extensively.".
 
 %% Some other miscellaneous assertions:
 

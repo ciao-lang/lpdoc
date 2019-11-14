@@ -7,15 +7,15 @@
 
 % Produce the HTTP response from the template and substitution
 page_response(TmplName, Subst, Response) :-
-	page_template(TmplName, Subst, HTML),
-	html2terms(Str, HTML),
-	Response = html_string(Str).
+    page_template(TmplName, Subst, HTML),
+    html2terms(Str, HTML),
+    Response = html_string(Str).
 
 % Instantiate a LPdoc template
 % TODO: ad-hoc solution (requires pregenerated .html)
 page_template(TmplName, Subst, HTML) :-
-	site_root_dir(SiteDir),
-	path_concat(SiteDir, TmplName, TmplFile),
-	file_to_string(TmplFile, TmplString),
-	html_template(TmplString, HTML, Subst).
+    site_root_dir(SiteDir),
+    path_concat(SiteDir, TmplName, TmplFile),
+    file_to_string(TmplFile, TmplString),
+    html_template(TmplString, HTML, Subst).
 

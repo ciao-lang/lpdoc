@@ -56,8 +56,8 @@ where:
       is a @em{parametric type functor}, not in the set of functors
        @tt{=/2}, @tt{^/2}, @tt{./3}.
 
-        @math{t_1, @ldots, t_m} are @em{regular type expressions},
-        and @math{y} is a @em{term variable}.
+    @math{t_1, @ldots, t_m} are @em{regular type expressions},
+    and @math{y} is a @em{term variable}.
   @end{enumerate}
 
  @item Each term variable occurs at most once in the clause's body

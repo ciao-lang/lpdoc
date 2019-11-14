@@ -89,7 +89,7 @@
    See @pred{option_comment/2} for a description of these options.
 
    The default values are: @tt{no_bugs}, @tt{no_patches}.".
-	
+    
 :- default_def(doc_mainopts/1, [doc_mainopts(no_bugs)]).
 :- default_def(doc_mainopts/1, [doc_mainopts(no_patches)]).
 
@@ -293,7 +293,7 @@
   means no messages printed, @tt{normal} means standard messages, and
   @tt{all} means more detailed messages. See @pred{autodoc_message_t/1}.".
 :- default_def(verbosity/1, [
-	verbosity(progress)
+    verbosity(progress)
 ]).
 
 :- export(warning_level/1).
@@ -302,7 +302,7 @@
    printed, @tt{normal} means errors and warnings, @tt{all} means also
    notes.  See @pred{autodoc_message_t/1}.".
 :- default_def(warning_level/1, [
-	warning_level(progress)
+    warning_level(progress)
 ]).
 
 % ---------------------------------------------------------------------------

@@ -1,9 +1,9 @@
 %% The module headers produce documentation on the module interface 
 %% Exported predicates (+ properties and types) are documented by default
 :- module(example_module,
-          [bar/1,baz/1,aorb/1,tree_of/2,list_or_aorb/2,q/2,r/1, p/1, p/5, u/3,
-	   long/1, w/1, mytype/1, t/5, s/1, q/1],
-          [assertions,basicmodes,fsyntax,regtypes,hiord,nativeprops]).  
+      [bar/1,baz/1,aorb/1,tree_of/2,list_or_aorb/2,q/2,r/1, p/1, p/5, u/3,
+       long/1, w/1, mytype/1, t/5, s/1, q/1],
+      [assertions,basicmodes,fsyntax,regtypes,hiord,nativeprops]).  
  
 %% We import two types: list/1 and list/2 (now in basic_props, which is 
 %% exported by default from assertions). 
@@ -87,9 +87,9 @@ tree_of(T) := tree(~call(T),~tree_of(T),~tree_of(T)).
 
 %% tree_of(_, void).
 %% tree_of(T, tree(X,L,R)) :- 
-%% 	T(X), 
-%% 	tree_of(T,L), 
-%% 	tree_of(T,R).
+%%      T(X), 
+%%      tree_of(T,L), 
+%%      tree_of(T,R).
 
 :- regtype list_or_aorb/2.
 
@@ -111,8 +111,8 @@ list_or_aorb(_T) := ~aorb.
 :- prop long(L) # "@var{L} is rather long.".
 
 long(L) :- 
-	length(L,N),
-	N>100.
+    length(L,N),
+    N>100.
 
 %% Now, a series of assertions:
 %% 
@@ -134,33 +134,33 @@ foo(_).
 :- doc(p/3,"A @bf{general comment} on the predicate." ).
 %% Documenting some typical usages of the predicate
 :- pred p/3 
-        : int * int * var 
+    : int * int * var 
        => int * int * list 
-        + (iso,not_fails) 
-        # "This mode is nice.".
+    + (iso,not_fails) 
+    # "This mode is nice.".
 :- pred p(Preds,Value,Assoc) 
-        : var * var * list
+    : var * var * list
        => int * int * list 
-        + not_fails # "This mode is also nice.".
+    + not_fails # "This mode is also nice.".
 :- pred p/3 
        => list * int * list 
-        + (not_fails,not_fails) 
-        # "Just playing around.".
+    + (not_fails,not_fails) 
+    # "Just playing around.".
 
 :- pred q(A) 
-        : list(A) 
+    : list(A) 
        => (list(A),gnd(A)) 
-        + not_fails
-        # "Foo".
+    + not_fails
+    # "Foo".
 :- pred q(A) 
-        # "Not a bad use at all.".
+    # "Not a bad use at all.".
 
 :- pred q/2 
-        : var * {gnd,int} 
+    : var * {gnd,int} 
        => {gnd,int} * int.
 :- pred q/2 
-        :: int * list
-        # "Non-moded types are best used this way.".
+    :: int * list
+    # "Non-moded types are best used this way.".
 
 q(_).
 
@@ -169,39 +169,39 @@ q(_).
 p(_).
  
 :- pred r(A) 
-        : list(A) 
+    : list(A) 
        => (list(A,int),gnd(A)) 
-        + not_fails
-        # "This uses parametric types".
+    + not_fails
+    # "This uses parametric types".
 
 :- doc(doinclude,s/1). %% Forces documentation even if not exported
 :- pred s(A) 
-        : list(A) 
+    : list(A) 
        => (list(A),gnd(A)) 
-        + not_fails.
+    + not_fails.
 
 s(_).
 
 :- doc(doinclude,[list/2,list/1]). %% Forces (local) documentation even if 
-                                       %% not exported 
+                                   %% not exported 
 
 :- modedef og(A) 
        => gnd(A) 
-        # "This is a @em{mode} definition: the output is ground.".
+    # "This is a @em{mode} definition: the output is ground.".
 
 :- doc(doinclude,og/2).
 
 :- modedef og(A,T) 
-        :: T(A) 
-        => gnd(A) 
-        #  "This is a @em{parametric mode definition}.".
+    :: T(A) 
+    => gnd(A) 
+    #  "This is a @em{parametric mode definition}.".
 
 :- pred t(+A,-B,?C,@D,og(E)) 
-        :: list * list * int * int * list 
-        :  long(B)
-        => (gnd(C),gnd(A)) 
-        +  not_fails 
-        #  "This predicate uses @em{modes} extensively.".
+    :: list * list * int * int * list 
+    :  long(B)
+    => (gnd(C),gnd(A)) 
+    +  not_fails 
+    #  "This predicate uses @em{modes} extensively.".
 
 t(_, _, _, _, _).
 

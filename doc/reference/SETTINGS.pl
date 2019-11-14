@@ -16,39 +16,39 @@ filepath := ~ciaofilepath_common.
 output_name := 'lpdoc'.
 
 doc_structure := 
-	'lpdoc_ref_man'-[
-	  'Generating',
-	  'Writing'-[
-	      'doccfg/doccfg_doc', % (document the trait)
- 	      'doccfg/doccfg_props' % (document option values)
-          ],
-	  'comments'-[
-	      'doccomments_doc' % Maturity?
-          ],
-	  'assertions/assertions_doc'-[
-	      'assertions/assertions_props',
-	      'regtypes/regtypes_doc',
-	      'basic_props',
-	      'assertions/native_props',
-	      'metaprops/meta_props'
-          ],
-          'lpdoc_examples'
-	  %
-	  % TODO: If we want to include it, it should be in a
-          %	    different manual so that we do not mess the
-          %	    current indices (e.g., q/1 is not a predicate from
-          %	    LPdoc)
-%	  'example_module',
-	  %
-%	  'rtchecks_doc',
-%	  'unittest'-
+    'lpdoc_ref_man'-[
+      'Generating',
+      'Writing'-[
+          'doccfg/doccfg_doc', % (document the trait)
+          'doccfg/doccfg_props' % (document option values)
+      ],
+      'comments'-[
+          'doccomments_doc' % Maturity?
+      ],
+      'assertions/assertions_doc'-[
+          'assertions/assertions_props',
+          'regtypes/regtypes_doc',
+          'basic_props',
+          'assertions/native_props',
+          'metaprops/meta_props'
+      ],
+      'lpdoc_examples'
+      %
+      % TODO: If we want to include it, it should be in a
+      %         different manual so that we do not mess the
+      %         current indices (e.g., q/1 is not a predicate from
+      %         LPdoc)
+%         'example_module',
+      %
+%         'rtchecks_doc',
+%         'unittest'-
 %             ['unittest/unittest_props',
-%		'unittestdecls_doc',
-%		% 'unittest/unittest_utils',
-%		'unittest/unittest_statistics',
-%		'unittest/unittest_examples'
-%	     ],
-        ].
+%               'unittestdecls_doc',
+%               % 'unittest/unittest_utils',
+%               'unittest/unittest_statistics',
+%               'unittest/unittest_examples'
+%            ],
+    ].
 
 bibfile := ~ciao_bibfile.
 

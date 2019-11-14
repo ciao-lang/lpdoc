@@ -70,11 +70,11 @@ supported_option := status.
 
 :- export(option_comment/2).
 :- pred option_comment(Option,Text) 
-	=> supported_option * string
-        # "@var{Option} is a documentation option which is
-          supported. These options can be applied to the main file or
-          to the components.  @var{Text} describes the effect of
-          selecting that option.".
+    => supported_option * string
+    # "@var{Option} is a documentation option which is
+      supported. These options can be applied to the main file or
+      to the components.  @var{Text} describes the effect of
+      selecting that option.".
 
 :- doc(option_comment(Option,Text), "The currently supported options
    are: @includedef{option_comment/2}").
@@ -119,11 +119,11 @@ option_comment(regtype_props,"Include in the doc for regtypes the global prop"||
 option_comment(onesided, "For printing on one side (default is two).").
 option_comment(no_math, "Disable mathematical environments.").
 option_comment(tests,
-	"Document all test assertions (default is only those that have 'example' as a comp property).").
+    "Document all test assertions (default is only those that have 'example' as a comp property).").
 option_comment(no_examples,
-	"Document no test assertions, i.e., also not those that have 'example' as a comp property.").
+    "Document no test assertions, i.e., also not those that have 'example' as a comp property.").
 option_comment(status,
-	"Document also the status of assertions (default is no status, more appropriate for manuals).").
+    "Document also the status of assertions (default is no status, more appropriate for manuals).").
 
 :- doc(section, "Supported formats").
 

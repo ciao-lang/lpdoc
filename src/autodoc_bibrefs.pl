@@ -1,8 +1,8 @@
 :- module(autodoc_bibrefs,
-	[resolve_bibliography/1, 
-         parse_commands/3 % TODO: a hack
-	 ],
-	[dcg, assertions, regtypes, fsyntax]). 
+    [resolve_bibliography/1, 
+     parse_commands/3 % TODO: a hack
+     ],
+    [dcg, assertions, regtypes, fsyntax]). 
 
 :- doc(title, "Resolution of bibliographical references").
 
@@ -10,8 +10,8 @@
 :- doc(author, "Jose F. Morales").
 
 :- doc(module, "This module provides a predicate to resolve the
-	bibliographical references found during the generation of
-	documentation.").
+    bibliographical references found during the generation of
+    documentation.").
 
 :- doc(bug, "Using external BibTeX command to resolve references. We
 can merge with @apl{bibutils} in order to get rid of this
@@ -48,65 +48,65 @@ dependency.").
  Both the docstring and label/reference pairs are kept in the
  @var{DocSt}, and used later to map symbolic references to textual
  labels.".
-         
+     
 % - Generate references, parse them, extract RefPairs
 % - Store the results (in the docstate)
 
 resolve_bibliography(DocSt) :-
-	autodoc_message(verbose,"Resolving bibliographical references"),	
-	( no_citations(DocSt) ->
-	    % We had no citations, do nothing
-	    % (bibtex would fail otherwise)
-	    RefsR = [],
-	    RefPairs = []
-	; % Building references BiBTeX
-	  get_resolved_refs(DocSt, RefsR, RefPairs)
-	),
-	% Save results in the docstate
-	% TODO: at this time this is more convenient than asserting data
-	docst_mvar_lookup(DocSt, biblio_doctree, RefsR),
-	docst_mvar_lookup(DocSt, biblio_pairs, RefPairs),
-	autodoc_message(verbose,"Done resolving bibliographical references").
+    autodoc_message(verbose,"Resolving bibliographical references"),        
+    ( no_citations(DocSt) ->
+        % We had no citations, do nothing
+        % (bibtex would fail otherwise)
+        RefsR = [],
+        RefPairs = []
+    ; % Building references BiBTeX
+      get_resolved_refs(DocSt, RefsR, RefPairs)
+    ),
+    % Save results in the docstate
+    % TODO: at this time this is more convenient than asserting data
+    docst_mvar_lookup(DocSt, biblio_doctree, RefsR),
+    docst_mvar_lookup(DocSt, biblio_pairs, RefPairs),
+    autodoc_message(verbose,"Done resolving bibliographical references").
 
 % Write the references, call bibtex, parse the output, and extract
 % RefPairs ((Label,Ref) pairs from bibitem commands, used later to map
 % symbolic refs to textual labels).
 get_resolved_refs(DocSt, RefsR, RefPairs) :-
-	% TODO: BblFile, RAuxFile could be removed later
-	docst_currmod(DocSt, Name),
-	docst_backend(DocSt, Backend),
-	get_cache_dir0(Backend, CacheDir),
-	path_concat(CacheDir, Name, TmpBase0),
-	atom_concat([TmpBase0, '_tmp'], TmpBase),
-	atom_concat([TmpBase, '.bbl'], BblFile),
-	atom_concat([TmpBase, '.aux'], RAuxFile),
-	%
-	write_bibtex_citations(DocSt, RAuxFile),
-	run_bibtex(Backend, TmpBase, RAuxFile, BblFile),
-	( file_exists(BblFile) ->
-	    % Read BblFile and parse it
-	    file_to_string(BblFile, RefsString0),
-	    %
-	    parse_commands(RefsString, RefsString0, []),
-	    parse_docstring0(DocSt, RefsString, RefsR),
-	    findall((Label,Ref), member(bibitem(Label, Ref), RefsR), RefPairs)
-	; % (empty if bbl is not found)
-	  RefsR = [],
-	  RefPairs = []
-	).
+    % TODO: BblFile, RAuxFile could be removed later
+    docst_currmod(DocSt, Name),
+    docst_backend(DocSt, Backend),
+    get_cache_dir0(Backend, CacheDir),
+    path_concat(CacheDir, Name, TmpBase0),
+    atom_concat([TmpBase0, '_tmp'], TmpBase),
+    atom_concat([TmpBase, '.bbl'], BblFile),
+    atom_concat([TmpBase, '.aux'], RAuxFile),
+    %
+    write_bibtex_citations(DocSt, RAuxFile),
+    run_bibtex(Backend, TmpBase, RAuxFile, BblFile),
+    ( file_exists(BblFile) ->
+        % Read BblFile and parse it
+        file_to_string(BblFile, RefsString0),
+        %
+        parse_commands(RefsString, RefsString0, []),
+        parse_docstring0(DocSt, RefsString, RefsR),
+        findall((Label,Ref), member(bibitem(Label, Ref), RefsR), RefPairs)
+    ; % (empty if bbl is not found)
+      RefsR = [],
+      RefPairs = []
+    ).
 
 run_bibtex(Backend, TmpBase, _RAuxFile, _BblFile) :-
-	% TODO: RAuxFile can be removed later
-	find_executable(~bibtex, Cmd),
-	!,
-	% This will take as input RAuxFile and output BblFile
-	cmd_logbase(Backend, 'run_bibtex', LogBase),
-	autodoc_process_call(Cmd, [TmpBase],
-	                     [logbase(LogBase), status(_)]).
+    % TODO: RAuxFile can be removed later
+    find_executable(~bibtex, Cmd),
+    !,
+    % This will take as input RAuxFile and output BblFile
+    cmd_logbase(Backend, 'run_bibtex', LogBase),
+    autodoc_process_call(Cmd, [TmpBase],
+                         [logbase(LogBase), status(_)]).
 run_bibtex(_Backend, _TmpBase, _RAuxFile, _BblFile) :-
-	autodoc_message(error, % TODO: documentation will be wrong, mark status somewhere
-	    "'~w' command not found in path, skipping resolution of bibliographical references",
-	    [~bibtex]).
+    autodoc_message(error, % TODO: documentation will be wrong, mark status somewhere
+        "'~w' command not found in path, skipping resolution of bibliographical references",
+        [~bibtex]).
 
 :- use_module(lpdoc(autodoc_parse), [parse_docstring0/3]).
 
@@ -115,36 +115,36 @@ run_bibtex(_Backend, _TmpBase, _RAuxFile, _BblFile) :-
    BibTeX.".
 
 write_bibtex_citations(DocSt, RAuxFile) :-
-	findall(F, find_bibfile(F), BibFiles),
-	%
-	open(RAuxFile, write, CS),
-	% Write all citations
-	( % (failure-driven loop)
-	  docst_gdata_query(DocSt, citation(RefClean)),
-	    format(CS, "\\citation{~s}\n", [RefClean]),
-	    fail
-	; true
-	),
-	% Our custom style that writes cites in pseudo-lpdoc notation
-	Style = 'docstring', 
-	( setting_value(lpdoc_etc, EtcDir) -> true ; fail ),
-	path_concat(EtcDir, Style, StyleFile),
-	%
-	format(CS, "\\bibstyle{~w}~n", [StyleFile]),
-	% The .bib files required to resolve references
-	format(CS, "\\bibdata{", []),
-	write_list_sep(BibFiles, ',', CS),
-	format(CS, "}~n", []),
-	%
-	close(CS).
+    findall(F, find_bibfile(F), BibFiles),
+    %
+    open(RAuxFile, write, CS),
+    % Write all citations
+    ( % (failure-driven loop)
+      docst_gdata_query(DocSt, citation(RefClean)),
+        format(CS, "\\citation{~s}\n", [RefClean]),
+        fail
+    ; true
+    ),
+    % Our custom style that writes cites in pseudo-lpdoc notation
+    Style = 'docstring', 
+    ( setting_value(lpdoc_etc, EtcDir) -> true ; fail ),
+    path_concat(EtcDir, Style, StyleFile),
+    %
+    format(CS, "\\bibstyle{~w}~n", [StyleFile]),
+    % The .bib files required to resolve references
+    format(CS, "\\bibdata{", []),
+    write_list_sep(BibFiles, ',', CS),
+    format(CS, "}~n", []),
+    %
+    close(CS).
 
 find_bibfile(F) :-
-	setting_value_or_default(bibfile, BF),
-	find_file(BF, F).
+    setting_value_or_default(bibfile, BF),
+    find_file(BF, F).
 
 % There are no citations in refs_closure
 no_citations(DocSt) :-
-	\+ docst_gdata_query(DocSt, citation(_)).
+    \+ docst_gdata_query(DocSt, citation(_)).
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Special parser for our custom BBL output").
@@ -154,121 +154,121 @@ no_citations(DocSt) :-
 parse_commands([]) --> [].
 %% Some special commands, handled directly
 parse_commands(" " || Tail) --> "~", !,
-	parse_commands(Tail).
+    parse_commands(Tail).
 parse_commands(" " || Tail) --> start, " ", !, % TODO: This was '@ ' (or '\ '), correct?
-	parse_commands(Tail).
+    parse_commands(Tail).
 parse_commands("_" || Tail) --> start, "_", !,
-	parse_commands(Tail).
+    parse_commands(Tail).
 parse_commands("~" || Tail) --> start, "~{}", !,
-	parse_commands(Tail).
+    parse_commands(Tail).
 parse_commands("&" || Tail) --> start, "&", !,
-	parse_commands(Tail).
+    parse_commands(Tail).
 parse_commands(Tail) --> start, "-", !, % (hyphenation, ignored)
-	parse_commands(Tail).
+    parse_commands(Tail).
 %% Some accents without braces (e.g. \'a ===> \'{a})
 parse_commands(NCommand) -->
-	( open ; [] ), % a kludge to void entering the 'alt syntax' clause
-	               % (otherwise, it cannot parse {\'e}) 
-	start,
-	command_char(Accent),
-	{ accent(Accent) },
-	accented_char(X),
-	!,
-	{ handle_command([Accent], [X], NCommand, Tail) },
-	parse_commands(Tail).
+    ( open ; [] ), % a kludge to void entering the 'alt syntax' clause
+                   % (otherwise, it cannot parse {\'e}) 
+    start,
+    command_char(Accent),
+    { accent(Accent) },
+    accented_char(X),
+    !,
+    { handle_command([Accent], [X], NCommand, Tail) },
+    parse_commands(Tail).
 %% Command(s) with two bodies
 parse_commands(NCommand) -->
-	start,
-	command_chars1(Chars),
-	open,
-	{ Chars = "htmladdnormallink"
-	; Chars = "bibitem"
-	},
-	balanced_braces(1, CommandBody1),
-	separators,
-	open,
-	balanced_braces(1, CommandBody2),
-	!,
-	{ handle_command_2b(Chars, CommandBody1, CommandBody2, NCommand, Tail) },
-	parse_commands(Tail).
+    start,
+    command_chars1(Chars),
+    open,
+    { Chars = "htmladdnormallink"
+    ; Chars = "bibitem"
+    },
+    balanced_braces(1, CommandBody1),
+    separators,
+    open,
+    balanced_braces(1, CommandBody2),
+    !,
+    { handle_command_2b(Chars, CommandBody1, CommandBody2, NCommand, Tail) },
+    parse_commands(Tail).
 %% Generic commands, with space after them
 parse_commands(NCommand) -->
-	start,
-	command_chars1(Chars),
-	space_like,
-	!,
-	{handle_command(Chars, [], NCommand, Tail)},
-	parse_commands(Tail).
+    start,
+    command_chars1(Chars),
+    space_like,
+    !,
+    {handle_command(Chars, [], NCommand, Tail)},
+    parse_commands(Tail).
 %% Commands, with no space after them
 parse_commands(NCommand) -->
-	start,
-	command_chars1(Chars),
-	open,
-	balanced_braces(1, CommandBody),
-	!,
-	{handle_command(Chars, CommandBody, NCommand, Tail)},
-	parse_commands(Tail).
+    start,
+    command_chars1(Chars),
+    open,
+    balanced_braces(1, CommandBody),
+    !,
+    {handle_command(Chars, CommandBody, NCommand, Tail)},
+    parse_commands(Tail).
 %% Commands, with no space after them, alt syntax
 parse_commands(NCommand) -->
-	open,
-	start,
-	command_chars1(Chars),
-	separators,
-	balanced_braces(1, CommandBody),
-	!,
-	{handle_command(Chars, CommandBody, NCommand, Tail)},
-	parse_commands(Tail).
+    open,
+    start,
+    command_chars1(Chars),
+    separators,
+    balanced_braces(1, CommandBody),
+    !,
+    {handle_command(Chars, CommandBody, NCommand, Tail)},
+    parse_commands(Tail).
 %% Lone braces: ignore!
 parse_commands(Tail) -->
-	brace,
-	!,
-	parse_commands(Tail).
+    brace,
+    !,
+    parse_commands(Tail).
 %% Normal chars
 parse_commands([X|T]) -->
-	normal_char(X),
-	!,
-	parse_commands(T).
+    normal_char(X),
+    !,
+    parse_commands(T).
 %% Else warning, skip one, continue
 parse_commands(Y, Z, W) :-
-	Z = [A, B, C, D, E, F, G, H|X],
-	!,
-	warning_str([A, B, C, D, E, F, G, H]),
-	parse_commands(Y, [B, C, D, E, F, G, H|X], W).
+    Z = [A, B, C, D, E, F, G, H|X],
+    !,
+    warning_str([A, B, C, D, E, F, G, H]),
+    parse_commands(Y, [B, C, D, E, F, G, H|X], W).
 %% At end, just give up
 parse_commands(Z, Z, _).
 
 warning_str([A, B, C, D, E, F, G, H]) :-
-	autodoc_message(error, "Parsing error around ~s \n", [[A, B, C, D, E, F, G, H]]).
+    autodoc_message(error, "Parsing error around ~s \n", [[A, B, C, D, E, F, G, H]]).
 
 %% Not empty char sequence
 command_chars1([C|Cs]) -->
-	command_char(C),
-	command_chars(Cs).
+    command_char(C),
+    command_chars(Cs).
 
 command_chars([C|Cs]) -->
-	command_char(C),
-	command_chars(Cs).
+    command_char(C),
+    command_chars(Cs).
 command_chars([]) -->
-	[].
+    [].
 
 command_args([Arg|RArgs]) -->
-	all_chars(Arg),
-	close,
-	spaces,
-	open,
-	!,
-	command_args(RArgs).
+    all_chars(Arg),
+    close,
+    spaces,
+    open,
+    !,
+    command_args(RArgs).
 command_args([Arg]) -->
-	all_chars(Arg),
-	close.
+    all_chars(Arg),
+    close.
 
 % TODO: duplicated from autodoc_parse
 all_chars([C, 0'{|Cs]) --> { cmdchar(C) }, [C], open, !,
-	all_chars(Cs).
+    all_chars(Cs).
 all_chars([C, 0'}|Cs]) --> { cmdchar(C) }, [C], close, !,
-	all_chars(Cs).
+    all_chars(Cs).
 all_chars([C, C|Cs]) --> { cmdchar(C) }, [C, C], !,
-	all_chars(Cs).
+    all_chars(Cs).
 all_chars([C|Cs]) --> normal_char(C), !, all_chars(Cs).
 all_chars([]) --> [].
 
@@ -323,47 +323,47 @@ accent(0'~).
 
 balanced_braces(1, []) --> "}", !.
 balanced_braces(N, [C, C|Rest]) --> { cmdchar(C) }, [C, C], !,
-	balanced_braces(N, Rest).
+    balanced_braces(N, Rest).
 balanced_braces(N, [C, 0'{|Rest]) --> { cmdchar(C) }, [C], "{", !,
-	balanced_braces(N, Rest).
+    balanced_braces(N, Rest).
 balanced_braces(N, [C, 0'}|Rest]) --> { cmdchar(C) }, [C], "}", !,
-	balanced_braces(N, Rest).
+    balanced_braces(N, Rest).
 balanced_braces(N, [0'{|Rest]) --> "{", !,
-	{N1 is N+1},
-	balanced_braces(N1, Rest).
+    {N1 is N+1},
+    balanced_braces(N1, Rest).
 balanced_braces(N, [0'}|Rest]) --> "}", !,
-	{N1 is N-1},
-	balanced_braces(N1, Rest).
+    {N1 is N-1},
+    balanced_braces(N1, Rest).
 balanced_braces(N, [X|Rest]) -->
-	[X],
-	balanced_braces(N, Rest).
+    [X],
+    balanced_braces(N, Rest).
 
 handle_command(Command, [], NCommand, Tail) :- !,
-	new_command(Command, sp, NewCommand, NewBody),
-	handle_body(NewCommand, NewBody, NCommand, Tail).
+    new_command(Command, sp, NewCommand, NewBody),
+    handle_body(NewCommand, NewBody, NCommand, Tail).
 handle_command(Command, Body, NCommand, Tail) :-
-	new_command(Command, Body, NewCommand, NewBody),
-	handle_body(NewCommand, NewBody, NCommand, Tail).
+    new_command(Command, Body, NewCommand, NewBody),
+    handle_body(NewCommand, NewBody, NCommand, Tail).
 
 handle_command_2b("htmladdnormallink", Body1, Body2, NewCommand, Tail) :- !,
-	parse_commands(NBody1, Body1, []),
-	parse_commands(NBody2, Body2, []),
-	append(NBody1, " (@href{", T1),
-	append(T1, NBody2, T2),
-	append(T2, "})" || Tail, NewCommand).
+    parse_commands(NBody1, Body1, []),
+    parse_commands(NBody2, Body2, []),
+    append(NBody1, " (@href{", T1),
+    append(T1, NBody2, T2),
+    append(T2, "})" || Tail, NewCommand).
 handle_command_2b(Command, Body1, Body2, NewCommand, Tail) :- !,
-	append("@"||Command, "{"||Body1, T1),
-	append(T1, "}{"||Body2, T2),
-	append(T2, "}"||Tail, NewCommand).
+    append("@"||Command, "{"||Body1, T1),
+    append(T1, "}{"||Body2, T2),
+    append(T2, "}"||Tail, NewCommand).
 
 handle_body(NewCommand, sp, NCommand, Tail) :- !,
-	append([0'@|NewCommand], [0' |Tail], NCommand).
+    append([0'@|NewCommand], [0' |Tail], NCommand).
 handle_body(NewCommand, nsp, NCommand, Tail) :- !,
-	append([0'@|NewCommand], Tail, NCommand).
+    append([0'@|NewCommand], Tail, NCommand).
 handle_body(NewCommand, NewBody, NCommand, Tail) :-
-	parse_commands(ParsedNewBody, NewBody, []),
-	append([0'@|NewCommand], [0'{|ParsedNewBody], T1),
-	append(T1,               [0'}|Tail],          NCommand).
+    parse_commands(ParsedNewBody, NewBody, []),
+    append([0'@|NewCommand], [0'{|ParsedNewBody], T1),
+    append(T1,               [0'}|Tail],          NCommand).
 
 % Translation of some formatting TeX commands to lpdoc docstring
 % TODO: what is this command?
@@ -385,9 +385,9 @@ new_command(Command,  Body,  Command, Body) :- !.
 
 write_list_sep([], _Sep, _O) :- !.
 write_list_sep([E], _Sep, O) :- !,
-	format(O, "~w", [E]).
+    format(O, "~w", [E]).
 write_list_sep([H|T], Sep, O) :-
-	format(O, "~w~w", [H, Sep]),
-	write_list_sep(T, Sep, O).
+    format(O, "~w~w", [H, Sep]),
+    write_list_sep(T, Sep, O).
 
 

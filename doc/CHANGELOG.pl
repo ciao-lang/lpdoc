@@ -24,152 +24,152 @@
 :- doc(version(3*0+0,2011/07/07,16:33*15+'CEST'), "
    @begin{itemize}
    @item Major redesign of the documentation generator:
-         @begin{itemize}
-         @item LPdoc redesigned to work internally with a 'doctree'
-               representation (a-la Pillow). (Jose Morales)
-         @item A native HTML backend (not generated from texi). (Jose
-               Morales)
-         @item Allow custom website generation from LPdoc documents.
-               (Jose Morales)
-         @item Two passes for document generation, allowing resolution
-               of bibliographical references in all backends
-               (including HTML). (Jose Morales)
-         @item @tt{doc_structure/1} in @tt{SETTINGS} allows structure
-               in LPdoc documents (sections can really be nested
-               inside parts). (Jose Morales)
-         @item @tt{:- doc(_,_)} is the recommended syntax for
-               documentation comments now.
-         @item Replacing @tt{:- comment} by @tt{:- doc} in LPdoc code,
-               updated documentation. (Jose Morales)
-         @end{itemize}
+     @begin{itemize}
+     @item LPdoc redesigned to work internally with a 'doctree'
+           representation (a-la Pillow). (Jose Morales)
+     @item A native HTML backend (not generated from texi). (Jose
+           Morales)
+     @item Allow custom website generation from LPdoc documents.
+           (Jose Morales)
+     @item Two passes for document generation, allowing resolution
+           of bibliographical references in all backends
+           (including HTML). (Jose Morales)
+     @item @tt{doc_structure/1} in @tt{SETTINGS} allows structure
+           in LPdoc documents (sections can really be nested
+           inside parts). (Jose Morales)
+     @item @tt{:- doc(_,_)} is the recommended syntax for
+           documentation comments now.
+     @item Replacing @tt{:- comment} by @tt{:- doc} in LPdoc code,
+           updated documentation. (Jose Morales)
+     @end{itemize}
 
    @item General improvements and bug fixes:
-         @begin{itemize}
-         @item Designed a logo for LPdoc. (Jose Morales)
-         @item LPdoc comments can now be written using @tt{%!}
-               style comment syntax. (Manuel Hermenegildo)
-         @item Now commas etc. are allowed in section names (so that
-               they can be used in other formats). They are eliminated
-               automatically in texi and info. This avoids wrong
-               section names --and thus dangling pointers-- in
-               generated texinfo files. (Manuel Hermenegildo)
-         @item Eliminated superfluous copy of summary in info mode.
-               (Manuel Hermenegildo)
-         @item Eliminated unsupported chars that broke texi manual
-               cross-referencing. (Manuel Hermenegildo)
-         @item Improved treatment of accents (dotless i and dotless j,
-               \o, etc.). (Manuel Hermenegildo)
-         @item Initial size passed to @tt{xdvi} more appropriate for
-               current @tt{xdvis}. (Manuel Hermenegildo)
-         @item Accents in bibliography fixed.  (Manuel Hermenegildo)
-         @item Now repeated sections are disambiguated. (Manuel
-               Hermenegildo)
-         @item Eliminated unnecessary escaping (especially for
-               &). (Manuel Hermenegildo)
-         @item Better detection of when version is not
-               available. (Manuel Hermenegildo)
-         @item Added new @tt{doc(address, _)} comment, which is the
-               right place to put address/contact information in
-               manuals (Jose Morales)
-         @item Added new @tt{@@version@{@}} command (expands to the
-               version of the software to be documented). (Jose
-               Morales)
-         @item Shorter @tt{SETTINGS.pl} files (with some rudimentary,
-               assertion-based checking of options) (Jose Morales)
-         @item Bug fix: '@tt{@@@@ include}' and '@tt{@@@@
-               includeverbatim}' are no longer a problem (space can be
-               omitted) (Jose Morales)
-         @item Added and documented a new @tt{documentation} filetype
-               (for some parts of the manual that contains only
-               documentation). That avoids the old trick of declaring
-               a fake @tt{main/0} predicate. (Jose Morales)
-         @item Style for subtitle added automatically (in texinfo, it
-               is @em{emph}; in HTML it is normal text with smaller
-               font). The entries in @tt{subtitle_extra} are
-               free-form. (Jose Morales)
-         @item Bugs and changelog appear now in the global links in
-               the HTML backend. (Jose Morales)
-         @item Merged code that documented @tt{.pl} and @tt{.lpdoc}
-               files. (Jose Morales)
-         @item No copyright section if no copyright comment. (Jose Morales)
-         @item Auxiliary documentation files ending in '@tt{_doc}'
-               displayed incorrect names for the module (ending in
-               '@tt{_doc}'). E.g., @tt{use_package(foo_doc)} was
-               displayed instead of
-               @tt{use_package(foo_doc)}. Fixed. (Jose Morales)
-         @item In @tt{verbatim} enviroments, new-line characters are
-               removed from the beginning. (Jose Morales)
-         @item Fix wrong use of @tt{erase/1} for clauses (which
-               resulted in segmentation fault when documentation
-               generation failed) (Jose Morales)
-         @item Fixed image generation (now uses @tt{.png} files for
-               HTML) (Jose Morales)
-         @item New code for text escape fixed some problems, like
-               '@tt{@@/1}' operator not being displayed correctly in
-               Info. (Jose Morales)
-         @item Colors for Prolog variables (in HTML). (Jose Morales)
-         @item Added @tt{@@begin@{alert@}} environment for alert
-               messages (like cartouche, but in red). (Jose Morales)
-         @item Supporting '@@\"' command for umlaut, in addition to
-               '@@..'  (Jose Morales)
-         @item Double quotes correctly translated to HTML (Jose Morales)
-         @item @tt{@@author} command to reference authors (changed
-               @index command referring to people by @tt{@@author}, in
-               all the documentation) (Jose Morales)
-         @item Simplification of documentation setting files (see the
-               documentation for further details) (Jose Morales)
-         @item Using @tt{open} for @tt{lpdoc htmlview} command in
-               MacOS X (Jose Morales)
-         @item Adding @tt{html} and @tt{pdf} formats as options for
-               emacs customization of LPdoc (@tt{html} is the default
-               one now) (Jose Morales)
-         @item Improved detection of external tools for image
-               conversion. (Manuel Hermenegildo)
-         @item Added section name syntax auto-correction. This avoids
-               wrong section names --and thus dangling pointers-- in
-               generated texinfo files. (Manuel Hermenegildo)
-         @item Document size more appropriate for current xdvi
-               versions. (Manuel Hermenegildo)
-         @item Lpdoc no longer adds .info filename suffix to
-               .infoindex entries since it breaks Debian's
-               install-info --remove and goes against standard
-               practice anyway. (Jose Luis Gonzalez)
-         @item Added option --cv, --comment-version, that tells lpdoc
-               if the file has version comment. Formatting of lpdoc
-               version comments completed. (Edison Mera)
-         @item Improved handling of option values. Added -d option to
-               lpdoc, that allows defining additional values in the
-               argument. Added options -l and -m that are similar to
-               the corresponding lpmake options.  (Edison Mera)
-         @end{itemize}
+     @begin{itemize}
+     @item Designed a logo for LPdoc. (Jose Morales)
+     @item LPdoc comments can now be written using @tt{%!}
+           style comment syntax. (Manuel Hermenegildo)
+     @item Now commas etc. are allowed in section names (so that
+           they can be used in other formats). They are eliminated
+           automatically in texi and info. This avoids wrong
+           section names --and thus dangling pointers-- in
+           generated texinfo files. (Manuel Hermenegildo)
+     @item Eliminated superfluous copy of summary in info mode.
+           (Manuel Hermenegildo)
+     @item Eliminated unsupported chars that broke texi manual
+           cross-referencing. (Manuel Hermenegildo)
+     @item Improved treatment of accents (dotless i and dotless j,
+           \o, etc.). (Manuel Hermenegildo)
+     @item Initial size passed to @tt{xdvi} more appropriate for
+           current @tt{xdvis}. (Manuel Hermenegildo)
+     @item Accents in bibliography fixed.  (Manuel Hermenegildo)
+     @item Now repeated sections are disambiguated. (Manuel
+           Hermenegildo)
+     @item Eliminated unnecessary escaping (especially for
+           &). (Manuel Hermenegildo)
+     @item Better detection of when version is not
+           available. (Manuel Hermenegildo)
+     @item Added new @tt{doc(address, _)} comment, which is the
+           right place to put address/contact information in
+           manuals (Jose Morales)
+     @item Added new @tt{@@version@{@}} command (expands to the
+           version of the software to be documented). (Jose
+           Morales)
+     @item Shorter @tt{SETTINGS.pl} files (with some rudimentary,
+           assertion-based checking of options) (Jose Morales)
+     @item Bug fix: '@tt{@@@@ include}' and '@tt{@@@@
+           includeverbatim}' are no longer a problem (space can be
+           omitted) (Jose Morales)
+     @item Added and documented a new @tt{documentation} filetype
+           (for some parts of the manual that contains only
+           documentation). That avoids the old trick of declaring
+           a fake @tt{main/0} predicate. (Jose Morales)
+     @item Style for subtitle added automatically (in texinfo, it
+           is @em{emph}; in HTML it is normal text with smaller
+           font). The entries in @tt{subtitle_extra} are
+           free-form. (Jose Morales)
+     @item Bugs and changelog appear now in the global links in
+           the HTML backend. (Jose Morales)
+     @item Merged code that documented @tt{.pl} and @tt{.lpdoc}
+           files. (Jose Morales)
+     @item No copyright section if no copyright comment. (Jose Morales)
+     @item Auxiliary documentation files ending in '@tt{_doc}'
+           displayed incorrect names for the module (ending in
+           '@tt{_doc}'). E.g., @tt{use_package(foo_doc)} was
+           displayed instead of
+           @tt{use_package(foo_doc)}. Fixed. (Jose Morales)
+     @item In @tt{verbatim} enviroments, new-line characters are
+           removed from the beginning. (Jose Morales)
+     @item Fix wrong use of @tt{erase/1} for clauses (which
+           resulted in segmentation fault when documentation
+           generation failed) (Jose Morales)
+     @item Fixed image generation (now uses @tt{.png} files for
+           HTML) (Jose Morales)
+     @item New code for text escape fixed some problems, like
+           '@tt{@@/1}' operator not being displayed correctly in
+           Info. (Jose Morales)
+     @item Colors for Prolog variables (in HTML). (Jose Morales)
+     @item Added @tt{@@begin@{alert@}} environment for alert
+           messages (like cartouche, but in red). (Jose Morales)
+     @item Supporting '@@\"' command for umlaut, in addition to
+           '@@..'  (Jose Morales)
+     @item Double quotes correctly translated to HTML (Jose Morales)
+     @item @tt{@@author} command to reference authors (changed
+           @index command referring to people by @tt{@@author}, in
+           all the documentation) (Jose Morales)
+     @item Simplification of documentation setting files (see the
+           documentation for further details) (Jose Morales)
+     @item Using @tt{open} for @tt{lpdoc htmlview} command in
+           MacOS X (Jose Morales)
+     @item Adding @tt{html} and @tt{pdf} formats as options for
+           emacs customization of LPdoc (@tt{html} is the default
+           one now) (Jose Morales)
+     @item Improved detection of external tools for image
+           conversion. (Manuel Hermenegildo)
+     @item Added section name syntax auto-correction. This avoids
+           wrong section names --and thus dangling pointers-- in
+           generated texinfo files. (Manuel Hermenegildo)
+     @item Document size more appropriate for current xdvi
+           versions. (Manuel Hermenegildo)
+     @item Lpdoc no longer adds .info filename suffix to
+           .infoindex entries since it breaks Debian's
+           install-info --remove and goes against standard
+           practice anyway. (Jose Luis Gonzalez)
+     @item Added option --cv, --comment-version, that tells lpdoc
+           if the file has version comment. Formatting of lpdoc
+           version comments completed. (Edison Mera)
+     @item Improved handling of option values. Added -d option to
+           lpdoc, that allows defining additional values in the
+           argument. Added options -l and -m that are similar to
+           the corresponding lpmake options.  (Edison Mera)
+     @end{itemize}
 
    @item Support for in-code sections (experimental):
-         @begin{itemize}
-         @item Latex-like font-lock highlight of sectioning
-               documentation comments (@tt{:- doc(C, \"...\")}, with
-               @tt{C} one of @tt{title}, @tt{section}, and
-               @tt{subsection}).
+     @begin{itemize}
+     @item Latex-like font-lock highlight of sectioning
+           documentation comments (@tt{:- doc(C, \"...\")}, with
+           @tt{C} one of @tt{title}, @tt{section}, and
+           @tt{subsection}).
 
-               Currently the @tt{section} and @tt{subsection}
-               comments are still ignored by LPdoc.  (Jose Morales)
-         @end{itemize}
+           Currently the @tt{section} and @tt{subsection}
+           comments are still ignored by LPdoc.  (Jose Morales)
+     @end{itemize}
 
    @item Support for mathematical notation (experimental):
-         @begin{itemize}
-         @item new @@math@{...@} and
-               @@begin@{displaymath@}...@@end@{displaymath@}
-               enviroments are supported (see the documentation for
-               more details) (Jose Morales)
-         @item In documentation strings, single @tt{\\\\} must be
-               escaped (e.g. '@@math@{\\\\\\\\lambda@}') (Jose Morales)
-         @item Supported in both the texinfo and HTML (using MathJax)
-               backends. (Jose Morales)
-         @item Added @tt{@@defmathcmd@{Cmd@}@{N@}@{Def@}} and
-               @tt{@@defmathcmd@{Cmd@}@{Def@}}, both for texinfo and
-               HTML backends. Those LPdoc commands define new
-               mathematical environments (equivalent to
-               @tt{\\\\newcommand}). (Jose Morales)
-         @end{itemize}
+     @begin{itemize}
+     @item new @@math@{...@} and
+           @@begin@{displaymath@}...@@end@{displaymath@}
+           enviroments are supported (see the documentation for
+           more details) (Jose Morales)
+     @item In documentation strings, single @tt{\\\\} must be
+           escaped (e.g. '@@math@{\\\\\\\\lambda@}') (Jose Morales)
+     @item Supported in both the texinfo and HTML (using MathJax)
+           backends. (Jose Morales)
+     @item Added @tt{@@defmathcmd@{Cmd@}@{N@}@{Def@}} and
+           @tt{@@defmathcmd@{Cmd@}@{Def@}}, both for texinfo and
+           HTML backends. Those LPdoc commands define new
+           mathematical environments (equivalent to
+           @tt{\\\\newcommand}). (Jose Morales)
+     @end{itemize}
    @end{itemize}
 
 ").
@@ -181,42 +181,42 @@
 
    @begin{itemize}
    @item New functionality:
-   	 @begin{itemize}
+     @begin{itemize}
 
-         @item Use of @tt{:- doc} declarations (as a shorthand for
-               @tt{comment}) now allowed.  (Manuel Hermenegildo)
+     @item Use of @tt{:- doc} declarations (as a shorthand for
+           @tt{comment}) now allowed.  (Manuel Hermenegildo)
 
-         @item Made xdvi viewer, ps viewer, and xdvi zoom size be
-               parameters (the latter since new versions of xdvi
-               display sizes differently than old ones).  (Manuel
-               Hermenegildo)
+     @item Made xdvi viewer, ps viewer, and xdvi zoom size be
+           parameters (the latter since new versions of xdvi
+           display sizes differently than old ones).  (Manuel
+           Hermenegildo)
 
-         @item Processing options can now be set for each file
-               independently.  (Manuel Hermenegildo)
+     @item Processing options can now be set for each file
+           independently.  (Manuel Hermenegildo)
 
-         @item Proper @concept{pdf generation} now achieved in most
-               cases, thanks to newer versions of @apl{dvips}.
-               (Manuel Hermenegildo)
+     @item Proper @concept{pdf generation} now achieved in most
+           cases, thanks to newer versions of @apl{dvips}.
+           (Manuel Hermenegildo)
 
-         @item Added option -c Target in lpdoc, that treats Target as
-               a separate component.  (Edison Mera) @item Added option
-               -f ConfigFile in lpdoc, that uses the file ConfigFile
-               instead the default LPSETTINGS.pl.  (Edison Mera)
+     @item Added option -c Target in lpdoc, that treats Target as
+           a separate component.  (Edison Mera) @item Added option
+           -f ConfigFile in lpdoc, that uses the file ConfigFile
+           instead the default LPSETTINGS.pl.  (Edison Mera)
 
-         @item Added option ascii that generates documentation in
-               ascii plain format.  (Edison Mera)
+     @item Added option ascii that generates documentation in
+           ascii plain format.  (Edison Mera)
 
-         @item Added --help option. Is equal to -h.  (Edison Mera)
+     @item Added --help option. Is equal to -h.  (Edison Mera)
 
-         @item Added option testsettings to check that the settings
-               file is correctly specified.  (Edison Mera)
+     @item Added option testsettings to check that the settings
+           file is correctly specified.  (Edison Mera)
 
-         @item Changed @pred{generate_html_pointer/5} by
-               @pred{generate_html_pointer/6} to let it work with any
-               given directory, and not only the working directory.
-               (Edison Mera)
+     @item Changed @pred{generate_html_pointer/5} by
+           @pred{generate_html_pointer/6} to let it work with any
+           given directory, and not only the working directory.
+           (Edison Mera)
 
-   	 @end{itemize}
+     @end{itemize}
 
    @end{itemize}
 
@@ -308,58 +308,58 @@
 
    @begin{itemize}
    @item New functionality:
-   	 @begin{itemize}
+     @begin{itemize}
 
-         @item A new parameter @tt{PAPERTYPE} can be set in the
-               @file{SETTINGS} file which controls the format of
-               printed output.  (Manuel Hermenegildo)
+     @item A new parameter @tt{PAPERTYPE} can be set in the
+           @file{SETTINGS} file which controls the format of
+           printed output.  (Manuel Hermenegildo)
 
-         @item Default @concept{pdf viewer} is now @apl{ghostview},
-               sicne recent versions handle @tt{pdf} well.  (Manuel
-               Hermenegildo) 
+     @item Default @concept{pdf viewer} is now @apl{ghostview},
+           sicne recent versions handle @tt{pdf} well.  (Manuel
+           Hermenegildo) 
 
-         @item Changed default style sheet in order to show <PRE>
-               lines with a monospaced font.  (Daniel Cabeza Gras)
+     @item Changed default style sheet in order to show <PRE>
+           lines with a monospaced font.  (Daniel Cabeza Gras)
 
-         @item Mode definitions now documented in a separate
-               section. The way they are documented has been improved.
-               (Manuel Hermenegildo)
+     @item Mode definitions now documented in a separate
+           section. The way they are documented has been improved.
+           (Manuel Hermenegildo)
 
-         @item References in files now updated only if @tt{.refs} file
-               is not empty.  (Manuel Hermenegildo)
+     @item References in files now updated only if @tt{.refs} file
+           is not empty.  (Manuel Hermenegildo)
 
-         @item A @em{copy} of the html style sheet is now included in
-               @em{distributions}. Also @em{Copies} of the html and
-               info index head and tail files. (Manuel
-               Hermenegildo)
+     @item A @em{copy} of the html style sheet is now included in
+           @em{distributions}. Also @em{Copies} of the html and
+           info index head and tail files. (Manuel
+           Hermenegildo)
 
-         @item Made pointers relative in library html templates.
-               (Manuel Hermenegildo)
+     @item Made pointers relative in library html templates.
+           (Manuel Hermenegildo)
 
-   	 @end{itemize}
+     @end{itemize}
 
    @item Bug fixes and other minor improvements:
-   	 @begin{itemize}
+     @begin{itemize}
 
-         @item Declarations now documented properly even if they have
-               the same name and arity as a predicate.  (Manuel
-               Hermenegildo)
+     @item Declarations now documented properly even if they have
+           the same name and arity as a predicate.  (Manuel
+           Hermenegildo)
 
-         @item Accented i's now translate correctly in html.  (Manuel
-               Hermenegildo)
+     @item Accented i's now translate correctly in html.  (Manuel
+           Hermenegildo)
 
-         @item Fixed a funny installation quirk: while we want to
-               install LPdoc in the Ciao group, the manuals produced
-               by LPdoc should be installed in the LPdoc group.
-               (Manuel Hermenegildo)
+     @item Fixed a funny installation quirk: while we want to
+           install LPdoc in the Ciao group, the manuals produced
+           by LPdoc should be installed in the LPdoc group.
+           (Manuel Hermenegildo)
 
-         @item Now using @tt{lpdoclib} path alias.  (Manuel Hermenegildo)
+     @item Now using @tt{lpdoclib} path alias.  (Manuel Hermenegildo)
 
-         @item Fixed bug in ordering of html indices in recent Linux
-               versions, related to varying file listing order
-               depending on locale.  (Manuel Hermenegildo)
+     @item Fixed bug in ordering of html indices in recent Linux
+           versions, related to varying file listing order
+           depending on locale.  (Manuel Hermenegildo)
 
-   	 @end{itemize}
+     @end{itemize}
    @end{itemize}
 
 ").
@@ -466,95 +466,95 @@
 
    @begin{itemize}
    @item New commands:
-         @begin{itemize}
-         @item @@begin@{cartouche@} and @@end@{cartouche@} commands
-               now supported.
-         @item @@foonote command now supported.
-         @item New @tt{gmake htmlview} command (makes a running
-               @apl{netscape} visit the generated html
-               manual). Suggested by Per Cederberg.
-         @item New @tt{gmake distclean} command, intended for software
-               distributions. Leaves the generated documents and
-               eliminates @em{all} intermediate files (including
-               @tt{.texic}/@tt{.texi} files).
-         @item Adobe @tt{pdf} format now supported as a valid
-               target. Unfortunately, embedded @tt{.eps} figures are
-               not supported at this time in pdf output.
-         @item The second argument of @tt{:- comment(hide,...).} and
-               @tt{:- comment(doinclude,...).} declarations can now be
-               a list of predicate names.
-         @item A @tt{-u} @em{File} option is now supported so that a
-               file including, e.g., path alias definitions can be
-               included (this has the same functionality as the
-               @tt{-u} option in @apl{ciaoc}).
-         @item Now typing just @tt{gmake} does nothing. In order to do
-               something at least one target should be specified. This
-               was necessary so that recursive invocations with empty
-               arguments did nothing.
-         @item Added a new filetype: @tt{part}. This allows splitting
-               large documents into parts, each of which groups a
-               series of chapters.
-         @end{itemize}
+     @begin{itemize}
+     @item @@begin@{cartouche@} and @@end@{cartouche@} commands
+           now supported.
+     @item @@foonote command now supported.
+     @item New @tt{gmake htmlview} command (makes a running
+           @apl{netscape} visit the generated html
+           manual). Suggested by Per Cederberg.
+     @item New @tt{gmake distclean} command, intended for software
+           distributions. Leaves the generated documents and
+           eliminates @em{all} intermediate files (including
+           @tt{.texic}/@tt{.texi} files).
+     @item Adobe @tt{pdf} format now supported as a valid
+           target. Unfortunately, embedded @tt{.eps} figures are
+           not supported at this time in pdf output.
+     @item The second argument of @tt{:- comment(hide,...).} and
+           @tt{:- comment(doinclude,...).} declarations can now be
+           a list of predicate names.
+     @item A @tt{-u} @em{File} option is now supported so that a
+           file including, e.g., path alias definitions can be
+           included (this has the same functionality as the
+           @tt{-u} option in @apl{ciaoc}).
+     @item Now typing just @tt{gmake} does nothing. In order to do
+           something at least one target should be specified. This
+           was necessary so that recursive invocations with empty
+           arguments did nothing.
+     @item Added a new filetype: @tt{part}. This allows splitting
+           large documents into parts, each of which groups a
+           series of chapters.
+     @end{itemize}
 
    @item Other new functionality:
-   	 @begin{itemize}
-   	 @item A style sheet can now be specified which allows modifying
-   	       many characteristics of the html output (fonts, colors,
-   	       background, ...) (thanks to Per Cederberg).
-   	 @item Added limited support for changing page numbering (in
-   	       @file{SETTINGS} file).
-   	 @item The concept indexing commands (@@index, @@cindex, and
-   	       @@concept) now work somewhat differently, to make them
-   	       consistent with other indexing commands.
-   	 @item The old @em{usage} index is now called, more appropriately,
-   	       @em{global} index. Correspondingly, changed things so that
-   	       now every definition goes to the global index in addition to
-   	       its definitional index.
-   	 @item Imported files from module @tt{user} are now documented
-   	       separately.
-   	 @item Now a warning is issued if characters unsupported by info are
-   	       used in section names.
-   	 @item Navigation in html docs was improved.
-   	 @item The table of contents in printed manuals now contains entries
-   	       for the individual descriptions of predicates, props,
-   	       regtypes, declarations, etc.  This can be shut off with the
-   	       @tt{-shorttoc} option.
-   	 @item Made more silent in normal conditions: file inclusion is
-   	       muted now unless @tt{-v} option is selected.
-   	 @item A single @tt{.texi} file is now constructed (by grouping the
-   	       @tt{.texic} files generated for all components) in which the
-   	       references and menus are resolved. This has the advantage
-   	       that the process of resolving references and menus has now
-   	       been sped up very significantly.  Also, @tt{texi} is now a
-   	       valid target (perhaps useful for distributions). The
-   	       generated files now have @tt{texic} (@em{texinfo component}).
-   	 @item Now, declarations are always documented as long as there is a
-   	       @tt{decl} assertion.  Also, they are now documented in a
-   	       separate section.
-   	 @end{itemize}
+     @begin{itemize}
+     @item A style sheet can now be specified which allows modifying
+           many characteristics of the html output (fonts, colors,
+           background, ...) (thanks to Per Cederberg).
+     @item Added limited support for changing page numbering (in
+           @file{SETTINGS} file).
+     @item The concept indexing commands (@@index, @@cindex, and
+           @@concept) now work somewhat differently, to make them
+           consistent with other indexing commands.
+     @item The old @em{usage} index is now called, more appropriately,
+           @em{global} index. Correspondingly, changed things so that
+           now every definition goes to the global index in addition to
+           its definitional index.
+     @item Imported files from module @tt{user} are now documented
+           separately.
+     @item Now a warning is issued if characters unsupported by info are
+           used in section names.
+     @item Navigation in html docs was improved.
+     @item The table of contents in printed manuals now contains entries
+           for the individual descriptions of predicates, props,
+           regtypes, declarations, etc.  This can be shut off with the
+           @tt{-shorttoc} option.
+     @item Made more silent in normal conditions: file inclusion is
+           muted now unless @tt{-v} option is selected.
+     @item A single @tt{.texi} file is now constructed (by grouping the
+           @tt{.texic} files generated for all components) in which the
+           references and menus are resolved. This has the advantage
+           that the process of resolving references and menus has now
+           been sped up very significantly.  Also, @tt{texi} is now a
+           valid target (perhaps useful for distributions). The
+           generated files now have @tt{texic} (@em{texinfo component}).
+     @item Now, declarations are always documented as long as there is a
+           @tt{decl} assertion.  Also, they are now documented in a
+           separate section.
+     @end{itemize}
 
    @item Bug fixes and other minor improvements:
-   	 @begin{itemize}
-   	 @item The directory containing html manual is now called
-   	       @em{BASENAME}@tt{_html} instead of just @em{BASENAME}, which
-   	       was confusing.
-   	 @item Now requesting building a .ps only does not leave a .dvi
-   	       behind (useful for distributions).
-   	 @item File names can now include the symbol @tt{_} even if they
-   	       contain figures.
-   	 @item @apl{TeX}-related intermediate files are now cleaned up after
-   	       each run in order to avoid clutter.
-   	 @item Fixed @tt{-modes}, which was broken since going to the new
-   	       normalizer (was normalizer problem). Fixed problem with no
-   	       documentation when only modes given.
-   	 @item Fixed duplication of documentation for internal predicates
-   	       when also exported.
-   	 @item Minor formatting problem when no documentation nor definition
-   	       found for a regtype fixed.
-   	 @item Determining exports, imports, etc. now done solely by calls
-   	       to @lib{c_itf} library (and, thus, synchronized with
-   	       @apl{ciaoc} compiler).
-   	 @end{itemize}
+     @begin{itemize}
+     @item The directory containing html manual is now called
+           @em{BASENAME}@tt{_html} instead of just @em{BASENAME}, which
+           was confusing.
+     @item Now requesting building a .ps only does not leave a .dvi
+           behind (useful for distributions).
+     @item File names can now include the symbol @tt{_} even if they
+           contain figures.
+     @item @apl{TeX}-related intermediate files are now cleaned up after
+           each run in order to avoid clutter.
+     @item Fixed @tt{-modes}, which was broken since going to the new
+           normalizer (was normalizer problem). Fixed problem with no
+           documentation when only modes given.
+     @item Fixed duplication of documentation for internal predicates
+           when also exported.
+     @item Minor formatting problem when no documentation nor definition
+           found for a regtype fixed.
+     @item Determining exports, imports, etc. now done solely by calls
+           to @lib{c_itf} library (and, thus, synchronized with
+           @apl{ciaoc} compiler).
+     @end{itemize}
    @end{itemize}
    (Manuel Hermenegildo)
 
@@ -638,69 +638,69 @@
 
    @begin{itemize}
    @item Now, if the name of a file being documented ends in
-         @tt{_doc}, the @tt{_doc} part is left out when referring to
-         the file in the documentation (useful if one would like to
-         place the documentation declarations in different file).
+     @tt{_doc}, the @tt{_doc} part is left out when referring to
+     the file in the documentation (useful if one would like to
+     place the documentation declarations in different file).
    @item It is now possible to declare (via a @decl{comment/2}
-         declaration) the intended use of a file which is not a module
-         (i.e. a package, user, or include file), which results in
-         correct documentation of operator definitions, new
-         declarations, etc. The declaration is only needed for 'user'
-         files (i.e., files to be loaded with @pred{ensure_loaded/1}).
+     declaration) the intended use of a file which is not a module
+     (i.e. a package, user, or include file), which results in
+     correct documentation of operator definitions, new
+     declarations, etc. The declaration is only needed for 'user'
+     files (i.e., files to be loaded with @pred{ensure_loaded/1}).
    @item Separated generation of the manuals from their
-         installation. I.e., @tt{gmake install} now does not force a
-         @tt{gmake all}, which has to be done by hand. This was
-         necessary to ensure correct installation of distributed
-         manuals, even if modification dates are changed during
-         installation. Previously, in some cases generation was
-         triggered unnecessarily.
+     installation. I.e., @tt{gmake install} now does not force a
+     @tt{gmake all}, which has to be done by hand. This was
+     necessary to ensure correct installation of distributed
+     manuals, even if modification dates are changed during
+     installation. Previously, in some cases generation was
+     triggered unnecessarily.
    @item New @tt{-v} option allows using quieter by default operation
-         when not debugging.
+     when not debugging.
    @item New option @tt{-propmods} makes the name of the module in
-         which a property is defined appear in front of the property
-         in the places where the property is used.
+     which a property is defined appear in front of the property
+     in the places where the property is used.
    @item New option @tt{-noisoline} makes the textual explanation of
-         the @prop{iso/1} property not appear in the description of
-         the usage (but the @iso symbol does appear)
+     the @prop{iso/1} property not appear in the description of
+     the usage (but the @iso symbol does appear)
    @item Two new options, @tt{-nosysmods} and @tt{-noengmods},
-         selectively avoid listing the system or engine libraries
-         used.
+     selectively avoid listing the system or engine libraries
+     used.
    @item If there is no declaration for a predicate, now a line is
-         output with the name and arity and a simple comment saying
-         that there is no further documentation available (this has
-         the great advantage that then it goes in the index, and, for
-         example in ciao, they get added to completion commands!).
+     output with the name and arity and a simple comment saying
+     that there is no further documentation available (this has
+     the great advantage that then it goes in the index, and, for
+     example in ciao, they get added to completion commands!).
    @item Now, if a property or regtype declaration has no textual
-         comment, the actual definition is given (first level only) in
-         the place where it is documented, and a simple generic
-         message where it is used.
+     comment, the actual definition is given (first level only) in
+     the place where it is documented, and a simple generic
+     message where it is used.
    @item Added @@noindent and @@iso commands.
    @item Nicer spacing now when printing predicate names which are
-         operators, as well as modes, etc.
+     operators, as well as modes, etc.
    @item Reporting of versions in libraries has been improved: now
-         both the global version and the last version in which the
-         library itself was changed are reported.
+     both the global version and the last version in which the
+     library itself was changed are reported.
    @item Exported new declarations also documented now for
-         include-type files.
+     include-type files.
    @item A module is now documented even if exports nothing at all.
    @item Engine modules used now documented even if no other modules
-         used (was a reported bug).
+     used (was a reported bug).
    @item Fixed indexing of names containing @@ etc. for newer versions
-         of texinfo.
+     of texinfo.
    @item Tabs in verbatim modes now converted to a number of spaces
-         (8). Not perfect, but produces better output than leaving the
-         tabs in.
+     (8). Not perfect, but produces better output than leaving the
+     tabs in.
    @item Tex is now run in 'nonstopmode' which means it will typically
-         not stop if there are minor errors (but some errors may go
-         unnoticed...).
+     not stop if there are minor errors (but some errors may go
+     unnoticed...).
    @item The full path of the version maintenance directory is now
-         computed (correctly) using the directory of the @tt{.pl} file
-         being documented as base.
+     computed (correctly) using the directory of the @tt{.pl} file
+     being documented as base.
    @item Notices for missing subtitle, copyright, and summary now only
-         given from main file and not for components.
+     given from main file and not for components.
    @item Added special handling of regtype and generalized it to
-         handle some props specially if there is a certain comp
-         property present.
+     handle some props specially if there is a certain comp
+     property present.
    @end{itemize}
 
    (Manuel Hermenegildo)").

@@ -83,8 +83,8 @@ listof_or_aorb(_) := ~aorb.
 :- prop long(L) # "@var{L} is rather long.".
 
 long(L) :- 
-	length(L,N),
-	N>100.
+    length(L,N),
+    N>100.
 
 %% Now, a series of assertions:
 %% 
@@ -104,69 +104,69 @@ long(L) :-
 :- doc(p/3,"A @bf{general comment} on the predicate." ).
 %% Documenting some typical usages of the predicate
 :- pred p/3 
-        : int * int * var 
+    : int * int * var 
        => int * int * list 
-        + (iso,no_fail) 
-        # "This mode is nice.".
+    + (iso,no_fail) 
+    # "This mode is nice.".
 :- pred p(Preds,Value,Assoc) 
-        : var * var * list
+    : var * var * list
        => int * int * list 
-        + no_fail # "This mode is also nice.".
+    + no_fail # "This mode is also nice.".
 :- pred p/3 
        => list * int * list 
-        + (no_fail,no_fail) 
-        # "Just playing around.".
+    + (no_fail,no_fail) 
+    # "Just playing around.".
 
 :- pred q(A) 
-        : list(A) 
+    : list(A) 
        => (list(A),gnd(A)) 
-        + no_fail
-        # "Foo".
+    + no_fail
+    # "Foo".
 :- pred q(A) 
-        # "Not a bad use at all.".
+    # "Not a bad use at all.".
 
 :- pred q/2 
-        : var * {gnd,int} 
+    : var * {gnd,int} 
        => {gnd,int} * int.
 :- pred q/2 
-        :: int * list
-        # "Non-moded types are best used this way.".
+    :: int * list
+    # "Non-moded types are best used this way.".
 
 :- pred p/1 : var => list.
  
 :- pred r(A) 
-        : list(A) 
+    : list(A) 
        => (list(A,int),gnd(A)) 
-        + no_fail 
-        # "This uses parametric types".
+    + no_fail 
+    # "This uses parametric types".
 
 :- doc(doinclude,s/1). %% Forces documentation even if not exported
 :- pred s(A) 
-        : list(A) 
+    : list(A) 
        => (list(A),gnd(A)) 
-        + no_fail.
+    + no_fail.
 
 :- doc(doinclude,list/2). %% Forces (local) documentation even if 
-                              %% not exported 
+                          %% not exported 
 :- doc(doinclude,list/1). %% Forces local documentation 
 
 :- modedef og(A) 
        => gnd(A) 
-        # "This is a @em{mode} definition: the output is ground.".
+    # "This is a @em{mode} definition: the output is ground.".
 
 :- doc(doinclude,og/2).
 
 :- modedef og(A,T) 
-        :: regtype(A,T) 
-        => gnd(A) 
-        #  "This is a @em{parametric mode definition}.".
+    :: regtype(A,T) 
+    => gnd(A) 
+    #  "This is a @em{parametric mode definition}.".
 
 :- pred t(+A,-B,?C,@D,og(E)) 
-        :: list * list * int * int * list 
-        :  long(B)
-        => (gnd(C),gnd(A)) 
-        +  no_fail 
-        #  "This predicate uses @em{modes} extensively.".
+    :: list * list * int * int * list 
+    :  long(B)
+    => (gnd(C),gnd(A)) 
+    +  no_fail 
+    #  "This predicate uses @em{modes} extensively.".
 
 %% Some other miscellaneous assertions:
 

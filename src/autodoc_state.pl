@@ -23,11 +23,11 @@
    ]).
 :- use_module(library(compiler/c_itf)).
 :- use_module(library(assertions/assertions_props),
-	    [predfunctor/1, propfunctor/1]).
+        [predfunctor/1, propfunctor/1]).
 :- use_module(library(pathnames),
-	[path_dirname/2, path_basename/2,
-	 path_concat/3, path_split/3,
-	 path_splitext/3]).
+    [path_dirname/2, path_basename/2,
+     path_concat/3, path_split/3,
+     path_splitext/3]).
 :- use_module(library(lists), [member/2, append/3, reverse/2, length/2, list_concat/2]).
 :- use_module(library(terms), [atom_concat/2]).
 
@@ -43,7 +43,7 @@
 :- use_module(lpdoc(autodoc_parse)).
 :- use_module(lpdoc(autodoc_index)).
 :- use_module(lpdoc(comments), [version_descriptor/1, docstring/1,
-	stringcommand/1, doc_id_type/3, filetype/1]).
+    stringcommand/1, doc_id_type/3, filetype/1]).
 :- use_module(lpdoc(autodoc_messages)).
 
 % ===========================================================================
@@ -95,53 +95,53 @@ parent_format(Format, Format).
 :- export(docstate/1).
 :- regtype docstate/1.
 docstate(docstate(Backend, Name, Opts, MVarDic, I)) :-
-	backend_id(Backend),
-	atom(Name),
-	list(Opts,supported_option),
-	dictionary(MVarDic), % to keep custom data
-	filename(I).
+    backend_id(Backend),
+    atom(Name),
+    list(Opts,supported_option),
+    dictionary(MVarDic), % to keep custom data
+    filename(I).
 
 :- export(docst_backend/2).
 docst_backend(DocSt, Backend) :-
-	DocSt = docstate(Backend, _, _, _, _).
+    DocSt = docstate(Backend, _, _, _, _).
 
 :- export(docst_currmod/2).
 docst_currmod(DocSt, Name) :-
-	DocSt = docstate(_, Name, _, _, _).
+    DocSt = docstate(_, Name, _, _, _).
 
 :- export(docst_set_currmod/3).
 docst_set_currmod(DocSt0, Name, DocSt) :-
-	DocSt0 = docstate(Backend, _,    Opts, MVarDic, I),
-	DocSt  = docstate(Backend, Name, Opts, MVarDic, I).
+    DocSt0 = docstate(Backend, _,    Opts, MVarDic, I),
+    DocSt  = docstate(Backend, Name, Opts, MVarDic, I).
 
 :- export(docst_opts/2).
 docst_opts(DocSt, Opts) :-
-	DocSt = docstate(_, _, Opts, _, _).
+    DocSt = docstate(_, _, Opts, _, _).
 
 :- export(docst_set_opts/3).
 docst_set_opts(DocSt0, Opts, DocSt) :-
-	DocSt0 = docstate(Backend, Name, _,    MVarDic, I),
-	DocSt  = docstate(Backend, Name, Opts, MVarDic, I).
+    DocSt0 = docstate(Backend, Name, _,    MVarDic, I),
+    DocSt  = docstate(Backend, Name, Opts, MVarDic, I).
 
 % 'mvar' is a dictionary for module-scoped global variables
 %:- export(docst_mvar/2).
 docst_mvardic(DocSt, MVarDic) :-
-	DocSt = docstate(_, _, _, MVarDic, _).
+    DocSt = docstate(_, _, _, MVarDic, _).
 
 %:- export(docst_set_mvar/3).
 docst_set_mvardic(DocSt0, MVarDic, DocSt) :-
-	DocSt0 = docstate(Backend, Name, Opts, _, I),
-	DocSt  = docstate(Backend, Name, Opts, MVarDic, I).
+    DocSt0 = docstate(Backend, Name, Opts, _, I),
+    DocSt  = docstate(Backend, Name, Opts, MVarDic, I).
 
 :- export(docst_inputfile/2).
 docst_inputfile(DocSt, I) :-
-	DocSt = docstate(_, _, _, _, I).
+    DocSt = docstate(_, _, _, _, I).
 
 :- export(docst_pragma/2).
 docst_pragma(DocSt, Pragma) :- % TODO: optimize?
-	get_doc(pragma, ignore, DocSt, Pragmas),
-	member(Pragma, Pragmas),
-	!.
+    get_doc(pragma, ignore, DocSt, Pragmas),
+    member(Pragma, Pragmas),
+    !.
 
 %% ---------------------------------------------------------------------------
 
@@ -151,30 +151,30 @@ docst_pragma(DocSt, Pragma) :- % TODO: optimize?
 % Create a new docstate (with no source loaded)
 % TODO: keep OldLibs! remember to reset them
 docst_new_no_src(Backend, Name, Opts, DocSt) :-
-	DocSt = docstate(Backend, Name, Opts, _, '').
+    DocSt = docstate(Backend, Name, Opts, _, '').
 
 % Create a new docstate and load the source
 :- export(docst_new_with_src/5).
 docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt) :-
-	DocSt = docstate(Backend, Name, Opts, _, I),
-	%
-	atom_concat(FileBase, FileExt, FExt),
-	find_file(FExt, I),
-	( source_is_doc(FileExt) ->
-	    load_source_lpdoc(I, M, Base, Dir, Text),
-	    docst_mvar_lookup(DocSt, plain_content, Text)
-	; load_source_pl_assrt(I, Opts, M, Base, Dir)
-	),
-	path_basename(Base, Name), % TODO: M (the Prolog module name) and Name may be different...
-	docst_mvar_lookup(DocSt, fileinfo, fileinfo(M, Base)),
-	docst_mvar_lookup(DocSt, dir, dir(Dir)),
-	%
-	( docst_mvar_get(DocSt, plain_content, _) ->
-	    FileType = plain
-	; detect_filetype(DocSt, FileType)
-	),
-	docst_mdata_assertz(filetype(FileType), DocSt),
-	docst_mvar_lookup(DocSt, filetype, FileType). % TODO: redundant
+    DocSt = docstate(Backend, Name, Opts, _, I),
+    %
+    atom_concat(FileBase, FileExt, FExt),
+    find_file(FExt, I),
+    ( source_is_doc(FileExt) ->
+        load_source_lpdoc(I, M, Base, Dir, Text),
+        docst_mvar_lookup(DocSt, plain_content, Text)
+    ; load_source_pl_assrt(I, Opts, M, Base, Dir)
+    ),
+    path_basename(Base, Name), % TODO: M (the Prolog module name) and Name may be different...
+    docst_mvar_lookup(DocSt, fileinfo, fileinfo(M, Base)),
+    docst_mvar_lookup(DocSt, dir, dir(Dir)),
+    %
+    ( docst_mvar_get(DocSt, plain_content, _) ->
+        FileType = plain
+    ; detect_filetype(DocSt, FileType)
+    ),
+    docst_mdata_assertz(filetype(FileType), DocSt),
+    docst_mvar_lookup(DocSt, filetype, FileType). % TODO: redundant
 
 source_is_doc('.lpdoc').
 source_is_doc('.md').
@@ -183,25 +183,25 @@ source_is_doc('.md').
 % TODO: Probably this could be extended (literate programming?)
 % load_source_lpdoc(+F, -M, -Base, -Dir, -Text)
 load_source_lpdoc(F, M, Base, Dir, Text) :-
-	path_splitext(F, Base, _),
-	atom_codes(F, FCodes), % TODO: not escaped!
-	append("@include{"|| FCodes, "}", Text),
-	path_dirname(Base, Dir),
-	path_basename(Base, M). % TODO: assume this is correct
+    path_splitext(F, Base, _),
+    atom_codes(F, FCodes), % TODO: not escaped!
+    append("@include{"|| FCodes, "}", Text),
+    path_dirname(Base, Dir),
+    path_basename(Base, M). % TODO: assume this is correct
 
 %% ---------------------------------------------------------------------------
 
 % Create a state for a subfile
 :- export(docst_new_sub/3).
 docst_new_sub(DocSt0, SubSuffix, DocSt) :-
-	docst_currmod(DocSt0, Name),
-	get_subbase(Name, SubSuffix, SubName),
-	docst_set_currmod(DocSt0, SubName, DocSt1),
-	% some mvar need to be cleaned
-	% TODO: generalize
-	docst_mvar_replace(DocSt1, full_toc_tree, _, DocSt2),
-	docst_mvar_replace(DocSt2, curr_toc_tree, _, DocSt3),
-	docst_mvar_replace(DocSt3, nav, _, DocSt).
+    docst_currmod(DocSt0, Name),
+    get_subbase(Name, SubSuffix, SubName),
+    docst_set_currmod(DocSt0, SubName, DocSt1),
+    % some mvar need to be cleaned
+    % TODO: generalize
+    docst_mvar_replace(DocSt1, full_toc_tree, _, DocSt2),
+    docst_mvar_replace(DocSt2, curr_toc_tree, _, DocSt3),
+    docst_mvar_replace(DocSt3, nav, _, DocSt).
 
 %% ---------------------------------------------------------------------------
 
@@ -214,10 +214,10 @@ docst_new_sub(DocSt0, SubSuffix, DocSt) :-
    @var{Opts}: options.
 ".
 load_source_pl_assrt(F, Opts, M, Base, Dir) :-
-	cleanup_c_itf_data,
-	cleanup_code_and_related_assertions,
-	prolog_flag(quiet, _, off),
-	get_code_and_related_assertions_opts(F, Opts, M, Base, _Suffix, Dir).
+    cleanup_c_itf_data,
+    cleanup_code_and_related_assertions,
+    prolog_flag(quiet, _, off),
+    get_code_and_related_assertions_opts(F, Opts, M, Base, _Suffix, Dir).
 
 % NOTE: The assertions package is treated normally
 %
@@ -228,33 +228,33 @@ load_source_pl_assrt(F, Opts, M, Base, Dir) :-
 %
 % TODO: I removed this, since AssrtOps is always []
 %
-	% optional_mess("Gathering and normalizing assertions from T"),
+    % optional_mess("Gathering and normalizing assertions from T"),
 %
-%% 	( includes(Base, library(assertions)) -> %% possibly only 'assertions'
-%% 	    ( member(Op, AssrtOps),
-%% 		retractall_fact(clause_read(_, 1, Op, _, _, _, _)),
-%% 		fail
-%% 	    ; true
+%%      ( includes(Base, library(assertions)) -> %% possibly only 'assertions'
+%%          ( member(Op, AssrtOps),
+%%              retractall_fact(clause_read(_, 1, Op, _, _, _, _)),
+%%              fail
+%%          ; true
 %%             )
-%% %	    findall(_,(member(Op,AssrtOps),
-%% %	    retract_fact(clause_read(_,1,Op,_,_,_,_))),_),
-%% %	    findall(_,(member(NDP,AssrtNDPs),
-%% %	    clause_read(_,1,new_declaration(NDP),_,_,_,_)),_) 
-%% 	;
-%% 	    true
-%% 	),
+%% %        findall(_,(member(Op,AssrtOps),
+%% %        retract_fact(clause_read(_,1,Op,_,_,_,_))),_),
+%% %        findall(_,(member(NDP,AssrtNDPs),
+%% %        clause_read(_,1,new_declaration(NDP),_,_,_,_)),_) 
+%%      ;
+%%          true
+%%      ),
 %%% No good, for now they are indistiguishable...
 %%% Eliminate clauses coming from library(assertions) unless Main=assertions!
-%% 	(  Main = assertions
-%% 	-> true
-%% 	;  autodoc_message(simple, "*** Eliminating assertions stuff..."),
-%% 	   base_name(library(assertions),AssrtBase),
-%% 	   autodoc_message(simple, "*** AssrtBase is ~w",[AssrtBase]),
-%% 	   findall(_,
-%% 	           ( clause_read(AB,A,B,C,D,E,F),
-%%      	             autodoc_message(simple, "*** retracting ~w",
+%%      (  Main = assertions
+%%      -> true
+%%      ;  autodoc_message(simple, "*** Eliminating assertions stuff..."),
+%%         base_name(library(assertions),AssrtBase),
+%%         autodoc_message(simple, "*** AssrtBase is ~w",[AssrtBase]),
+%%         findall(_,
+%%                 ( clause_read(AB,A,B,C,D,E,F),
+%%                           autodoc_message(simple, "*** retracting ~w",
 %%                            [clause_read(AB,A,B,C,D,E,F)]) ), _)
-%% 	),
+%%      ),
 
 % ---------------------------------------------------------------------------
 
@@ -262,13 +262,13 @@ load_source_pl_assrt(F, Opts, M, Base, Dir) :-
 
 :- export(docst_opt/2).
 docst_opt(Opt, DocSt) :-
-	docst_opts(DocSt, Opts),
-	member(Opt, Opts), !.
+    docst_opts(DocSt, Opts),
+    member(Opt, Opts), !.
 
 :- export(docst_currmod_is_main/1).
 docst_currmod_is_main(DocSt) :-
-	docst_currmod(DocSt, Name),
-	get_mainmod(Name), !.
+    docst_currmod(DocSt, Name),
+    get_mainmod(Name), !.
 
 :- export(docst_no_components/1).
 :- pred docst_no_components(DocSt) # "@var{DocSt} specify an empty
@@ -279,8 +279,8 @@ docst_no_components(_DocSt) :- all_component_specs([]).
 :- pred docst_modname(DocSt, ModName) # "@var{ModName} is the name of
    the module that we are documenting.".
 docst_modname(DocSt, NDName) :-
-	docst_currmod(DocSt, Name),
-	modname_nodoc(Name, NDName).
+    docst_currmod(DocSt, Name),
+    modname_nodoc(Name, NDName).
 
 % ======================================================================
 
@@ -291,21 +291,21 @@ docst_modname(DocSt, NDName) :-
 
 :- export(labgen_init/1).
 labgen_init(DocSt) :-
-	docst_currmod(DocSt, Name),
-	assertz_fact(labcounter(0, Name)).
+    docst_currmod(DocSt, Name),
+    assertz_fact(labcounter(0, Name)).
 
 :- export(labgen_clean/1).
 labgen_clean(DocSt) :-
-	docst_currmod(DocSt, Name),
-	retractall_fact(labcounter(_, Name)).
+    docst_currmod(DocSt, Name),
+    retractall_fact(labcounter(_, Name)).
 
 :- export(labgen_get/2).
 labgen_get(DocSt, Label) :-
-	docst_currmod(DocSt, Name),
-	retract_fact(labcounter(N, Name)),
-	number_codes(N, Label),
-	N1 is N + 1,
-	assertz_fact(labcounter(N1, Name)).
+    docst_currmod(DocSt, Name),
+    retract_fact(labcounter(N, Name)),
+    number_codes(N, Label),
+    N1 is N + 1,
+    assertz_fact(labcounter(N1, Name)).
 
 % ======================================================================
 
@@ -316,50 +316,50 @@ labgen_get(DocSt, Label) :-
 
 :- export(docst_mvar_lookup/3).
 docst_mvar_lookup(DocSt, K, V) :-
-	docst_mvardic(DocSt, MVarDic),
-	dic_lookup(MVarDic, K, V).
+    docst_mvardic(DocSt, MVarDic),
+    dic_lookup(MVarDic, K, V).
 
 :- export(docst_mvar_replace/4).
 docst_mvar_replace(DocSt0, K, V, DocSt) :-
-	docst_mvardic(DocSt0, MVarDic0),
-	dic_replace(MVarDic0, K, V, MVarDic),
-	docst_set_mvardic(DocSt0, MVarDic, DocSt).
+    docst_mvardic(DocSt0, MVarDic0),
+    dic_replace(MVarDic0, K, V, MVarDic),
+    docst_set_mvardic(DocSt0, MVarDic, DocSt).
 
 :- export(docst_mvar_get/3).
 docst_mvar_get(DocSt, K, V) :-
-	docst_mvardic(DocSt, MVarDic),
-	dic_get(MVarDic, K, V).
+    docst_mvardic(DocSt, MVarDic),
+    dic_get(MVarDic, K, V).
 
 :- export(docst_mdata_clean/1).
 docst_mdata_clean(DocSt) :-
-	docst_currmod(DocSt, Name),
-	retractall_fact(docst_mdata(_, Name)).
+    docst_currmod(DocSt, Name),
+    retractall_fact(docst_mdata(_, Name)).
 
 :- export(docst_mdata_assertz/2).
 docst_mdata_assertz(Entry, DocSt) :-
-	docst_currmod(DocSt, Name),
-	assertz_fact(docst_mdata(Entry, Name)).
+    docst_currmod(DocSt, Name),
+    assertz_fact(docst_mdata(Entry, Name)).
 
 :- use_module(engine(runtime_control), [push_prolog_flag/2, pop_prolog_flag/1]). % TODO: find a better solution?
 
 :- export(docst_mdata_save/1).
 docst_mdata_save(DocSt) :-
-	docst_currmod(DocSt, Name),
-	docst_backend(DocSt, Backend),
-	absfile_for_subtarget(Name, Backend, rr, RefsFile),
-	open(RefsFile, write, RefsOS),
-	push_prolog_flag(write_strings, on),
-	( % (failure-driven loop)
-          docst_mdata(Entry, Name),
-%	  display(user_error, refsentry(RefsFile, Entry)), nl(user_error),
-	  % quote atoms so that it can be read back properly
-	    writeq(RefsOS, Entry),
-	    write(RefsOS, '.\n'),
-	    fail
-	; true
-	),
-	pop_prolog_flag(write_strings),
-	close(RefsOS).
+    docst_currmod(DocSt, Name),
+    docst_backend(DocSt, Backend),
+    absfile_for_subtarget(Name, Backend, rr, RefsFile),
+    open(RefsFile, write, RefsOS),
+    push_prolog_flag(write_strings, on),
+    ( % (failure-driven loop)
+      docst_mdata(Entry, Name),
+%         display(user_error, refsentry(RefsFile, Entry)), nl(user_error),
+      % quote atoms so that it can be read back properly
+        writeq(RefsOS, Entry),
+        write(RefsOS, '.\n'),
+        fail
+    ; true
+    ),
+    pop_prolog_flag(write_strings),
+    close(RefsOS).
 
 % TODO: missing docst_mdata_restore; it is put in docst_gdata_restore
 
@@ -382,52 +382,52 @@ docst_mdata_save(DocSt) :-
 
 :- export(docst_gdata_query/2).
 docst_gdata_query(DocSt, Entry) :-
-	docst_currmod(DocSt, Name),
-	docst_gdata(Entry, _Base, Name).
+    docst_currmod(DocSt, Name),
+    docst_gdata(Entry, _Base, Name).
 
 :- export(docst_gdata_query/3).
 % (like docst_gdata_query/2 but returns the Base where the Entry comes from)
 docst_gdata_query(DocSt, Base, Entry) :-
-	docst_currmod(DocSt, Name),
-	docst_gdata(Entry, Base, Name).
+    docst_currmod(DocSt, Name),
+    docst_gdata(Entry, Base, Name).
 
 :- export(docst_gdata_restore/1).
 docst_gdata_restore(DocSt) :-
-%	docst_currmod(DocSt, Name),
-	get_mainmod(MainName),
-	docst_gdata_restore_(MainName, DocSt).
+%       docst_currmod(DocSt, Name),
+    get_mainmod(MainName),
+    docst_gdata_restore_(MainName, DocSt).
 
 % (fails if the refs file does not exist)
 docst_gdata_restore_(Base, DocSt) :-
-	docst_backend(DocSt, Backend),
-	absfile_for_subtarget(Base, Backend, rr, RefsFile),
-	file_exists(RefsFile),
-	!,
-	docst_currmod(DocSt, Name),
-	open(RefsFile, read, RefsOS),
-	( repeat,
-	  ( read(RefsOS, Entry) -> true ; fail ),
-	  ( Entry = end_of_file ->
-	     !
-	  ; ( Entry = refs_link(Base2) ->
-	        docst_gdata_restore_(Base2, DocSt)
-	    ; assertz_fact(docst_gdata(Entry, Base, Name))
-	    ),
-	    fail
-	  )
-	; true
-	),
-	close(RefsOS).
+    docst_backend(DocSt, Backend),
+    absfile_for_subtarget(Base, Backend, rr, RefsFile),
+    file_exists(RefsFile),
+    !,
+    docst_currmod(DocSt, Name),
+    open(RefsFile, read, RefsOS),
+    ( repeat,
+      ( read(RefsOS, Entry) -> true ; fail ),
+      ( Entry = end_of_file ->
+         !
+      ; ( Entry = refs_link(Base2) ->
+            docst_gdata_restore_(Base2, DocSt)
+        ; assertz_fact(docst_gdata(Entry, Base, Name))
+        ),
+        fail
+      )
+    ; true
+    ),
+    close(RefsOS).
 docst_gdata_restore_(Base, _DocSt) :-
-	throw(error(no_rr_file_for(Base), docst_gdata_restore_/2)).
-        % Entry = sect([level(999)], "", string_esc("[ERROR-UNRESOLVED]")),
-	% docst_currmod(DocSt, Name),
-	% assertz_fact(docst_gdata(Entry, Name, Name)).
+    throw(error(no_rr_file_for(Base), docst_gdata_restore_/2)).
+    % Entry = sect([level(999)], "", string_esc("[ERROR-UNRESOLVED]")),
+    % docst_currmod(DocSt, Name),
+    % assertz_fact(docst_gdata(Entry, Name, Name)).
 
 :- export(docst_gdata_clean/1).
 docst_gdata_clean(DocSt) :-
-	docst_currmod(DocSt, Name),
-	retractall_fact(docst_gdata(_, _, Name)).
+    docst_currmod(DocSt, Name),
+    retractall_fact(docst_gdata(_, _, Name)).
 
 :- use_module(library(system), [file_exists/1]).
 
@@ -441,51 +441,51 @@ docst_gdata_clean(DocSt) :-
 % TODO: docst_gvar_save and docst_gvar_restore are not good names...
 :- export(docst_gvar_save/2).
 docst_gvar_save(DocSt, MVars) :-
-	% get_mainmod(MainName), % TODO: only valid for mainmod
-	docst_currmod(DocSt, Name),
-	docst_backend(DocSt, Backend),
- 	absfile_for_subtarget(Name, Backend, gr, File),
-	open(File, write, OS),
-	push_prolog_flag(write_strings, on),
-	save_mvar_entries(MVars, DocSt, OS),
-	pop_prolog_flag(write_strings),
-	close(OS).
+    % get_mainmod(MainName), % TODO: only valid for mainmod
+    docst_currmod(DocSt, Name),
+    docst_backend(DocSt, Backend),
+    absfile_for_subtarget(Name, Backend, gr, File),
+    open(File, write, OS),
+    push_prolog_flag(write_strings, on),
+    save_mvar_entries(MVars, DocSt, OS),
+    pop_prolog_flag(write_strings),
+    close(OS).
 
 :- export(docst_gvar_restore/2).
 docst_gvar_restore(DocSt, MVars) :-
-	get_mainmod(MainName),
-	docst_backend(DocSt, Backend),
- 	absfile_for_subtarget(MainName, Backend, gr, File),
-	open(File, read, IS),
-	restore_mvar_entries(MVars, DocSt, IS),
-	close(IS).
+    get_mainmod(MainName),
+    docst_backend(DocSt, Backend),
+    absfile_for_subtarget(MainName, Backend, gr, File),
+    open(File, read, IS),
+    restore_mvar_entries(MVars, DocSt, IS),
+    close(IS).
 
 save_mvar_entries([], _, _).
 save_mvar_entries([V|Vs], DocSt, OS) :-
-        save_mvar_entry(V, DocSt, OS),
-        save_mvar_entries(Vs, DocSt, OS).
+    save_mvar_entry(V, DocSt, OS),
+    save_mvar_entries(Vs, DocSt, OS).
 
 % Save mvar entry
 save_mvar_entry(Var, DocSt, OS) :-
-        ( docst_mvar_get(DocSt, Var, Value) ->
-	    Term =.. [Var, Value],
-	    writeq(OS, Term),
-	    write(OS, '.\n')
-	; throw(error(cannot_save(Var), save_mvar_entry/3))
-	).
+    ( docst_mvar_get(DocSt, Var, Value) ->
+        Term =.. [Var, Value],
+        writeq(OS, Term),
+        write(OS, '.\n')
+    ; throw(error(cannot_save(Var), save_mvar_entry/3))
+    ).
 
 restore_mvar_entries([], _, _).
 restore_mvar_entries([V|Vs], DocSt, IS) :-
-        restore_mvar_entry(V, DocSt, IS),
-        restore_mvar_entries(Vs, DocSt, IS).
+    restore_mvar_entry(V, DocSt, IS),
+    restore_mvar_entries(Vs, DocSt, IS).
 
 % Restore mvar entry
 restore_mvar_entry(Var, DocSt, IS) :-
-        docst_mvar_lookup(DocSt, Var, Value),
-	Term =.. [Var, Value],
-	( read(IS, Term) -> true
-	; throw(error(cannot_restore(Var), restore_mvar_entry/3))
-	).
+    docst_mvar_lookup(DocSt, Var, Value),
+    Term =.. [Var, Value],
+    ( read(IS, Term) -> true
+    ; throw(error(cannot_restore(Var), restore_mvar_entry/3))
+    ).
 
 % ===========================================================================
 
@@ -494,20 +494,20 @@ restore_mvar_entry(Var, DocSt, IS) :-
 
 :- export(docst_has_index/2).
 docst_has_index(Index, DocSt) :-
-        docst_opt(indices(Indices), DocSt),
-	( member(Index, Indices) -> true
-	; Indices=[all]
-	).
+    docst_opt(indices(Indices), DocSt),
+    ( member(Index, Indices) -> true
+    ; Indices=[all]
+    ).
 
 :- export(all_indices/2).
 all_indices(DocSt, Indices) :-
-	findall(I, enum_indices(I, DocSt), Indices).
+    findall(I, enum_indices(I, DocSt), Indices).
 
 % Enumerate (backtracking) the indices in the order stablished by
 % typeindex.
 enum_indices(IdxName, DocSt) :-
-	typeindex(IdxName, _Index, _IType, _ITitle, _IComment),
-	docst_has_index(IdxName, DocSt).
+    typeindex(IdxName, _Index, _IType, _ITitle, _IComment),
+    docst_has_index(IdxName, DocSt).
 
 % ---------------------------------------------------------------------------
 
@@ -519,68 +519,68 @@ enum_indices(IdxName, DocSt) :-
 % Obtain the value of document property Id.
 % If the value is not defined, the action specified by MessageType is carried out.
 get_doc(Id, MessageType, DocSt, Value) :-
-	( doc_id_type(Id, Type, ValueType) -> 
- 	    get_doc_(Id, Type, ValueType, MessageType, DocSt, Value)
-	; autodoc_message(error, "Unrecognized doc/comment declaration type '~w'.",[Id]),
-	  fail % TODO: recover from this error?
-	). 
-	
+    ( doc_id_type(Id, Type, ValueType) -> 
+        get_doc_(Id, Type, ValueType, MessageType, DocSt, Value)
+    ; autodoc_message(error, "Unrecognized doc/comment declaration type '~w'.",[Id]),
+      fail % TODO: recover from this error?
+    ). 
+    
 get_doc_(Id, single, ValueType, _MessageType, DocSt, Value) :-
-	get_docdecl(Id, RContent, Dict, Loc),
-	!,
-	process_content(ValueType, DocSt, Dict, Loc, RContent, Value).
+    get_docdecl(Id, RContent, Dict, Loc),
+    !,
+    process_content(ValueType, DocSt, Dict, Loc, RContent, Value).
 get_doc_(Id, multiple, ValueType, _MessageType, DocSt, Values) :-
-	findall(Value,
-	    ( get_docdecl(Id, RContent, Dict, Loc),
-	      process_content(ValueType, DocSt, Dict, Loc, RContent, Value) 
-            ),
-	    Values),
-	Values \== [],
-	!.
+    findall(Value,
+        ( get_docdecl(Id, RContent, Dict, Loc),
+          process_content(ValueType, DocSt, Dict, Loc, RContent, Value) 
+        ),
+        Values),
+    Values \== [],
+    !.
 get_doc_(Id, Type, ValueType, MessageType, DocSt, Value) :-
-	% No docdecl found for this Id
-	( Type = single, ValueType = docstr ->
-	    % default empty case
-	    empty_doctree(Value)
-	; Value = []
-	),
-	treat_missing_docdecl(MessageType, Id, DocSt).
+    % No docdecl found for this Id
+    ( Type = single, ValueType = docstr ->
+        % default empty case
+        empty_doctree(Value)
+    ; Value = []
+    ),
+    treat_missing_docdecl(MessageType, Id, DocSt).
 
 process_content(ValueType, DocSt, Dict, Loc, RContent, Value) :-
-	bind_dict_varnames(Dict),
-	( ValueType = docstr ->
-	    % Parse a docstring to obtain a doctree
-	    % TODO: emit error if \+string(RContent)
-	    parse_docstring_loc(DocSt, Loc, RContent, Value)
-	; Value = RContent
-	).
+    bind_dict_varnames(Dict),
+    ( ValueType = docstr ->
+        % Parse a docstring to obtain a doctree
+        % TODO: emit error if \+string(RContent)
+        parse_docstring_loc(DocSt, Loc, RContent, Value)
+    ; Value = RContent
+    ).
 
 % What to do if no docdecl is found, according to `MessageType`
 treat_missing_docdecl(ignore, _, _) :- !.
 treat_missing_docdecl(dofail, _, _) :- !, fail.
 treat_missing_docdecl(MessageType, Id, DocSt) :-
-	docst_inputfile(DocSt, S),
-	autodoc_message(MessageType, loc(S, 1, 1),
-	    "no "":- doc(~w,...)"" declaration found", [Id]).
+    docst_inputfile(DocSt, S),
+    autodoc_message(MessageType, loc(S, 1, 1),
+        "no "":- doc(~w,...)"" declaration found", [Id]).
 
 :- export(get_doc_changes/3).
 % Retrieve the changelog (list of change/2).
 get_doc_changes(DocSt, VPatch, Changes) :-
-	( setof(Change,
-	    VPatch^change_field(VPatch, DocSt, Change),
-	    RChanges) ->
-	    reverse(RChanges, Changes)
-	; Changes = []
-	).
+    ( setof(Change,
+        VPatch^change_field(VPatch, DocSt, Change),
+        RChanges) ->
+        reverse(RChanges, Changes)
+    ; Changes = []
+    ).
 
 change_field(VPatch, DocSt, change(Version, RC)) :-
-	version_patch(V, VPatch),
-	get_docdecl(V, C, _Dict, Loc),
-	parse_docstring_loc(DocSt, Loc, C, RC),
-	( V = version(Ver, Date) ->
-	    Version = version(Ver, Date, [])
-	; Version = V
-	).
+    version_patch(V, VPatch),
+    get_docdecl(V, C, _Dict, Loc),
+    parse_docstring_loc(DocSt, Loc, C, RC),
+    ( V = version(Ver, Date) ->
+        Version = version(Ver, Date, [])
+    ; Version = V
+    ).
 
 :- use_module(lpdoc(autodoc_aux), [all_vars/1]).
 
@@ -589,32 +589,32 @@ change_field(VPatch, DocSt, change(Version, RC)) :-
 % @tt{F/A}. The names are extracted from a predicate documentation
 % comment. If there is no such comment, 'Arg1',...,'ArgN' is returned.
 get_doc_pred_varnames(F/A, CArgs) :-
-	functor(CH, F, A),
-	get_docdecl(pred(CH), _, Dict, Loc),
-	CH =.. [_|CArgs],
-	( all_vars(CArgs) ->
-	    true
-	; % TODO: should we create new non-colliding names instead?
-	  autodoc_message(warning, Loc, "nonvariable argument(s) in comment head ~w, "
-		|| "variable names ignored", [CH]),
-	  fail
-	),
-	!,
-	bind_dict_varnames(Dict). % (this bind names in CArgs)
+    functor(CH, F, A),
+    get_docdecl(pred(CH), _, Dict, Loc),
+    CH =.. [_|CArgs],
+    ( all_vars(CArgs) ->
+        true
+    ; % TODO: should we create new non-colliding names instead?
+      autodoc_message(warning, Loc, "nonvariable argument(s) in comment head ~w, "
+            || "variable names ignored", [CH]),
+      fail
+    ),
+    !,
+    bind_dict_varnames(Dict). % (this bind names in CArgs)
 get_doc_pred_varnames(_/A, CArgs) :-
-	new_var_arg_names(A, CArgs).
+    new_var_arg_names(A, CArgs).
 
 % Args is the list ['Arg1', ..., 'ArgN']
 new_var_arg_names(N, Args) :-
-	new_var_arg_names_(1, N, Args).
+    new_var_arg_names_(1, N, Args).
 
 new_var_arg_names_(I, N, []) :- I > N, !.
 new_var_arg_names_(I, N, [Arg|Args]) :-
-	number_codes(I, IS),
-	atom_codes(II, IS),
-	atom_concat('Arg', II, Arg),
-	I1 is I + 1,
-	new_var_arg_names_(I1, N, Args).
+    number_codes(I, IS),
+    atom_codes(II, IS),
+    atom_concat('Arg', II, Arg),
+    I1 is I + 1,
+    new_var_arg_names_(I1, N, Args).
 
 % ---------------------------------------------------------------------------
 
@@ -626,38 +626,38 @@ new_var_arg_names_(I, N, [Arg|Args]) :-
 % TODO: A mechanism manipulate the variable dictionary in sentence
 %   translations would be much better.
 extract_varnames(CO0, CO, Dict) :-
-	nonvar(CO0),
-	CO0 = '\6\varnames'(CO, Dict).
+    nonvar(CO0),
+    CO0 = '\6\varnames'(CO, Dict).
 
 :- export(doc_assertion_read/9).
 % A wrapper for assertion_read/9 that allow replacement of the
 % variable name dictionary.
 doc_assertion_read(P, M, Status, Type, NAss2, Dict2, S, LB, LE) :-
-	assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
-	( assertion_body(P, DP, CP, AP, GP, CO0, NAss),
-	  extract_varnames(CO0, CO1, Dict1) ->
-	    Dict2 = Dict1,
-	    assertion_body(P, DP, CP, AP, GP, CO1, NAss2)
-	; NAss2 = NAss,
-	  Dict2 = Dict
-	).
+    assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
+    ( assertion_body(P, DP, CP, AP, GP, CO0, NAss),
+      extract_varnames(CO0, CO1, Dict1) ->
+        Dict2 = Dict1,
+        assertion_body(P, DP, CP, AP, GP, CO1, NAss2)
+    ; NAss2 = NAss,
+      Dict2 = Dict
+    ).
 
 :- export(get_docdecl/4).
 % Query a `:- doc(Cmd, Val)` declaration in the source, with variable
 % names `Dict` and location `Loc`.
 get_docdecl(Id0, Field, Dict, Loc) :-
-	% TODO: accept 'comment' for compatibility, but emit deprecate message
-	( Id0 = pred(Id) -> true ; Id = Id0 ),
-	( clause_read(_, 1, comment(Id, Field0), Dict0, S, LB, LE)
-	; clause_read(_, 1, doc(Id, Field0), Dict0, S, LB, LE)
-	),
-	( extract_varnames(Field0, Field1, Dict1) ->
-	    Field = Field1,
-	    Dict = Dict1
-	; Field = Field0,
-	  Dict = Dict0
-	),
-	Loc = loc(S, LB, LE).
+    % TODO: accept 'comment' for compatibility, but emit deprecate message
+    ( Id0 = pred(Id) -> true ; Id = Id0 ),
+    ( clause_read(_, 1, comment(Id, Field0), Dict0, S, LB, LE)
+    ; clause_read(_, 1, doc(Id, Field0), Dict0, S, LB, LE)
+    ),
+    ( extract_varnames(Field0, Field1, Dict1) ->
+        Field = Field1,
+        Dict = Dict1
+    ; Field = Field0,
+      Dict = Dict0
+    ),
+    Loc = loc(S, LB, LE).
 
 :- export(bind_dict_varnames/1).
 :- pred bind_dict_varnames(Dict) # "Binds the variables in @var{Dict}
@@ -666,29 +666,29 @@ get_docdecl(Id0, Field, Dict, Loc) :-
 
 bind_dict_varnames([]).
 bind_dict_varnames([VarName=Var|Rest]) :-
-	VarName=Var,
-	bind_dict_varnames(Rest).
+    VarName=Var,
+    bind_dict_varnames(Rest).
 
 % Like get_doc, but emits 'note' errors only if doing mainmod
 :- export(get_mod_doc/3).
 get_mod_doc(P, DocSt, Value) :-
-	( docst_currmod_is_main(DocSt) ->
-	    ErrorType = note
-	; ErrorType = ignore
-	),
-	get_doc(P, ErrorType, DocSt, Value).
+    ( docst_currmod_is_main(DocSt) ->
+        ErrorType = note
+    ; ErrorType = ignore
+    ),
+    get_doc(P, ErrorType, DocSt, Value).
 
 :- export(pred_has_docprop/2).
 % pred_has_docprop(+Pred, +Prop)
 % TODO: not efficient
 pred_has_docprop(Pred, Prop) :-
-	( % :- doc(Prop, Pred)
-	  get_docdecl(Prop, Pred, _Dict, _Loc)
-	; % :- doc(Prop, [..., Pred, ...])
-	  get_docdecl(Prop, PredList, _Dict, _Loc),
-	  list(PredList),
-	  member(Pred, PredList)
-	).
+    ( % :- doc(Prop, Pred)
+      get_docdecl(Prop, Pred, _Dict, _Loc)
+    ; % :- doc(Prop, [..., Pred, ...])
+      get_docdecl(Prop, PredList, _Dict, _Loc),
+      list(PredList),
+      member(Pred, PredList)
+    ).
 
 % ---------------------------------------------------------------------------
 
@@ -696,50 +696,50 @@ pred_has_docprop(Pred, Prop) :-
 % filetype is cached in the docstate
 :- pred detect_filetype(DocSt, FileType) => docstate * filetype.
 detect_filetype(DocSt, FileType) :-
-	get_doc(filetype, dofail, DocSt, FileType0),
-	!,
-	( filetype(FileType0) ->
-	    FileType = FileType0
-	; autodoc_message(error, "Unrecognized value in doc(filetype) declaration"),
-	  fail % TODO: recover from this error?
-	).
+    get_doc(filetype, dofail, DocSt, FileType0),
+    !,
+    ( filetype(FileType0) ->
+        FileType = FileType0
+    ; autodoc_message(error, "Unrecognized value in doc(filetype) declaration"),
+      fail % TODO: recover from this error?
+    ).
 %% Application - no interface, so no complication
 detect_filetype(DocSt, FileType) :-
-	docst_mvar_get(DocSt, fileinfo, fileinfo(_, Base)),
-	( defines(Base, main, 0, _, _)
-	; defines(Base, main, 1, _, _)
-	),
-	!,
-	FileType = application.
+    docst_mvar_get(DocSt, fileinfo, fileinfo(_, Base)),
+    ( defines(Base, main, 0, _, _)
+    ; defines(Base, main, 1, _, _)
+    ),
+    !,
+    FileType = application.
 %% Else, we need to infer the type
 detect_filetype(DocSt, FileType) :-
-	docst_mvar_get(DocSt, fileinfo, fileinfo(M, _)),
-	( M = user(_) ->
-	    FileType = package % TODO: This is wrong, check for ":- package" declarations instead
-	; FileType = module
-	).
+    docst_mvar_get(DocSt, fileinfo, fileinfo(M, _)),
+    ( M = user(_) ->
+        FileType = package % TODO: This is wrong, check for ":- package" declarations instead
+    ; FileType = module
+    ).
 
 :- export(docst_filetype/2).
 docst_filetype(DocSt, FileType) :-
-	( docst_mvar_get(DocSt, filetype, FileType) ->
-	    true
-	; docst_currmod(DocSt, M), % TODO: Wrong! M is not Base!?
-	  docst_gdata_query(DocSt, M, filetype(FileType0)) ->
-	    FileType = FileType0
-	; % TODO: this could be sometimes wrong
-	  % TODO: Copy the filetype in docst_new_sub/3 instead
-	  FileType = documentation % for sections in subfiles...
-	).
+    ( docst_mvar_get(DocSt, filetype, FileType) ->
+        true
+    ; docst_currmod(DocSt, M), % TODO: Wrong! M is not Base!?
+      docst_gdata_query(DocSt, M, filetype(FileType0)) ->
+        FileType = FileType0
+    ; % TODO: this could be sometimes wrong
+      % TODO: Copy the filetype in docst_new_sub/3 instead
+      FileType = documentation % for sections in subfiles...
+    ).
 
 % ---------------------------------------------------------------------------
 
 :- export(get_first_loc_for_pred/3).
 % TODO: Need to check for loops <- JFMC: old comment, what does it mean?
 get_first_loc_for_pred(F, A, loc(S, L0, L1)) :-
-	functor(Head, F, A),
-	clause_read(_, Head, _Body, _VarNames, S, L0, L1),
-	!.
+    functor(Head, F, A),
+    clause_read(_, Head, _Body, _VarNames, S, L0, L1),
+    !.
 get_first_loc_for_pred(F, A, loc(S, L0, L1)) :-
-	clause_read(_, 1, multifile(F/A), _, S, L0, L1),
-	!.
+    clause_read(_, 1, multifile(F/A), _, S, L0, L1),
+    !.
 get_first_loc_for_pred(_, _, _).

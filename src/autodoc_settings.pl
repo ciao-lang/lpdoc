@@ -26,21 +26,21 @@
 :- data name_value/2.
 
 set_settings_file(ConfigFile) :-
-	assertz_fact(settings_file(ConfigFile)).
+    assertz_fact(settings_file(ConfigFile)).
 
 :- export(clean_autodoc_settings/0).
 clean_autodoc_settings :-
-	retractall_fact(settings_file(_)),
-	retractall_fact(autodoc_option(_)),
-	retractall_fact(name_value(_, _)).
+    retractall_fact(settings_file(_)),
+    retractall_fact(autodoc_option(_)),
+    retractall_fact(name_value(_, _)).
 
 set_opts([]).
 set_opts([X|Xs]) :- set_opt(X), set_opts(Xs).
 
 set_opt(autodoc_option(Opt)) :- !,
-	assertz_fact(autodoc_option(Opt)).
+    assertz_fact(autodoc_option(Opt)).
 set_opt(name_value(Name, Value)) :- !,
-	add_name_value(Name, Value).
+    add_name_value(Name, Value).
 set_opt(X) :- throw(error(unknown_opt(X), set_opt/1)).
 
 % ---------------------------------------------------------------------------
@@ -52,41 +52,41 @@ set_opt(X) :- throw(error(unknown_opt(X), set_opt/1)).
 :- use_module(library(lists), [member/2, append/3]).
 
 add_name_value(Name, Value) :-
-	assertz_fact(name_value(Name, Value)).
+    assertz_fact(name_value(Name, Value)).
 
 % read all values
 % TODO: findall of get_value should be equivalent
 all_values(Name, Values) :-
-	all_name_values(Name, Values0),
-	( Values0 = [] ->
-	    all_pred_values(Name, Values)
-	; Values = Values0
-	).
+    all_name_values(Name, Values0),
+    ( Values0 = [] ->
+        all_pred_values(Name, Values)
+    ; Values = Values0
+    ).
 
 all_pred_values(Name, Values) :-
-	findall(Value, get_pred_value(Name, Value), Values).
+    findall(Value, get_pred_value(Name, Value), Values).
 
 all_name_values(Name, Values) :-
-	findall(Value, name_value(Name, Value), Values).
+    findall(Value, name_value(Name, Value), Values).
 
 get_value(Name, Value) :-
-	( name_value(Name, _) ->
-	    name_value(Name, Value)
-	; get_pred_value(Name, Value)
-	).
+    ( name_value(Name, _) ->
+        name_value(Name, Value)
+    ; get_pred_value(Name, Value)
+    ).
 
 dyn_load_doccfg(ConfigFile) :-
-	doccfg_holder:do_use_module(ConfigFile).
+    doccfg_holder:do_use_module(ConfigFile).
 
 % (Get value, given by a predicate definition Name/1)
 get_pred_value(Name, Value) :-
-	( atom(Name) ->
-	    Pred =.. [Name, Value]
-	; Name =.. Flat,
-	  append(Flat, [Value], PredList),
-	  Pred =.. PredList
-	),
-	doccfg_holder:call_unknown(_:Pred).
+    ( atom(Name) ->
+        Pred =.. [Name, Value]
+    ; Name =.. Flat,
+      append(Flat, [Value], PredList),
+      Pred =.. PredList
+    ),
+    doccfg_holder:call_unknown(_:Pred).
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Loading Settings").
@@ -97,44 +97,44 @@ get_pred_value(Name, Value) :-
    @var{InFile} of kind @var{InKind} and @var{Opts}".
 
 load_settings(InFile, InKind, Opts) :-
-	clean_autodoc_settings,
-	fixed_absolute_file_name(InFile, '.', InFile2),
-	( InKind = doccfg ->
-	    ( dyn_load_doccfg(InFile2) -> true
-	    ; throw(autodoc_error("could not load doccfg file ~w", [InFile]))
-	    ),
-	    set_settings_file(InFile2)
-	; InKind = standalone ->
-	    path_dirname(InFile2, InDir),
-	    % Fill cfg for standalone
-	    add_name_value(filepath, InDir),
-	    add_name_value(docformat, html), % default format
-	    add_name_value('$implements', 'doccfg'),
-	    add_name_value(doc_structure, [InFile]) % TODO: or InFile2?
-	; fail
-	),
-	set_opts(Opts),
-	ensure_lpdoc_etc_defined.
+    clean_autodoc_settings,
+    fixed_absolute_file_name(InFile, '.', InFile2),
+    ( InKind = doccfg ->
+        ( dyn_load_doccfg(InFile2) -> true
+        ; throw(autodoc_error("could not load doccfg file ~w", [InFile]))
+        ),
+        set_settings_file(InFile2)
+    ; InKind = standalone ->
+        path_dirname(InFile2, InDir),
+        % Fill cfg for standalone
+        add_name_value(filepath, InDir),
+        add_name_value(docformat, html), % default format
+        add_name_value('$implements', 'doccfg'),
+        add_name_value(doc_structure, [InFile]) % TODO: or InFile2?
+    ; fail
+    ),
+    set_opts(Opts),
+    ensure_lpdoc_etc_defined.
 
 % Verify that the configuration module uses the library(doccfg) package
 :- export(verify_settings/0).
 verify_settings :-
-	( setting_value('$implements', 'doccfg') ->
-	    true
-	; throw(autodoc_error("Configuration files must use the library(doccfg) package", []))
-	).
+    ( setting_value('$implements', 'doccfg') ->
+        true
+    ; throw(autodoc_error("Configuration files must use the library(doccfg) package", []))
+    ).
 
 % Define 'lpdoc_etc' setting, check that it is valid
 ensure_lpdoc_etc_defined :-
-	( LpDocEtcDir = ~file_search_path(lpdoc_etc),
-	  file_exists(~path_concat(LpDocEtcDir, 'lpdoc.css')) -> % (some example)
-	    add_name_value(lpdoc_etc, LpDocEtcDir)
-	; autodoc_message(error, 
+    ( LpDocEtcDir = ~file_search_path(lpdoc_etc),
+      file_exists(~path_concat(LpDocEtcDir, 'lpdoc.css')) -> % (some example)
+        add_name_value(lpdoc_etc, LpDocEtcDir)
+    ; autodoc_message(error, 
 % ___________________________________________________________________________
  "No valid file search path for 'lpdoc_etc' alias.\n"||
  "Please, check this is LPdoc installation.\n", []),
-	  fail
-	).
+      fail
+    ).
 
 %:- multifile file_search_path/2.
 %:- dynamic(file_search_path/2). % (just declaration, dynamic not needed in this module)
@@ -155,16 +155,16 @@ ensure_lpdoc_etc_defined :-
   is no default value for the variable @var{Var} it fails.".
 
 setting_value_or_default(Name, Value) :-
-	( get_value(Name, _) -> % Has some value
-	    get_value(Name, Value)
-	; ( Value0 = ~default_val(Name) ->
-              Value = Value0
-	  ; autodoc_message(error,
-	      "no ~w provided and no default value available.", [Name]),
-	    fail
-	  )
-        ). 
-	
+    ( get_value(Name, _) -> % Has some value
+        get_value(Name, Value)
+    ; ( Value0 = ~default_val(Name) ->
+          Value = Value0
+      ; autodoc_message(error,
+          "no ~w provided and no default value available.", [Name]),
+        fail
+      )
+    ). 
+    
 
 % TODO: Use defaults from doccfg package instead?
 default_val(startpage) := 1.
@@ -174,7 +174,7 @@ default_val(warning_level) := normal.
 
 :- export(setting_value/2).
 setting_value(Name, Value) :-
-	get_value(Name, Value).
+    get_value(Name, Value).
 
 :- export(all_setting_values/2).
 all_setting_values(Name) := ~all_values(Name).
@@ -186,37 +186,37 @@ all_setting_values(Name) := ~all_values(Name).
 
 :- use_module(library(bundle/bundle_paths), [ext_absolute_file_name/3]).
 :- use_module(library(pathnames), 
-	[path_dirname/2, path_is_absolute/1, path_norm/2, path_concat/3]).
+    [path_dirname/2, path_is_absolute/1, path_norm/2, path_concat/3]).
 :- use_module(lpdoc(autodoc_filesystem), [cleanup_vpath/0, add_vpath/1]).
 
 :- export(load_vpaths/1).
 % Setup vpath values, relative to directory of InFile if needed
 load_vpaths(InFile) :-
-	cleanup_vpath,
-	path_dirname(InFile, InDir),
-	( % (failure-driven loop)
-	  ( P = InDir
-	  ; resolved_filepath(InDir, P)
-	  ; file_search_path(_Alias, P), % TODO: prioritize path aliases for the current bundle?
-	    \+ P = '.'
-	  ),
-	    add_vpath(P),
-	    fail
-	; true
-	).
+    cleanup_vpath,
+    path_dirname(InFile, InDir),
+    ( % (failure-driven loop)
+      ( P = InDir
+      ; resolved_filepath(InDir, P)
+      ; file_search_path(_Alias, P), % TODO: prioritize path aliases for the current bundle?
+        \+ P = '.'
+      ),
+        add_vpath(P),
+        fail
+    ; true
+    ).
 
 :- multifile file_search_path/2.
 :- dynamic(file_search_path/2). % (just declaration, dynamic not needed in this module)
 
 % Obtain a resolved filepath (use ext_absolute_file_name/2 and make it relative to InDir if needed)
 resolved_filepath(InDir, P) :-
-	% TODO: document at_bundle(_,_) syntax?
-	member(P0, ~all_setting_values(filepath)),
-	ext_absolute_file_name(P0, InDir, P1),
-	( path_is_absolute(P1) -> P = P1
-	; path_concat(InDir, P1, P2),
-	  path_norm(P2, P)
-	).
+    % TODO: document at_bundle(_,_) syntax?
+    member(P0, ~all_setting_values(filepath)),
+    ext_absolute_file_name(P0, InDir, P1),
+    ( path_is_absolute(P1) -> P = P1
+    ; path_concat(InDir, P1, P2),
+      path_norm(P2, P)
+    ).
 
 % TODO: prioritize path aliases for the current bundle?
 % :- use_module(lpdoc(autodoc_filesystem), [get_parent_bundle/1]).
@@ -226,10 +226,10 @@ resolved_filepath(InDir, P) :-
 
 :- export(custom_html_layout/0).
 custom_html_layout :-
-	setting_value(html_layout, Layout),
-	( Layout = website_layout(_) -> true
-	; Layout = tmpl_layout(_, _, _)
-	).
+    setting_value(html_layout, Layout),
+    ( Layout = website_layout(_) -> true
+    ; Layout = tmpl_layout(_, _, _)
+    ).
 
 % ---------------------------------------------------------------------------
 :- doc(section, "External Commands").

@@ -23,20 +23,20 @@
 % (execute between scanning and final translation)
 :- export(compute_refs_and_biblio/1).
 compute_refs_and_biblio(DocSt) :-
-	docst_gdata_restore(DocSt),
-	( \+ docst_opt(no_biblio, DocSt) ->
-	    % Keep the doctree for the bibliography in the state
-	    % so that it can be used anywhere.
-	    resolve_bibliography(DocSt)
-	; true
-	),
-	( \+ docst_opt(no_biblio, DocSt) ->
-	    % Save the bibliography
-	    MVars = [biblio_pairs, biblio_doctree]
-	; MVars = []
-	),
-	docst_gvar_save(DocSt, MVars),
-	docst_gdata_clean(DocSt).
+    docst_gdata_restore(DocSt),
+    ( \+ docst_opt(no_biblio, DocSt) ->
+        % Keep the doctree for the bibliography in the state
+        % so that it can be used anywhere.
+        resolve_bibliography(DocSt)
+    ; true
+    ),
+    ( \+ docst_opt(no_biblio, DocSt) ->
+        % Save the bibliography
+        MVars = [biblio_pairs, biblio_doctree]
+    ; MVars = []
+    ),
+    docst_gvar_save(DocSt, MVars),
+    docst_gdata_clean(DocSt).
 
 % ---------------------------------------------------------------------------
 
@@ -45,40 +45,40 @@ compute_refs_and_biblio(DocSt) :-
    # "Prepare references for the translation of the current file.".
 % Restore biblio if necessary and compute navigation and contents
 prepare_current_refs(DocSt) :-
-	docst_gdata_restore(DocSt),
-	( % docst_currmod_is_main(DocSt),
-	  % TODO: optimize, keep in memory for several passes...
-	  % TODO: do not load all biblio (just biblio_pairs?)
-          docst_backend(DocSt, Backend),
-	  ( Backend = html ; Backend = texinfo ) -> % TODO: formats hardwired
-	    % TODO: it should be more automatic
-	    ( \+ docst_opt(no_biblio, DocSt) ->
-	        % Load the bibliography
-	        MVars = [biblio_pairs, biblio_doctree]
-	    ; MVars = []
-	    ),
-	    docst_gvar_restore(DocSt, MVars),
-	    ( \+ docst_opt(no_biblio, DocSt) ->
-	        true
-	    ; % Fill bibliography with empty data
-	      docst_mvar_lookup(DocSt, biblio_pairs, []),
-	      docst_mvar_lookup(DocSt, biblio_doctree, [])
-	    ),
-	    % Compute navigation links and table of contents for the current file
-	    docst_currmod(DocSt, Name),
-	    get_secttree(DocSt, SectTree),
-	    get_nav(SectTree, Name, Nav, CurrTree),
-	    docst_mvar_lookup(DocSt, full_toc_tree, SectTree),
-	    docst_mvar_lookup(DocSt, curr_toc_tree, CurrTree),
-	    docst_mvar_lookup(DocSt, nav, Nav)
-	; true
-	).
+    docst_gdata_restore(DocSt),
+    ( % docst_currmod_is_main(DocSt),
+      % TODO: optimize, keep in memory for several passes...
+      % TODO: do not load all biblio (just biblio_pairs?)
+      docst_backend(DocSt, Backend),
+      ( Backend = html ; Backend = texinfo ) -> % TODO: formats hardwired
+        % TODO: it should be more automatic
+        ( \+ docst_opt(no_biblio, DocSt) ->
+            % Load the bibliography
+            MVars = [biblio_pairs, biblio_doctree]
+        ; MVars = []
+        ),
+        docst_gvar_restore(DocSt, MVars),
+        ( \+ docst_opt(no_biblio, DocSt) ->
+            true
+        ; % Fill bibliography with empty data
+          docst_mvar_lookup(DocSt, biblio_pairs, []),
+          docst_mvar_lookup(DocSt, biblio_doctree, [])
+        ),
+        % Compute navigation links and table of contents for the current file
+        docst_currmod(DocSt, Name),
+        get_secttree(DocSt, SectTree),
+        get_nav(SectTree, Name, Nav, CurrTree),
+        docst_mvar_lookup(DocSt, full_toc_tree, SectTree),
+        docst_mvar_lookup(DocSt, curr_toc_tree, CurrTree),
+        docst_mvar_lookup(DocSt, nav, Nav)
+    ; true
+    ).
 
 :- export(clean_current_refs/1).
 :- pred clean_current_refs/1 :: docstate
    # "Clean the data stored by @pred{prepare_current_refs/1}.".
 clean_current_refs(DocSt) :-
-	docst_gdata_clean(DocSt).
+    docst_gdata_clean(DocSt).
 
 % ---------------------------------------------------------------------------
 
@@ -88,19 +88,19 @@ clean_current_refs(DocSt) :-
      bibliography style".
 
 pretty_cite(Ref, DocSt, Text) :-
-	( docst_mvar_get(DocSt, biblio_pairs, RefPairs) ->
-	    true
-	; throw(error(no_biblio_pairs, cite_idx/4))
-	),
-	% TODO: make RefPairs a dictionary so that this can be faster
-	% note: Label is the textual representation for the cite (e.g. [JS99])
-	( member((Label0,Ref), RefPairs) ->
-	    Text = Label0
-	; Text = "?", % Unknown cite
-	  % TODO: Improve warning message
-	  atom_codes(RefAtom, Ref),
-	  autodoc_message(error, "unresolved bibliographical reference '~w'", [RefAtom])
-	).
+    ( docst_mvar_get(DocSt, biblio_pairs, RefPairs) ->
+        true
+    ; throw(error(no_biblio_pairs, cite_idx/4))
+    ),
+    % TODO: make RefPairs a dictionary so that this can be faster
+    % note: Label is the textual representation for the cite (e.g. [JS99])
+    ( member((Label0,Ref), RefPairs) ->
+        Text = Label0
+    ; Text = "?", % Unknown cite
+      % TODO: Improve warning message
+      atom_codes(RefAtom, Ref),
+      autodoc_message(error, "unresolved bibliographical reference '~w'", [RefAtom])
+    ).
 
 % ---------------------------------------------------------------------------
 
@@ -115,10 +115,10 @@ secttree(_). % TODO: Define
 
 :- pred get_secttree/2 :: docstate * secttree # "Obtain the complete tree of sections".
 get_secttree(DocSt, SectTree) :-
-	findall(sect(Props, link_to(Base,SectLabel), T),
-	        docst_gdata_query(DocSt, Base, sect(Props, SectLabel, T)),
-		Sects),
-	get_secttree_(Sects, _, -1, '__root__', SectTree).
+    findall(sect(Props, link_to(Base,SectLabel), T),
+            docst_gdata_query(DocSt, Base, sect(Props, SectLabel, T)),
+            Sects),
+    get_secttree_(Sects, _, -1, '__root__', SectTree).
 
 % get_secttree_(+Xs, ?Ys, +BaseLevel, +BaseName, -Nodes):
 %
@@ -127,27 +127,27 @@ get_secttree(DocSt, SectTree) :-
 %   the list of pending sections that are not descendants.
 get_secttree_([], [], _BaseLevel, _BaseName, []).
 get_secttree_([sect(Props,Link,T)|Ss], Ss0, BaseLevel, BaseName, Rs) :-
-	Link = link_to(N, _),
-	% Determine if it is a subsection based on level or parent relationship
-	section_prop(level(L), Props),
-	% \+ section_prop(is_special(search), Props), % TODO: ad-hoc, better way?
-	( \+ doclink_is_local(Link), docstr_node(N, _, Parent, Mode) ->
-	    Parent = BaseName, NextN = N
-	; L > BaseLevel, NextN = '__local__', Mode = normal
-	),
-	!,
-	% Get the subsections
-%	display(user_error, foundsub(L, N, Parent, BaseName)), nl(user_error),
-	get_secttree_(Ss, Ss1, L, NextN, SubRs),
-	( Mode = normal -> Link2 = Link 
-	; Mode = phony_link(PhonyBase) -> Link2 = link_to(PhonyBase, no_label)
-	; % Mode = phony
-	  Link2 = no_link
-	),
-	R = toc_node(Link2,T,Props,SubRs),
-	Rs = [R|Rs1],
-	% Continue with the sibling sections
-	get_secttree_(Ss1, Ss0, BaseLevel, BaseName, Rs1).
+    Link = link_to(N, _),
+    % Determine if it is a subsection based on level or parent relationship
+    section_prop(level(L), Props),
+    % \+ section_prop(is_special(search), Props), % TODO: ad-hoc, better way?
+    ( \+ doclink_is_local(Link), docstr_node(N, _, Parent, Mode) ->
+        Parent = BaseName, NextN = N
+    ; L > BaseLevel, NextN = '__local__', Mode = normal
+    ),
+    !,
+    % Get the subsections
+%       display(user_error, foundsub(L, N, Parent, BaseName)), nl(user_error),
+    get_secttree_(Ss, Ss1, L, NextN, SubRs),
+    ( Mode = normal -> Link2 = Link 
+    ; Mode = phony_link(PhonyBase) -> Link2 = link_to(PhonyBase, no_label)
+    ; % Mode = phony
+      Link2 = no_link
+    ),
+    R = toc_node(Link2,T,Props,SubRs),
+    Rs = [R|Rs1],
+    % Continue with the sibling sections
+    get_secttree_(Ss1, Ss0, BaseLevel, BaseName, Rs1).
 get_secttree_(Ss, Ss, _BaseLevel, _BaseName, []).
 
 :- use_module(lpdoc(autodoc_structure), [docstr_node/4]).
@@ -158,33 +158,33 @@ get_secttree_(Ss, Ss, _BaseLevel, _BaseName, []).
 :- pred get_nav/4 :: secttree * atm * term * secttree
    # "Obtain some navigation links and the tree for the current section from a global tree".
 get_nav(Tree, Curr, Nav, CurrTree) :-
-	( tree_df(Tree, [], Nodes, []),
-	  % Find @var{Curr} (alongside previous and next nodes) in the
-	  % list of nodes @var{Nodes}
-	  doclink_at(CurrLink, Curr),
-	  Curr0 = df_item(CurrLink, CurrTitle, CurrTree0, RootPath),
-	  member123(Prev0, Curr0, Next0, Nodes) ->
-	    % (Include current)
-	    CurrPath = ~reverse([step(CurrLink,CurrTitle)|RootPath]),
-	    CurrTree = CurrTree0,
-	    first_link(CurrPath, Top),
-	    first_link(RootPath, Up),
-	    df_link(Prev0, Prev),
-	    df_link(Next0, Next)
-	; % TODO: README*.lpdoc files fail here... find a better way to catch this
-          fail %throw(error(arg(1,Curr), get_nav/1)) % not found!
-	),
-	!,
-	Nav = nav(CurrPath, Top, Up, Prev, Next).
+    ( tree_df(Tree, [], Nodes, []),
+      % Find @var{Curr} (alongside previous and next nodes) in the
+      % list of nodes @var{Nodes}
+      doclink_at(CurrLink, Curr),
+      Curr0 = df_item(CurrLink, CurrTitle, CurrTree0, RootPath),
+      member123(Prev0, Curr0, Next0, Nodes) ->
+        % (Include current)
+        CurrPath = ~reverse([step(CurrLink,CurrTitle)|RootPath]),
+        CurrTree = CurrTree0,
+        first_link(CurrPath, Top),
+        first_link(RootPath, Up),
+        df_link(Prev0, Prev),
+        df_link(Next0, Next)
+    ; % TODO: README*.lpdoc files fail here... find a better way to catch this
+      fail %throw(error(arg(1,Curr), get_nav/1)) % not found!
+    ),
+    !,
+    Nav = nav(CurrPath, Top, Up, Prev, Next).
 get_nav(_Tree, _Curr, Nav, CurrTree) :-
-	Nav = nav([], no_link, no_link, no_link, no_link),
-	CurrTree = [].
+    Nav = nav([], no_link, no_link, no_link, no_link),
+    CurrTree = [].
 
 df_link(X, Link) :-
-        ( X = [df_item(Link0, _, _, _)] -> Link = Link0 ; Link = no_link ).
+    ( X = [df_item(Link0, _, _, _)] -> Link = Link0 ; Link = no_link ).
 
 first_link(Path, Link) :-
-	( Path = [step(Link0,_)|_] -> Link = Link0 ; Link = no_link ).
+    ( Path = [step(Link0,_)|_] -> Link = Link0 ; Link = no_link ).
 
 :- use_module(library(lists), [reverse/2]).
 
@@ -195,27 +195,27 @@ first_link(Path, Link) :-
 % Note: links to local sections are not included.
 tree_df([], _, Xs, Xs).
 tree_df([toc_node(Link,T,_Props,Sub)|Ts], RootPath0, Xs, Xs0) :-
-	( doclink_is_local(Link) ->
-	    Xs = Xs2
-	; Xs = [df_item(Link,T,Sub,RootPath0)|Xs2]
-	),
-	RootPath = [step(Link,T)|RootPath0],
-	tree_df(Sub, RootPath, Xs2, Xs1),
-	tree_df(Ts, RootPath0, Xs1, Xs0).
+    ( doclink_is_local(Link) ->
+        Xs = Xs2
+    ; Xs = [df_item(Link,T,Sub,RootPath0)|Xs2]
+    ),
+    RootPath = [step(Link,T)|RootPath0],
+    tree_df(Sub, RootPath, Xs2, Xs1),
+    tree_df(Ts, RootPath0, Xs1, Xs0).
 
 % Prev+[Curr]+Next is a sublist of List.
 %   where both Prev and Next are either singleton elements or the
 %   empty list
 % (nondet)
 member123(Prev, Curr, Next, List) :-
-	prefix01(Prev, Ns, Ns2), Ns2 = [Curr|Ns1], prefix01(Next, Ns1, _),
-	append(_, Ns, List).
+    prefix01(Prev, Ns, Ns2), Ns2 = [Curr|Ns1], prefix01(Next, Ns1, _),
+    append(_, Ns, List).
 
 % (nondet)
 prefix01(Sub, Ns, Ns0) :-
-	( Ns = [N|Ns0], Sub = [N] % take one element
-	; Ns = Ns0, Sub = [] % do not take anything
-	).
+    ( Ns = [N|Ns0], Sub = [N] % take one element
+    ; Ns = Ns0, Sub = [] % do not take anything
+    ).
 
 % ---------------------------------------------------------------------------
 
@@ -225,12 +225,12 @@ prefix01(Sub, Ns, Ns0) :-
       @var{LabelName} and return the @var{Link} to the section.".
 
 secttree_resolve(LabelName, Tree, Link) :-
-	member(toc_node(Link0, _, _, Subs), Tree),
-	( Link0 = link_to(_, Label),
-	  ( Label = global_label(LabelName)
-	  ; Label = local_label(LabelName)
-	  ) ->
-	    Link = Link0
-	; secttree_resolve(LabelName, Subs, Link)
-	).
+    member(toc_node(Link0, _, _, Subs), Tree),
+    ( Link0 = link_to(_, Label),
+      ( Label = global_label(LabelName)
+      ; Label = local_label(LabelName)
+      ) ->
+        Link = Link0
+    ; secttree_resolve(LabelName, Subs, Link)
+    ).
 

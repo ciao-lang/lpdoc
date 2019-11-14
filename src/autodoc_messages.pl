@@ -1,9 +1,9 @@
 :- module(autodoc_messages,
-	[
-	    autodoc_message/2,
-	    autodoc_message/3,
-	    autodoc_message/4
-	], [assertions, regtypes, fsyntax]).
+    [
+        autodoc_message/2,
+        autodoc_message/3,
+        autodoc_message/4
+    ], [assertions, regtypes, fsyntax]).
 
 :- doc(title, "Messages library for lpdoc").
 :- doc(author, "Manuel Hermenegildo").
@@ -40,17 +40,17 @@
 
 % Ciao libraries
 :- use_module(library(messages),[
-	show_message__/5, % internal
-	message_t/1
-	]).
+    show_message__/5, % internal
+    message_t/1
+    ]).
 %% The verbosity of these is already controlled by other mechanisms: reexport.
 %% Perhaps provide alternatives (e.g., for -v, which is somewhat ad-hoc.
 %% Not really needed after using the primitives here insttead of docst_message?
 %% :- reexport(library(messages),[
-%% 	optional_message/2,
-%% 	optional_message/3,
-%% 	debug_message/1,
-%% 	debug_message/2
+%%      optional_message/2,
+%%      optional_message/3,
+%%      debug_message/1,
+%%      debug_message/2
 %%         ]).
 
 % ---------------------------------------------------------------------------
@@ -128,11 +128,11 @@ autodoc_message_t(verbose).
 :- meta_predicate autodoc_message(?, addmodule).
 
 autodoc_message(Type, Message, Module) :-
-	optional_show_message__(Type, _, Message, [], Module).
+    optional_show_message__(Type, _, Message, [], Module).
 
 
 :- pred autodoc_message(Type, Text, ArgList)
-	: autodoc_message_t * format_control * list
+    : autodoc_message_t * format_control * list
 
 # "The text provided in @var{Text} is printed as a message of type
    @var{Type} (if allowed by the current error reporting level), using
@@ -142,11 +142,11 @@ autodoc_message(Type, Message, Module) :-
 :- meta_predicate autodoc_message(?, ?, addmodule).
 
 autodoc_message(Type, Message, A, Module) :-
-	optional_show_message__(Type, _, Message, A, Module).
+    optional_show_message__(Type, _, Message, A, Module).
 
 
 :- pred autodoc_message(Type, Lc, Text, ArgList)
-	: autodoc_message_t * location_t * format_control * list
+    : autodoc_message_t * location_t * format_control * list
 
 # "The text provided in @var{Text} is printed as a message of type
    @var{Type}, using the arguments in @var{ArgList} to interpret any
@@ -156,32 +156,32 @@ autodoc_message(Type, Message, A, Module) :-
 :- meta_predicate autodoc_message(?, ?, ?, addmodule).
 
 autodoc_message(Type, Loc, Message, A, Module) :-
-	optional_show_message__(Type, Loc, Message, A, Module).
+    optional_show_message__(Type, Loc, Message, A, Module).
 
 
 %% ---------------------------------------------------------------------------
 
 :- pred optional_show_message__(Type, Loc, Text, ArgList, Module)
-	: autodoc_message_t * term * format_control * list * sourcename
-        # "Does the work.".
+    : autodoc_message_t * term * format_control * list * sourcename
+    # "Does the work.".
  % TODO: use location_t(Loc), use loc(unknown,0,0) as unknown location?
 optional_show_message__(Type, Loc, Message, A, Module) :-
-	( message_should_show(Type,LibType) -> 
-	  show_message__(LibType, Loc, Message, A, Module)
-	; true ).
+    ( message_should_show(Type,LibType) -> 
+      show_message__(LibType, Loc, Message, A, Module)
+    ; true ).
 
 :- pred message_should_show(Type,LibType)
-	: autodoc_message_t(Type) => message_t(LibType).
+    : autodoc_message_t(Type) => message_t(LibType).
 
 message_should_show(error,error). % Errors should always show. 
 message_should_show(warning,warning) :-
-	setting_value_or_default(warning_level,L), (L=normal;L=all).
+    setting_value_or_default(warning_level,L), (L=normal;L=all).
 message_should_show(note,note) :- 
-	setting_value_or_default(warning_level,L), L=all.
+    setting_value_or_default(warning_level,L), L=all.
 message_should_show(progress,simple) :- 
-	setting_value_or_default(verbosity,L), (L=progress;L=full).
+    setting_value_or_default(verbosity,L), (L=progress;L=full).
 message_should_show(verbose,simple) :- 
-	setting_value_or_default(verbosity,L), L=full.
+    setting_value_or_default(verbosity,L), L=full.
 
 %% ---------------------------------------------------------------------------
 

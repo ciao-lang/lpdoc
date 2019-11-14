@@ -16,11 +16,11 @@
 :- use_module(library(lpdoc_http/lpdoc_http_rt), [page_response/3]).
 
 treat_request(Request, Response) :-
-	http_protect(treat_request_, error_response, Request, Response).
+    http_protect(treat_request_, error_response, Request, Response).
 
 error_response(E, Response) :- html_error_response(E, Str), Response = html_string(Str).
 
 treat_request_(Request, Response) :-
-	http_parse_form(Request, Info),
-	process_tmpl(Request, Info, TmplName, Subst),
-	page_response(TmplName, Subst, Response).
+    http_parse_form(Request, Info),
+    process_tmpl(Request, Info, TmplName, Subst),
+    page_response(TmplName, Subst, Response).

@@ -1,10 +1,10 @@
 :- module(comments,
-	[
-	    %% doc/2,
-            docstring/1,stringcommand/1,version_descriptor/1,
-	    filetype/1,stability_level/1
-	],
-	[dcg,assertions,regtypes,fsyntax]).
+    [
+        %% doc/2,
+        docstring/1,stringcommand/1,version_descriptor/1,
+        filetype/1,stability_level/1
+    ],
+    [dcg,assertions,regtypes,fsyntax]).
 
 :- use_module(library(strings), [string/3]).
 
@@ -603,12 +603,12 @@ doc_id_type(pragma, multiple, term). % dofail
 
 version_descriptor([]). % If no version available
 version_descriptor(version(Version,Date)) :-
-	version_number(Version),
-	ymd_date(Date).
+    version_number(Version),
+    ymd_date(Date).
 version_descriptor(version(Version,Date,Time)) :-
-	version_number(Version),
-	ymd_date(Date),
-	time_struct(Time).
+    version_number(Version),
+    ymd_date(Date),
+    time_struct(Time).
 
 :- doc(filetype/1,"Intended uses of a file: @includedef{filetype/1}"). 
 
@@ -656,9 +656,9 @@ stability_level(prod(L))  :- docstring(L).
    # "@var{Version} is a complete version number".
 
 version_number(Major*Minor+Patch) :-
-	int(Major),
-	int(Minor),
-	int(Patch).
+    int(Major),
+    int(Minor),
+    int(Patch).
 
 % ----------------------------------------------------------------------------
 
@@ -671,9 +671,9 @@ version_number(Major*Minor+Patch) :-
    # "@var{Date} is a Year/Month/Day structure denoting a date.".
 
 ymd_date(Y/M/D) :-
-	int(Y),
-	int(M),
-	int(D).
+    int(Y),
+    int(M),
+    int(D).
 
 % ----------------------------------------------------------------------------
 
@@ -685,10 +685,10 @@ ymd_date(Y/M/D) :-
 :- regtype time_struct(Time) # "@var{Time} contains time information.".
 
 time_struct(Hours:Minutes*Seconds+TimeZone) :-
-	int(Hours),
-	int(Minutes),
-	int(Seconds),
-	atm(TimeZone).
+    int(Hours),
+    int(Minutes),
+    int(Seconds),
+    atm(TimeZone).
 
 % ----------------------------------------------------------------------------
 
@@ -725,7 +725,7 @@ time_struct(Hours:Minutes*Seconds+TimeZone) :-
 version_maintenance_type(on).
 version_maintenance_type(off).
 version_maintenance_type(dir(Path)) :-
-	atm(Path).
+    atm(Path).
 
 % ----------------------------------------------------------------------------
 
@@ -768,30 +768,30 @@ version_maintenance_type(dir(Path)) :-
 :- prop docstring(Text) # "@var{Text} is a @em{documentation string}.".
 
 docstring(CO) :- 
-	docstring(CO,[]).
+    docstring(CO,[]).
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
 docstring --> "" 
-          |   normalchar, !, docstring 
-          |   escapeseq, !, docstring
-          |   ("@" | "\\"), string(Command), " ", 
-              {atom_codes(Com, Command), C =.. [Com,""], stringcommand(C) }, !,
-                docstring 
-          |   ("@" | "\\"), string(Command), "{", string(Body), "}", 
-              {atom_codes(Com, Command), C =.. [Com,Body], stringcommand(C) },
-                docstring.
+      |   normalchar, !, docstring 
+      |   escapeseq, !, docstring
+      |   ("@" | "\\"), string(Command), " ", 
+          {atom_codes(Com, Command), C =.. [Com,""], stringcommand(C) }, !,
+            docstring 
+      |   ("@" | "\\"), string(Command), "{", string(Body), "}", 
+          {atom_codes(Com, Command), C =.. [Com,Body], stringcommand(C) },
+            docstring.
 
 :- set_prolog_flag(multi_arity_warnings, on).
 
 normalchar --> [X], {X \== 0'@, X \== 0'\\, X \== 0'{, X \== 0'} }.
 
 escapeseq --> "@{" 
-          |   "@}" 
-          |   "@@"
-          |   "\\{" 
-          |   "\\}" 
-          |   "\\\\".
+      |   "@}" 
+      |   "@@"
+      |   "\\{" 
+      |   "\\}" 
+      |   "\\\\".
 
 
 :- doc(doinclude,stringcommand/1).
