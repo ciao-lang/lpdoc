@@ -1472,7 +1472,10 @@ fmt_navlinks(DocSt) := UpPrevNextR :-
     UpUnicode = raw("&#x2191;"),
     LeftUnicode = raw("&#x2190;"),
     RightUnicode = raw("&#x2192;"),
-    navlink(Up, UpUnicode, UpR),
+    ( Up = no_link -> Up2 = link_to(url('/'), no_label) % Link to dir % TODO: make it optional?
+    ; Up2 = Up
+    ),
+    navlink(Up2, UpUnicode, UpR),
     navlink(Prev, LeftUnicode, PrevR),
     navlink(Next, RightUnicode, NextR),
     UpPrevNextR = [UpR, PrevR, NextR, SearchR].
