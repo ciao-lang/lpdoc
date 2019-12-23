@@ -1469,11 +1469,13 @@ fmt_navlinks(DocSt) := UpPrevNextR :-
     MagUnicode = raw("&#x1F50D;"), % TODO: replace by a proper search input box?
     navlink(~search_link, MagUnicode, SearchR),
     % Arrows (it looks nicer in most devices)
-    UpUnicode = raw("&#x2191;"),
     LeftUnicode = raw("&#x2190;"),
     RightUnicode = raw("&#x2192;"),
-    ( Up = no_link -> Up2 = link_to(url('/'), no_label) % Link to dir % TODO: make it optional?
-    ; Up2 = Up
+    ( Up = no_link ->
+        UpUnicode = raw("&#x2302;"), % home unicode
+        Up2 = link_to(url('/'), no_label) % Link to dir % TODO: make it optional?
+    ; UpUnicode = raw("&#x2191;"),
+      Up2 = Up
     ),
     navlink(Up2, UpUnicode, UpR),
     navlink(Prev, LeftUnicode, PrevR),
