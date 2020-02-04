@@ -1253,8 +1253,8 @@ check_no_definitions(FileType, Exports, Multifiles, DocSt) :-
 
 :- pred fmt_module_usage_and_itf(DocSt, Exports, Mults,
         Ops, NDecls, NModes, Rimports, R)
-    : ( docstate(DocSt), list(Exports, predname), list(Mults, predname),
-        list(Ops), list(NDecls, atm), list(NModes, atm),
+    : ( docstate(DocSt), list(predname, Exports), list(predname, Mults),
+        list(Ops), list(atm, NDecls), list(atm, NModes),
         doctree(Rimports) ) => doctree(R)
 # "This predicate defines the format of the usage info for the
    module. @var{Exports} contains the predicates exported by the

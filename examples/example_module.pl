@@ -78,20 +78,13 @@ baz(b).
 aorb := a. 
 aorb := b. 
 
-%% Should use the other function syntax which uses *first argument* for return
-
 :- regtype tree_of/2. 
-
+:- meta_predicate tree_of(pred(1),?).
 tree_of(_) := void.
 tree_of(T) := tree(~call(T),~tree_of(T),~tree_of(T)).
 
-%% tree_of(_, void).
-%% tree_of(T, tree(X,L,R)) :- 
-%%      T(X), 
-%%      tree_of(T,L), 
-%%      tree_of(T,R).
-
 :- regtype list_or_aorb/2.
+:- meta_predicate list_or_aorb(pred(1),?).
 
 list_or_aorb(T)  := ~list(T).
 list_or_aorb(_T) := ~aorb.
@@ -170,7 +163,7 @@ p(_).
  
 :- pred r(A) 
     : list(A) 
-       => (list(A,int),gnd(A)) 
+       => (list(int,A),gnd(A)) 
     + not_fails
     # "This uses parametric types".
 

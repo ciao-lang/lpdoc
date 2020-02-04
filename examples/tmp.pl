@@ -63,10 +63,11 @@ baz(b).
 aorb := a. 
 aorb := b. 
 
-:- regtype listof_or_aorb/2.
+:- regtype list_or_aorb/2.
+:- meta_predicate list_or_aorb(pred(1),?).
 
-listof_or_aorb(X) := ~list(X).
-listof_or_aorb(_) := ~aorb.
+list_or_aorb(T)  := ~list(T).
+list_or_aorb(_T) := ~aorb.
 
 %% This is a property definition
 %% This comment appears only in the place where the property is itself 
@@ -136,7 +137,7 @@ long(L) :-
  
 :- pred r(A) 
     : list(A) 
-       => (list(A,int),gnd(A)) 
+       => (list(int,A),gnd(A)) 
     + no_fail 
     # "This uses parametric types".
 

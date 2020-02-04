@@ -93,7 +93,7 @@ long(L) :-
  
 :- pred r(A) 
     :  list(A) 
-    => (list(A,integer),ground(A)) 
+    => (list(integer,A),ground(A)) 
     +  no_fail 
     #  "This uses parametric types".
 
