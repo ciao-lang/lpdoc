@@ -1,4 +1,4 @@
- :- package(lpdoc_http). % TODO: :- trait lpdoc_http.
+:- package(lpdoc_http). % TODO: :- trait lpdoc_http.
 :- use_package(library(http/http_service)). % TODO: :- extends http_service.
 
 % Trait for HTTP-based interface for LPdoc templates
