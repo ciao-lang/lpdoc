@@ -28,14 +28,12 @@
 % Ciao libraries
 :- use_module(library(compiler), [use_module/1]).
 :- use_module(library(assertions/assrt_lib),
-        [
-            cleanup_code_and_related_assertions/0,
-            clause_read/7,
-            assertion_read/9,
-            assertion_body/7,
-            get_code_and_related_assertions_opts/6,
-            use_pkg/2
-        ]).
+	    [
+          clause_read/7,
+          assertion_read/9,
+          assertion_body/7,
+          use_pkg/2
+	    ]).
 :- use_module(library(compiler/c_itf)).
 :- use_module(library(pathnames),
     [path_basename/2, path_dirname/2, path_splitext/3, path_concat/3]).
