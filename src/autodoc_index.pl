@@ -89,7 +89,7 @@ idx_get_indices(use_noidx, _Cmd, Indices) :- !,
 idx_get_indices(Mode, Cmd, Indices) :-
     Indices = [global|Indices0],
     ( index_cmd(Cmd, Index, AlwaysDef, _) ->
-        ( AlwaysDef = yes -> % any ocurrence acts as a definition
+        ( AlwaysDef = yes -> % any occurrence acts as a definition
             Indices0 = [Index]
         ; Mode = def -> Indices0 = [Index]
         ; Indices0 = []
