@@ -39,7 +39,7 @@ General options:
 
   -h|--help              Show help
   --version              Show version and exit
-  -T                     Start a LPdoc toplevel (single option)
+  -T                     Start an LPdoc toplevel (single option)
 
   -t TARGET              Format (pdf|ps|html|info|manl)
 
