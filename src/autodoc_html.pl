@@ -223,7 +223,7 @@ rw_command(itemize_env(plain, Xs), _DocSt, R) :- !,
 rw_command(itemize_env(minus, Xs), _DocSt, R) :- !,
     R = htmlenv(ul, [class="lpdoc-itemize-minus"], Xs).
 rw_command(itemize_env(menu, Xs), _DocSt, R) :- get_layout(tmpl_layout(_, _, _)), !,
-    R = htmlenv(ul, [class="nav nav-pills nav-stacked"], Xs). % TODO: only for bootstrap framework CSS
+    R = htmlenv(ul, [class="nav nav-pills flex-column"], Xs). % TODO: only for bootstrap framework CSS
 rw_command(itemize_env(horizontal_menu, Xs), _DocSt, R) :- !,
     R = htmlenv(ul, [class="lpdoc-horiz-menu"], Xs).
 rw_command(itemize_env(sectpath, Xs), _DocSt, R) :- !, % TODO: special case
