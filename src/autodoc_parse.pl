@@ -507,12 +507,14 @@ handle_incl_command(includefact(Pred), DocSt, Verb, RContent) :-
       functor(Pattern, Functor, Arity),
       clause_read(_, Pattern, true, _, _, _, _) ->
         autodoc_message(verbose, "-> Including fact ~w in documentation string", [Functor]),
-        ( Arity = 1 ->
-            true
+        ( Arity = 1 -> true
         ; send_signal(parse_error(aritynot1, []))
         ),
         arg(1, Pattern, Content),
-        parse_docstring__1(DocSt, Verb, Content, RContent)
+        ( is_string(Content) -> 
+            parse_docstring__1(DocSt, Verb, Content, RContent)
+        ; RContent = err(parse_error(notstring, []))
+        )
     ; RContent = err(parse_error(tryinclude, [Pred]))
     ).
 handle_incl_command(includedef(Pred), DocSt, _Verb, RContent) :-
@@ -545,6 +547,10 @@ handle_incl_file(Mode, RelFile, DocSt, Verb, RContent) :-
 
 % TODO: See includefact above --JF
 :- use_module(library(assertions/assrt_lib), [clause_read/7]).
+
+% TODO: share
+is_string([]).
+is_string([X|Xs]) :- integer(X), is_string(Xs).
 
 % ---------------------------------------------------------------------------
 % Auxiliary predicate to output to string

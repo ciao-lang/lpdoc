@@ -20,6 +20,7 @@ error_text(rewrite, error,
 error_text(tryinclude, error, "~w not found in program text").
 error_text(aritynot1, warning,
         "Arity different from 1 -- will take first argument").
+error_text(notstring, error, "Argument is not a string").
 error_text(nobegin, error, "@end{~w} with no begin command").
 error_text(noend, error, "@begin{~w} not closed").
 error_text(wrongend, error, "@begin{~w} closed with @end{~w}").
