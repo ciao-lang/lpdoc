@@ -19,7 +19,8 @@ commonopts := no_patches. % no_bugs|no_patches
 doc_mainopts := ~commonopts.
 doc_compopts := ~commonopts.
 
+% TODO: now enabled by default (experimental)
+allow_markdown := yes.
 % TODO: enable by default?
-allow_markdown := no.
 syntax_highlight := no.
 
