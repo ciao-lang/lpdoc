@@ -26,9 +26,7 @@ in source form below. Comparing this code with the output in the
 following chapter illustrates the use and some of the capabilities of
 @apl{lpdoc}:
 
-@begin{verbatim}
-@includeverbatim{example_module.pl}
-@end{verbatim}
+@includecode{example_module.pl}
 
 ").
 
