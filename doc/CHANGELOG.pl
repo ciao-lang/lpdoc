@@ -1,3 +1,31 @@
+:- doc(version(3*3+0,2020/3/20,14:48*45+'CET'), "
+   Highlights of this release:
+   @begin{itemize}
+   @item Improved tolerance to missing dependencies, reporting
+     disabled backends and causing dependency. Markdown translation
+     turned on by default.
+   @end{itemize}
+
+   Detailed list of new features and changes:
+   @begin{itemize}
+   @item ENHANCED: @tt{is_operational} checks for backends (disable them
+      dynamically if some 3rd-party dependencies, e.g., tex, makeinfo,
+      etc. are missing). Informative messages about what is missing.
+   @item ENHANCED: Improved support for website generation
+   @item CHANGED: @tt{Up} navigation arrow links to @tt{/} URL (i.e., website or
+      doc index). This is handy when using @tt{M-x ciao-serve} or navigating
+      the ciao-lang website.
+   @item CHANGED: Do not abort if @tt{bibtex} is missing/failing (just emit
+      error messages).
+   @item FIXED: Turn on markdown translation by default in default
+      @tt{SETTINGS.pl} (used, e.g., by @tt{C-c D B} in the emacs mode).
+   @item FIXED: Check that arg 1 of fact pointed by @@includefact is a
+      string.
+   @item FIXED: Dependency to @tt{texindex} for dvi,ps,pdf formats.
+   @item FIXED: Do not abort doc generation on @tt{convert} errors.
+   @end{itemize}
+").
+
 :- doc(version(3*2+0,2018/12/06,11:25*08+'CEST'), "
    @begin{itemize}
    @item Major improvements in HTML backend (which now is also mobile-friendly).
