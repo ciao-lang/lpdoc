@@ -117,8 +117,8 @@ generally more compact, but requires the presence of several tools,
 such as @tt{tex}, @tt{Emacs}, etc., in order to generate the manuals
 in the target formats during installation.
 
-@item @tt{--realclean}: performs a complete cleanup, deleting also the
-.texic files, i.e., it typically leaves only the original source
+@item @tt{--realclean}: performs a complete cleanup, deleting also 
+the .texic files, i.e., it typically leaves only the original source
 files.  This is is the most compact, but requires the presence of the
 tools mentioned above, the source files from which the manuals are
 generated and @apl{lpdoc} in order to regenerate the manuals in the

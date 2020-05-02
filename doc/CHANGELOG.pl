@@ -158,8 +158,8 @@
            generated texinfo files. (Manuel Hermenegildo)
      @item Document size more appropriate for current xdvi
            versions. (Manuel Hermenegildo)
-     @item Lpdoc no longer adds .info filename suffix to
-           .infoindex entries since it breaks Debian's
+     @item Lpdoc no longer adds .info filename suffix
+           to .infoindex entries since it breaks Debian's
            install-info --remove and goes against standard
            practice anyway. (Jose Luis Gonzalez)
      @item Added option --cv, --comment-version, that tells lpdoc

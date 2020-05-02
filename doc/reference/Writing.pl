@@ -327,8 +327,8 @@ as part of the manual or translated to plain text
 (@ref{Generating README files}).
 
 Version numbers in comments specify a @em{major}, @em{minor}, and
-@em{patch} number. As a common convention, @em{patch} changes (e.g.,
-1.1#2 to 1.1#3) are reserved for internal changes, such as bug fixes
+@em{patch} number. As a common convention, @em{patch} changes (e.g.,1.1#2 
+to 1.1#3) are reserved for internal changes, such as bug fixes
 and backward-compatible changes whose detailed description may not be
 relevant for the user. More general changes (including the summary of
 internal changes when appropriate) are documented with changes in the

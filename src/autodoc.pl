@@ -2739,11 +2739,11 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 
 :- doc(bug, "underscores in file names result in problems when
    including figures (a texinfo bug). Possible fix:
-
+   @begin{verbatim}
    \newcommand@{\fichero@}[1]@{\catcode\`\~=11%
         \catcode\`\_=11%
         \emph@{#1@}@}
-
+   @end{verbatim}
    ").
 
 :- doc(bug, "putting props in a prop should give errors?").
