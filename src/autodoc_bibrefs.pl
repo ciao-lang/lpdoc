@@ -208,6 +208,17 @@ parse_commands(NCommand) -->
     !,
     {handle_command(Chars, CommandBody, NCommand, Tail)},
     parse_commands(Tail).
+%% Commands, with no space after them, alt syntax (with extra open/close)
+parse_commands(NCommand) -->
+    open,
+    start,
+    command_chars1(Chars),
+    open,
+    balanced_braces(1, CommandBody),
+    close,
+    !,
+    {handle_command(Chars, CommandBody, NCommand, Tail)},
+    parse_commands(Tail).
 %% Commands, with no space after them, alt syntax
 parse_commands(NCommand) -->
     open,
