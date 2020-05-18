@@ -75,8 +75,16 @@ get_value(Name, Value) :-
     ; get_pred_value(Name, Value)
     ).
 
+% Just keep one config file at a time
+:- data prev_config_file/1.
+
 dyn_load_doccfg(ConfigFile) :-
-    doccfg_holder:do_use_module(ConfigFile).
+    ( retract_fact(prev_config_file(PrevConfigFile)) ->
+        doccfg_holder:do_unload(PrevConfigFile)
+    ; true
+    ),
+    doccfg_holder:do_use_module(ConfigFile),
+    assertz_fact(prev_config_file(ConfigFile)).
 
 % (Get value, given by a predicate definition Name/1)
 get_pred_value(Name, Value) :-
