@@ -187,6 +187,11 @@ action_is_operational(_).
 % ---------------------------------------------------------------------------
 % 1) Doctree and references from each source
 
+% TODO: Needed because the predicates are called as higher-order calls.
+:- entry 'fsmemo.key'(Action, _) : ground(Action).
+:- entry 'fsmemo.deps'(Action, _) : ground(Action).
+:- entry 'fsmemo.run'(Action) : ground(Action).
+
 'fsmemo.key'(gen_doctree(Backend,Spec), Target) :- !,
     path_basename(Spec,Name),
     absfile_for_subtarget(Name, Backend, dr, Target).
