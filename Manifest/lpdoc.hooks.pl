@@ -17,11 +17,22 @@ generate_version_auto_lpdoc :-
     generate_version_auto(Bundle, File).
 
 % ===========================================================================
-:- doc(section, "Tests and Benchmarks").
+:- doc(section, "Tests, benchmarks, analysis").
 
+:- use_module(library(system), [working_directory/2]).
 :- use_module(ciaobld(ciaoc_aux), [runtests_dir/2]).
+:- use_module(ciaobld(ciaopp_aux), [invoke_ciaopp/1, invoke_ciaopp_batch/1, invoke_ciaopp_dump/1]).
 
 '$builder_hook'(test) :- !,
     runtests_dir(lpdoc, 'src').
+
+'$builder_hook'(analyze) :- !,
+    working_directory(ThisDir, ThisDir),
+    working_directory(_, ~bundle_path(lpdoc, '.')),
+    invoke_ciaopp_batch(['pdb', 'src']),
+    working_directory(_, ~bundle_path(lpdoc, 'cmds')),
+    invoke_ciaopp(['-A', 'lpdoccl.pl', '-ftypes=none', '-fmodes=pdb', '-fintermod=on', '-fmenu_dump=incremental', '-fmenu_output=off']),
+    invoke_ciaopp_dump([report, reach, 'lpdoccl.pl.dump']),
+    working_directory(_, ThisDir).
 
 
