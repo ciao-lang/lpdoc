@@ -5,7 +5,7 @@
 %  \author Edison Mera
 %  \author Jose F. Morales
 
-:- include(core_docsrc(common/'LPDOCCOMMON')).
+:- include(core_docsrc(docpaths)).
 
 filepath := '../readmes'.
 filepath := '../../src'.
