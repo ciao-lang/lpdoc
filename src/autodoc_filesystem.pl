@@ -237,7 +237,6 @@ get_output_dir(Backend, Dir) :-
    backend)".
 % Note: this is <main>.cachedoc/<backend>/
 
-get_cache_dir(nil, '') :- !.
 get_cache_dir(Backend, Dir) :-
     computed_cache_dir(Backend, Dir0), !, Dir = Dir0.
 get_cache_dir(Backend, Dir) :-

@@ -91,7 +91,6 @@ find_pl(Path0, Path) :-
       Path = Path1
     ).
 
-doc_cmd__(gen(nil)) :- !, doc_check.
 doc_cmd__(gen(Format)) :- gen(Format).
 doc_cmd__(view(Format)) :- view(Format).
 doc_cmd__(clean(Mode)) :- clean(Mode).
@@ -102,16 +101,14 @@ clean_tmp_db :-
     clean_image_cache,
     reset_output_dir_db.
 
-doc_check :-
-    load_doc_modules,
-    get_mainmod_spec(Spec),
-    gen_doctree(nil, Spec).
-    
 gen(Format) :-
     load_doc_modules,
     % report_cmd('Starting', Format),
-    gen_actions(Format, Actions),
-    fsmemo_call(Actions).
+    ( Format=nil ->
+        autodoc_check_doc
+    ; gen_actions(Format, Actions),
+      fsmemo_call(Actions)
+    ).
     % report_cmd('Finished', Format).
 
 % (disabled, too verbose)
@@ -173,6 +170,14 @@ action_is_operational(Action) :-
 action_is_operational(_).
 
 % ===========================================================================
+:- doc(section, "Documentation Checking").
+% (special case for the 'nil' backend, which produces no output)
+
+autodoc_check_doc :-
+    get_mainmod_spec(Spec),
+    gen_doctree(nil, Spec).
+
+% ===========================================================================
 :- doc(section, "Documentation Generation").
 
 :- use_module(library(pathnames), [path_basename/2]).
@@ -211,7 +216,9 @@ action_is_operational(_).
 gen_doctree(Backend, FileBase) :-
     query_source(FileBase, FileAbs), % TODO: only for FileExt; simplify?
     path_splitext(FileAbs, _, FileExt),
-    ensure_cache_dir(Backend),
+    ( Backend = nil -> true
+    ; ensure_cache_dir(Backend)
+    ),
     path_basename(FileBase, Name),
     get_autodoc_opts(Backend, Name, Opts),
     autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Name).

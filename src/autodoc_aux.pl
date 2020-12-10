@@ -92,7 +92,6 @@ autodoc_process_call(Cmd, Args, Opts) :-
 % TODO: Backend should not be needed
 :- export(cmd_logbase/3).
 cmd_logbase(Backend, RunId, LogBase) :-
-
     get_cache_dir0(Backend, CacheDir),
     path_concat(CacheDir, RunId, LogBase).
 

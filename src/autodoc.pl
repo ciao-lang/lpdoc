@@ -184,16 +184,13 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
     register_main_title(Version, DocSt),
     register_main_version(GlobalVers, DocSt),
     %
-    ( Backend = nil ->
-        true
-    ; doctree_scan_and_save(ModuleR, Mod, DocSt),
-      % TODO: This generates the infoindex if necessary; generalize for other formats
-      ( % FileExt = '.pl',
-          docst_currmod_is_main(DocSt),
-          Backend = texinfo ->
-              fmt_infodir_entry(DocSt, GlobalVers, Mod)
-          ; true
-          )
+    doctree_scan_and_save(ModuleR, Mod, DocSt),
+    % TODO: This generates the infoindex if necessary; generalize for other formats
+    ( % FileExt = '.pl',
+      docst_currmod_is_main(DocSt),
+      Backend = texinfo ->
+        fmt_infodir_entry(DocSt, GlobalVers, Mod)
+    ; true
     ),
     %
     autodoc_message(verbose,"Done generating ~w documentation for ~w", 
@@ -204,6 +201,10 @@ autodoc_gen_doctree(_, FileBase, _, _, _) :-
     autodoc_message(error,"formatting ~w could not be completed", [FileBase]).
 
 % Scan the references, save them, and save the doctree.
+doctree_scan_and_save(_, _, DocSt) :-
+    docst_backend(DocSt, Backend),
+    Backend = nil, % Do nothing for 'nil' backend
+    !.
 doctree_scan_and_save(R, Mod, DocSt) :-
     doctree_scan_and_save_refs(R, DocSt),
     docst_backend(DocSt, Backend),
