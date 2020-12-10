@@ -57,6 +57,7 @@
 backend_id(texinfo).
 backend_id(html).
 backend_id(man).
+backend_id(nil).
 
 % TODO: (This should be defined in the backend)
 :- export(backend_ignores_components/1).

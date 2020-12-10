@@ -41,7 +41,7 @@ General options:
   --version              Show version and exit
   -T                     Start an LPdoc toplevel (single option)
 
-  -t TARGET              Format (pdf|ps|html|info|manl)
+  -t TARGET              Format (pdf|ps|html|info|manl|nil)
 
   --Name=Value           Set or override the option Name (doccfg)
 

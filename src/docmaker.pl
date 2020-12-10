@@ -91,6 +91,7 @@ find_pl(Path0, Path) :-
       Path = Path1
     ).
 
+doc_cmd__(gen(nil)) :- !, doc_check.
 doc_cmd__(gen(Format)) :- gen(Format).
 doc_cmd__(view(Format)) :- view(Format).
 doc_cmd__(clean(Mode)) :- clean(Mode).
@@ -101,6 +102,11 @@ clean_tmp_db :-
     clean_image_cache,
     reset_output_dir_db.
 
+doc_check :-
+    load_doc_modules,
+    get_mainmod_spec(Spec),
+    gen_doctree(nil, Spec).
+    
 gen(Format) :-
     load_doc_modules,
     % report_cmd('Starting', Format),

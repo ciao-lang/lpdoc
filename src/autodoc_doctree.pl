@@ -32,7 +32,8 @@
 % The backends
 :- use_module(lpdoc(autodoc_texinfo), []).
 :- use_module(lpdoc(autodoc_man),     []).
-:- use_module(lpdoc(autodoc_html),     []).
+:- use_module(lpdoc(autodoc_html),    []).
+:- use_module(lpdoc(autodoc_nil),     []).
 
 % ---------------------------------------------------------------------------
 % TODO: collect all interfaces

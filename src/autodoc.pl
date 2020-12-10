@@ -184,13 +184,16 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
     register_main_title(Version, DocSt),
     register_main_version(GlobalVers, DocSt),
     %
-    doctree_scan_and_save(ModuleR, Mod, DocSt),
-    % TODO: This generates the infoindex if necessary; generalize for other formats
-    ( % FileExt = '.pl',
-      docst_currmod_is_main(DocSt),
-      Backend = texinfo ->
-        fmt_infodir_entry(DocSt, GlobalVers, Mod)
-    ; true
+    ( Backend = nil ->
+        true
+    ; doctree_scan_and_save(ModuleR, Mod, DocSt),
+      % TODO: This generates the infoindex if necessary; generalize for other formats
+      ( % FileExt = '.pl',
+          docst_currmod_is_main(DocSt),
+          Backend = texinfo ->
+              fmt_infodir_entry(DocSt, GlobalVers, Mod)
+          ; true
+          )
     ),
     %
     autodoc_message(verbose,"Done generating ~w documentation for ~w", 
