@@ -66,13 +66,18 @@ doc_cmd_(InFile, Cmd) :-
     parse_structure,
     doc_cmd__(Cmd).
 
+:- use_module(engine(internals), [opt_suff/1]).
+
 doc_input(InFile0, InFile, InKind) :-
-    fixed_absolute_file_name(InFile0, '.', InFile1),
-    ( find_pl(InFile1, InFile),
+    %fixed_absolute_file_name(InFile0, '.', InFile1),
+    opt_suff(Opt),
+    absolute_file_name(InFile0, Opt, '.pl', '.', InFile, _, _),
+    ( 
+      %find_pl(InFile1, InFile),
       peek_doccfg(InFile) -> % Input is a doccfg file
         InKind = doccfg
-    ; file_exists(InFile1) -> % Input is a standalone
-        InFile = InFile1,
+    ; file_exists(InFile) -> % Input is a standalone
+       % InFile = InFile1,
         InKind = standalone
     ; throw(autodoc_error("Input file not found: ~w", [InFile0]))
     ).
@@ -84,12 +89,13 @@ output_dir(InFile, Dir) :-
     ).
 
 % `Path` is the first file that exists from `Path0` or `Path0` plus `.pl` extension
-find_pl(Path0, Path) :-
-    ( file_exists(Path0) -> Path = Path0
-    ; atom_concat(Path0, '.pl', Path1),
-      file_exists(Path1),
-      Path = Path1
-    ).
+
+%% find_pl(Path0, Path) :-
+%%     ( file_exists(Path0) -> Path = Path0
+%%     ; atom_concat(Path0, '.pl', Path1),
+%%       file_exists(Path1),
+%%       Path = Path1
+%%     ).
 
 doc_cmd__(gen(Format)) :- gen(Format).
 doc_cmd__(view(Format)) :- view(Format).

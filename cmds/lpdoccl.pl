@@ -45,6 +45,8 @@ General options:
 
   --Name=Value           Set or override the option Name (doccfg)
 
+  -op SUFFIX             Use SUFFIX as the suffix for optimized (or otherwise tuned) code.
+
 Options to view or clean the documentation output:
 
   --view                 Open documentation in selected format
@@ -205,6 +207,7 @@ normunderscore(C,   C).
 % Parsed options
 
 :- use_module(library(aggregates), [findall/3]).
+:- use_module(library(compiler/c_itf), [opt_suffix/2]).
 
 :- data opt_target/1.
 :- data opt_mode/1.
@@ -263,6 +266,10 @@ is_option1('-t').
 handle_option1('-t', Target) :-
     retractall_fact(opt_target(_)),
     assertz_fact(opt_target(Target)).
+  
+is_option1('-op').
+handle_option1('-op', Suffix) :-
+    opt_suffix(_, Suffix).
 
 is_option0('--view').
 handle_option0('--view') :-
