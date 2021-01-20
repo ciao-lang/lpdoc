@@ -29,7 +29,18 @@ doc_structure :=
           'assertions/assertions_props',
           'regtypes/regtypes_doc',
           'basic_props',
-          'assertions/native_props',
+          % 'assertions/native_props',
+          % props native to analyzers, in chapters
+          'assertions/native_props'-[
+              'assertions/native_props_shfrg_doc',
+              'assertions/native_props_nfdet_doc',
+              'assertions/native_props_cardinality_doc',
+              'assertions/native_props_exceptions_doc',
+              'assertions/native_props_sideff_doc',
+              'assertions/native_props_polyhedral_doc',
+              'assertions/native_props_cost_doc'
+          ],
+          %
           'metaprops/meta_props'
       ],
       'lpdoc_examples'
