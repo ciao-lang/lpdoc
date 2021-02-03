@@ -163,14 +163,9 @@ Automatic, direct on-line access to the information contained in the
 info file (e.g., going automatically to predicate descriptions by
 clicking on predicate names in programs in an @apl{Emacs} buffer) can
 be easily implemented via existing @tt{.el} packages such as
-@tt{word-help}, written by Jens T. Berger Thielemann
-(@email{jensthi@@ifi.uio.no}). @file{word-help} may already be in your
-@apl{Emacs} distribution, but for convenience the file
-@file{word-help.el}, providing suitable initialization are included in
-the @tt{lpdoc} library.  A suitable interface for @file{word-help} is
-also provided by the @tt{ciao.el} @apl{Emacs} file that comes with the
-@apl{Ciao} system distribution (i.e., if @tt{ciao.el} is loaded it is
-not necessary to load or initialize @tt{word-help}).
+@tt{info-look}, written by Ralph Schleicher
+(@email{rs@@ralph-schleicher.de}). Support for this package can be
+found in @file{info-look-ciao.el}
 
 @subsection{Accessing man manuals} 
 
