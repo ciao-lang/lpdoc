@@ -1,3 +1,15 @@
+:- doc(version(3*4+0,2021/3/18,19:33*30+'CET'), "
+   Highlights of this release:
+   @begin{itemize}
+   @item FIXED: Missing command declarations for markdown syntax.
+   @item NEW: @tt{-op} for alternative code source suffix (useful for flycheck).
+   @item NEW: A @tt{nil} backend for lpdoc syntax checking only (no
+      actual documentation is generated).
+   @item FIXED: Avoid redefining @tt{SETTINGS} module errors.
+   @item FIXED: Improve support for @tt{bibtex} accents.
+   @end{itemize}
+").
+
 :- doc(version(3*3+0,2020/3/20,14:48*45+'CET'), "
    Highlights of this release:
    @begin{itemize}
