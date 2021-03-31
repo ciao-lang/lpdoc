@@ -110,7 +110,7 @@ doc_id_type(subtitle, multiple, docstr). % ignore
      title.
 
      @begin{itemize}
-     @em{Example:}
+     @item @em{Example:}
      @end{itemize}
 @begin{verbatim}
 :- doc(title,""Dr. Strangelove"").

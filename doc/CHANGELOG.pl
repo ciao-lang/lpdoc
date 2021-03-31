@@ -239,9 +239,11 @@
            (Manuel Hermenegildo)
 
      @item Added option -c Target in lpdoc, that treats Target as
-           a separate component.  (Edison Mera) @item Added option
-           -f ConfigFile in lpdoc, that uses the file ConfigFile
-           instead the default LPSETTINGS.pl.  (Edison Mera)
+           a separate component.  (Edison Mera) 
+
+     @item Added option -f ConfigFile in lpdoc, that uses the 
+           file ConfigFile instead the default LPSETTINGS.pl.  
+           (Edison Mera)
 
      @item Added option ascii that generates documentation in
            ascii plain format.  (Edison Mera)
