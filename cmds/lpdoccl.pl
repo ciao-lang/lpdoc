@@ -43,7 +43,7 @@ General options:
 
   -t TARGET              Format (pdf|ps|html|info|manl|nil)
 
-  --Name=Value           Set or override the option Name (doccfg)
+  --Name=Value           Set or override option Name to Value (doccfg)
 
   -op SUFFIX             Use SUFFIX as the suffix for optimized (or otherwise tuned) code.
 
