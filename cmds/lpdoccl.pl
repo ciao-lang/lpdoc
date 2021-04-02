@@ -30,6 +30,7 @@ available when invoking @apl{lpdoc}:
 
 :- use_module(lpdoc(docmaker), [doc_cmd/3]).
 
+% TODO: (MH) Should print at the end the Name=Value options
 usage_message("\
 lpdoc [<opts>] <input>
 
@@ -43,9 +44,15 @@ General options:
 
   -t TARGET              Format (pdf|ps|html|info|manl|nil)
 
-  --Name=Value           Set or override option Name to Value (doccfg)
+  --Name=Value           Set or override configuration option Name to Value.
+                         For the list of admissible values for 'Name' see the 
+                         'Documentation configuration options' chapter 
+                         (doccfg) of the LPdoc manual, and 'Admissible values
+                         for the documentation configuration options' for the 
+                         corresponding admissible 'Value's. 
 
-  -op SUFFIX             Use SUFFIX as the suffix for optimized (or otherwise tuned) code.
+  -op SUFFIX             Use SUFFIX as the suffix for optimized (or otherwise 
+                         transformed) code.
 
 Options to view or clean the documentation output:
 
