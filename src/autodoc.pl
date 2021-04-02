@@ -1966,8 +1966,14 @@ omit_usage(Assrt, _DocSt) :-
 omit_usage(Assrt, DocSt) :-
     % Do not document 'test' assertions unless it is specified in DocSt
     PType = test,
-    Assrt = assertion_read(_CP, _M, _Status, PType, _NAss, _, _, _, _),
-    \+ docst_opt(tests, DocSt).
+    Assrt = assertion_read(_CP, _M, _Status, PType, NAss, _, _, _, _),
+    assertion_body(_, _, _, _, GP, _, NAss),
+    ( \+ docst_opt(tests, DocSt),
+      \+ member(example(_), GP)
+    ; 
+        docst_opt(no_examples, DocSt)
+    ),
+    !.
 
 %% ---------------------------------------------------------------------------
 :- pred look_for_pred_type(L, P, T) ::
@@ -2092,7 +2098,7 @@ show_other_assrt_header(Usages, OtherAssrt) :-
     OtherAssrt = [_|_]. % length > 0
 
 gen_other_assrt_header(R) :-
-    R = [raw_nl, bf(string_esc("Other properties:")), string_esc(" ")].
+    R = [raw_nl, bf(string_esc("Other properties:")), string_esc(" "), linebreak].
 
 %% ---------------------------------------------------------------------------
 :- pred doc_usages/5 # "Generates documentation for each @em{usage} of
@@ -2121,9 +2127,14 @@ doc_usage(Assrt, N, Multiple, PType, DocSt, UsageR) :-
     ; Standard = non_iso
     ),
     ( docst_opt(no_isoline, DocSt),
-      select(iso(_), GP, NNGP) ->
+      select(iso(_), GP, NNNGP) ->
         true
-    ; NNGP = GP
+    ; NNNGP = GP
+    ),
+    ( select(example(_), NNNGP, NNGP) -> % Just marks that test is an example.
+        NAType = example
+    ; NNGP = NNNGP,
+      NAType = AType
     ),
     ( (\+ docst_opt(regtype_props, DocSt)),
       select(regtype(_), NNGP, NGP) ->
@@ -2134,10 +2145,10 @@ doc_usage(Assrt, N, Multiple, PType, DocSt, UsageR) :-
     ( CO=[], DP=[], CP=[], AP=[], NGP=[] ->
         UsageR = [] % No info
     ; ( docst_opt(status, DocSt) ->
-          gen_status_str(Status, AType, StatusStr)
+          gen_status_str(Status, NAType, StatusStr)
       ; StatusStr = [] % (do not show assertion status)
       ),
-      gen_usage_str(N, AType, Multiple, UsageStr),
+      gen_usage_str(N, NAType, Multiple, UsageStr),
       % TODO: Extract a descriptive head from the normalized assertion
       % Documenting a general property or empty usage
       fmt_head_descriptor(NP, PType, Standard, HeadR),
@@ -2197,6 +2208,8 @@ gen_status_str(Status, _AType, StatusStr) :-
 gen_usage_str(_N, test, _Multiple, UsageStr) :- !,
     % TODO: Probably not right.
     UsageStr = "Test:".
+gen_usage_str(_N, example, _Multiple, UsageStr) :- !,
+    UsageStr = "Example:".
 gen_usage_str(_N, entry, _Multiple, UsageStr) :- !,
     % TODO: check.
     UsageStr = "Module entry condition:".
@@ -2208,7 +2221,7 @@ usage_str(N, Multiple, Str) :-
         format_to_string("Usage ~w:", N, Str)
     ; Multiple = 0 ->
         Str = "Usage:"
-    ; Str = "" % (not an usage)
+    ; Str = "" % (not a usage)
     ).
 
 allvars([]).

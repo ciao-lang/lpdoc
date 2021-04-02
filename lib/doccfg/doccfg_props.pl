@@ -119,7 +119,7 @@ option_comment(regtype_props,"Include in the doc for regtypes the global prop"||
 option_comment(onesided, "For printing on one side (default is two).").
 option_comment(no_math, "Disable mathematical environments.").
 option_comment(tests,
-    "Document all test assertions (default is only those that have 'example' as a comp property).").
+    "Include test assertions in doc for preds (default: only tests that have 'example' in comp field).").
 option_comment(no_examples,
     "Document no test assertions, i.e., also not those that have 'example' as a comp property.").
 option_comment(status,

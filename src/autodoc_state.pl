@@ -631,7 +631,7 @@ extract_varnames(CO0, CO, Dict) :-
     CO0 = '\6\varnames'(CO, Dict).
 
 :- export(doc_assertion_read/9).
-% A wrapper for assertion_read/9 that allow replacement of the
+% A wrapper for assertion_read/9 that allows replacement of the
 % variable name dictionary.
 doc_assertion_read(P, M, Status, Type, NAss2, Dict2, S, LB, LE) :-
     assertion_read(P, M, Status, Type, NAss, Dict, S, LB, LE),
