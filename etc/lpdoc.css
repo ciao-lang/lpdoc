@@ -5,12 +5,67 @@
  */
 
 /* --------------------------------------------------------------------------- */
+/* Color theme */
+
+:root {
+    --bg: #FFFFFF;
+    --fg: #000000;
+    --sidebar-link: #4263ab;
+    --link-fg: #4263ab;
+    --code-fg: #666;
+    --code-bg: #f7f7f7;
+    --codeblock-bg: #fff8dd;
+    --codeblock-border: #fbe89d;
+    --var-fg: #e06000;
+    --border: #EEE;
+    --fgdim: #888;
+    --header: #2e4985;
+    --defname-bg: #eee;
+    --note-accent: #b6cbdc;
+    --note-bg: #f5f8f9;
+    --note-border: #ebf3f9;
+    --alert-accent: #ff8282;
+    --alert-bg: #fffafa;
+    --alert-border: #f9ebed;
+    --cartouche-border: #c8e2f0;
+    --cartouche-bg: #eff6fc;
+    --cartouche-fg: #1d609a;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #23272D;
+        --fg: #AFBAC6;
+        --sidebar-link: #73869c;
+        --link-fg: #5c9cec;
+        --code-fg: #AFBAC6;
+        --code-bg: #2E333A;
+        --codeblock-bg: #2E333A;
+        --codeblock-border: #2E333A;
+        --var-fg: #fdce56;
+        --border: #383838;
+        --fgdim: #747b84;
+        --header: #E0E0E0;
+        --defname-bg: #1e2125;
+        --note-accent: #0085fa;
+        --note-bg: #172531;
+        --note-border: #01396a;
+        --alert-accent: #ff6060;
+        --alert-bg: #33272D;
+        --alert-border: #53272D;
+        --cartouche-border: #23334d;
+        --cartouche-bg: #1b2432;
+        --cartouche-fg: #9bdcf3;
+    }
+}
+
+/* --------------------------------------------------------------------------- */
 /* Language and documentation elements */
 
 .lpdoc-defname {
     font-size: 105%;
     font-weight:bold;
-    background-color: #eee;
+    background-color: var(--defname-bg);
     padding: 3px 8px 3px 8px;
     border-radius: 3px;
 }
@@ -26,9 +81,9 @@
 }
 
 .lpdoc-iso {
-    color: white;
+    color: #ffffff;
     background-color: #48d;
-    /* text-shadow: 0px 1px 2px #000; */
+    /* text-shadow: 0px 1px 2px #000000; */
     font-size: 80%;
     padding-left: 4px; padding-right: 4px;
     border-radius: 4px;
@@ -42,10 +97,10 @@
 /*    border-top: 1px solid #888;*/
     background-color: #444;
     font-size: 14px;
-    font-family: arial, helvetica;
+    font-family: -apple-system,Helvetica,Arial,sans-serif;
     font-weight: normal;
-    color: #fff;
-    text-shadow: 0px 0px 2px #000;
+    color: #ffffff;
+    text-shadow: 0px 0px 2px #000000;
     padding-top: 1px;
     padding-bottom: 1px;
     padding-left: 4px;
@@ -66,11 +121,12 @@
 }
 
 pre.lpdoc-codeblock {
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
     font-size: 14px;
-    line-height:1.0em;
+    line-height: normal;
     padding: 8px;
-    background: #fff8dd;
-    border: 1px solid #fbe89d;
+    background-color: var(--codeblock-bg);
+    border: 1px solid var(--codeblock-border);
     border-radius: 3px;
     overflow-x: auto;
 }
@@ -83,24 +139,24 @@ pre.lpdoc-codeblock code {
 
 pre.lpdoc-codeblock tt,
 pre.lpdoc-codeblock code {
-    color: black;
+    color: var(--fg);
 }
 
 .lpdoc-var, pre, tt, code {
-    font-family: "Source Code Pro", monospace;
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+    font-size: 85%;
 }
 
 .lpdoc-var {
-    color: #e06000;
+    color: var(--var-fg);
 }
 tt, code {
-    color: #666;
+    color: var(--code-fg);
 }
 .lpdoc-var, tt, code {
-    font-size: 95%;
-    padding: 0px 2px 0px 2px;
+    padding: 0.2em 0.3em;
     border-radius: 3px;
-    background: #f7f7f7;
+    background-color: var(--code-bg);
 }
 
 /* Assertion status tags (on the right) */
@@ -109,7 +165,7 @@ span.lpdoc-false-header,
 span.lpdoc-check-header,
 span.lpdoc-checked-header,
 span.lpdoc-trust-header {
-    color: white;
+    color: var(--bg);
     padding: 3px 8px 3px 8px;
     margin-left: 4px;
     border-radius: 3px;
@@ -117,15 +173,15 @@ span.lpdoc-trust-header {
 }
 
 /* Name tag for true assertions (in green) */
-span.lpdoc-true-header { background: #78ac2b; }
+span.lpdoc-true-header { background-color: #78ac2b; }
 /* Name tag for false assertions (in red) */
-span.lpdoc-false-header { background: #ff6262; }
+span.lpdoc-false-header { background-color: #ff6262; }
 /* Name tag for check assertions (including Usage) (in blue) */
-span.lpdoc-check-header { background: #3f8cdc; }
+span.lpdoc-check-header { background-color: #3f8cdc; }
 /* Name tag for checked assertions (in lightest green) */
-span.lpdoc-checked-header { background: #6eb88c; }
+span.lpdoc-checked-header { background-color: #6eb88c; }
 /* Name tag for trust assertions (in orange) */
-span.lpdoc-trust-header { background: #ffa162; }
+span.lpdoc-trust-header { background-color: #ffa162; }
 
 /* E.g., "Usage 1" */
 span.lpdoc-usage-header {
@@ -135,9 +191,9 @@ span.lpdoc-usage-header {
 
 /* E.g., foo(+,-,+) */
 span.lpdoc-usage-decl {
-    /* background: #eee; */
-    background: #eff6fc; /* like mod usage */
-    color: #1d609a;
+    /* background-color: #eee; */
+    background-color: var(--cartouche-bg); /* like mod usage */
+    color: var(--cartouche-fg);
     padding: 3px 8px 3px 8px;
     /* border-radius: 0px 3px 3px 0px; */
     border-radius: 3px;
@@ -147,15 +203,15 @@ span.lpdoc-usage-decl .lpdoc-var,
 span.lpdoc-usage-decl tt,
 span.lpdoc-usage-decl code {
     background: none;
-    color: #1d609a;
+    color: var(--cartouche-fg);
 }
 
 /* Tag for predicates (PREDICATE, REGTYPE, etc.) */
 span.lpdoc-predtag {
     font-size: 14px;
     font-weight: bold;
-    color: #888;
-    /* background: #eee; */
+    color: var(--fgdim);
+    /* background-color: #eee; */
     /* padding: 3px 8px 3px 8px; */
     /* border-radius: 3px; */
     padding-right: 8px;
@@ -166,16 +222,16 @@ span.lpdoc-predtag {
 /* Special blocks */
 
 .lpdoc-cartouche {
-    border: 1px solid #c8e2f0;
+    border: 1px solid var(--cartouche-border);
     border-radius: 3px;
     padding: 8px;
-    background: #eff6fc;
+    background-color: var(--cartouche-bg);
 }
 .lpdoc-cartouche .lpdoc-var,
 .lpdoc-cartouche tt,
 .lpdoc-cartouche code {
     background: none;
-    color: #1d609a;
+    color: var(--cartouche-fg);
 }
 
 /* ul immediate child of cartouche */
@@ -186,20 +242,20 @@ span.lpdoc-predtag {
 }
 
 .lpdoc-note {
-    border: 1px solid #ebf3f9;
-    border-left: 5px solid #b6cbdc;
+    border: 1px solid var(--note-border);
+    border-left: 5px solid var(--note-accent);
     padding: 8px;
     border-radius: 3px;
-    color: #000000;
-    background: #f5f8f9;
+    color: var(--fg);
+    background-color: var(--note-bg);
 }
 .lpdoc-alert {
-    border: 1px solid #f9ebed;
-    border-left: 5px solid #ff8282;
+    border: 1px solid var(--alert-border);
+    border-left: 5px solid var(--alert-accent);
     padding: 8px;
     border-radius: 3px;
-    color: #000000;
-    background: #fffafa;
+    color: var(--fg);
+    background-color: var(--alert-bg);
 }
 
 div.lpdoc-twocolumns {
@@ -222,14 +278,16 @@ html {
 body, html {
     margin:0;
     padding:0;
-    font-family: "Source Sans Pro", arial, helvetica, sans-serif;
+    font-family: -apple-system,Helvetica,Arial,sans-serif;
     font-size: 16px;
     line-height: 1.3em;
+    color: var(--fg);
+    background-color: var(--bg);
 }
 
 div.lpdoc-nav {
     padding: 5px 0px 5px 0px;
-    background: #fff;
+    background-color: var(--bg);
 }
 div.lpdoc-nav ul {
     margin:0;
@@ -243,15 +301,15 @@ div.lpdoc-nav li {
 }
 
 div.lpdoc-main {
-    background-color:#fff;
-    color: #000000;
+    color: var(--fg);
+    background-color: var(--bg);
     padding: 1px 20px 0px 20px;
     /* padding: 1px 20px 30px 20px; */
     /* border-right: 1px solid #dedede; */ /* right-sidebar */
 }
 
 div.lpdoc-sidebar {
-    background-color:#fff;
+    background-color: var(--bg);
     padding:10px 10px 10px 20px;
     font-size: 14px;
     line-height: 1.3em;
@@ -268,9 +326,10 @@ div.lpdoc-clearer {
 div.lpdoc-footer {
     font-size: 11px;
     /* font-size: 75%; */
-    color: #888;
-    border-top: 1px solid #eee;
-    /* background: #f8f8f8; */
+    color: var(--fgdim);
+    background-color: var(--bg);
+    border-top: 1px solid var(--border);
+    /* background-color: #f8f8f8; */
     width: 100%;
     padding: 3px 0 3px 0;
     margin-top: 30px;
@@ -278,22 +337,22 @@ div.lpdoc-footer {
 }
 
 div.lpdoc-footer a {
-    color: black;
+    color: var(--fg);
     text-decoration: underline;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: -apple-system,Helvetica,Arial,sans-serif;
     line-height: 1.3em;
     font-weight: 600;
-    color: #2e4985;
+    color: var(--header);
 }
 
 /* --------------------------------------------------------------------------- */
 /* Page layout */
 
 div.lpdoc-page {
-    background-color: #fff;
+    background-color: var(--bg);
 }
 
 /* Document with left sidebar */
@@ -336,7 +395,7 @@ div.lpdoc-page {
     overflow-y: auto;
     top: 0;
     bottom: 0;
-    border-right: 1px solid #eee;
+    border-right: 1px solid var(--border);
 }
 
 /* Document with right sidebar */
@@ -353,36 +412,40 @@ div.lpdoc-page {
     overflow-y: auto;
     top: 0;
     bottom: 0;
-    border-left: 1px solid #eee;
+    border-left: 1px solid var(--border);
 }
 
 hr {
     border: none;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border);
 }
 
 /* --------------------------------------------------------------------------- */
 /* Links */
+
+div.lpdoc-sidebar a:link { color: var(--sidebar-link); text-decoration: none; }
+div.lpdoc-sidebar a:visited { color: var(--sidebar-link); text-decoration: none; }
+div.lpdoc-sidebar a:hover { color: var(--link-fg); text-decoration: none; }
 
 a.lpdoc-missing:link { color: #aa0000; text-decoration: none; }
 a.lpdoc-missing:visited { color: #aa0000; text-decoration: none; }
 a.lpdoc-missing:hover { color: #aa0000; text-decoration: underline; }
 a.lpdoc-missing:active { color: #FA0000; text-decoration: underline; }
 
-a.lpdoc-idx-anchor:link { color: #4263ab; text-decoration: none; }
-a.lpdoc-idx-anchor:visited { color: #0645AD; text-decoration: none; }
-a.lpdoc-idx-anchor:hover { color: #4263ab; text-decoration: underline; }
-a.lpdoc-idx-anchor:active { color: #FAA700; text-decoration: underline; }
+a.lpdoc-idx-anchor:link { color: var(--link-fg); text-decoration: none; }
+a.lpdoc-idx-anchor:visited { color: var(--link-fg); text-decoration: none; }
+a.lpdoc-idx-anchor:hover { color: var(--link-fg); text-decoration: underline; }
+a.lpdoc-idx-anchor:active { color: var(--link-fg); text-decoration: underline; }
 
-div.lpdoc-defname a.lpdoc-idx-anchor:link { color: #000; text-decoration: none; }
-div.lpdoc-defname a.lpdoc-idx-anchor:visited { color: #000; text-decoration: none; }
-div.lpdoc-defname a.lpdoc-idx-anchor:hover { color: #000; text-decoration: underline; }
-div.lpdoc-defname a.lpdoc-idx-anchor:active { color: #000; text-decoration: underline; }
+div.lpdoc-defname a.lpdoc-idx-anchor:link { color: var(--fg); text-decoration: none; }
+div.lpdoc-defname a.lpdoc-idx-anchor:visited { color: var(--fg); text-decoration: none; }
+div.lpdoc-defname a.lpdoc-idx-anchor:hover { color: var(--fg); text-decoration: underline; }
+div.lpdoc-defname a.lpdoc-idx-anchor:active { color: var(--fg); text-decoration: underline; }
 
-a:link { color: #4263ab; text-decoration: none; }
-a:visited { color: #0645AD; text-decoration: none; }
-a:hover { color: #4263ab; text-decoration: underline; }
-a:active { color: #FAA700; text-decoration: underline; }
+a:link { color: var(--link-fg); text-decoration: none; }
+a:visited { color: var(--link-fg); text-decoration: none; }
+a:hover { color: var(--link-fg); text-decoration: underline; }
+a:active { color: var(--link-fg); text-decoration: underline; }
 
 /* --------------------------------------------------------------------------- */
 /* Navigation buttons (special links) */
@@ -396,13 +459,13 @@ a:active { color: #FAA700; text-decoration: underline; }
     margin-right: 1px;
 }
 
-.lpdoc-navbutton { color: #4263ab; }
-a.lpdoc-navbutton:link { color: #4263ab; text-decoration: none; }
-a.lpdoc-navbutton:visited { color: #4263ab; text-decoration: none; }
-a.lpdoc-navbutton:hover { color: #0645AD; text-decoration: none; }
+.lpdoc-navbutton { color: var(--link-fg); }
+a.lpdoc-navbutton:link { color: var(--link-fg); text-decoration: none; }
+a.lpdoc-navbutton:visited { color: var(--link-fg); text-decoration: none; }
+a.lpdoc-navbutton:hover { color: var(--link-fg); text-decoration: none; }
 a.lpdoc-navbutton:active { color: #FAA700; text-decoration: none; }
 
-.lpdoc-navbutton-disabled { color: #ccc; }
+.lpdoc-navbutton-disabled { color: var(--border); }
 
 /* --------------------------------------------------------------------------- */
 /* Toggleable sidebar (for small screens) */
@@ -430,7 +493,7 @@ div.lpdoc-sidebar p {
 div.lpdoc-sidebar ul.lpdoc-itemize-sectpath {
     margin-left: 0px;
     list-style-type: none;
-    color: #0645ad;
+    color: var(--sidebar-link);
     padding-left: 0px;
     margin: 0px;
 }
@@ -461,7 +524,7 @@ div.lpdoc-cover-address {
     float:right;
     /* padding: 16px; */
     padding-left: 16px;
-    color: #888;
+    color: var(--fgdim);
 }
 
 div.lpdoc-cover-authors {
@@ -470,7 +533,7 @@ div.lpdoc-cover-authors {
     /* padding: 16px; */
     float:right;
     text-align:right;
-    color: #888;
+    color: var(--fgdim);
 }
 
 div.lpdoc-cover-logo {
@@ -481,8 +544,8 @@ div.lpdoc-cover-title {
     /* padding: 16px; */
     margin: 0px;
     margin-bottom: 16px;
-    background: white;
-    color: #2e4985;
+    background-color: var(--bg);
+    color: var(--header);
 }
 
 div.lpdoc-cover-subtitle-extra {
@@ -490,7 +553,7 @@ div.lpdoc-cover-subtitle-extra {
     line-height: 1.3em;
     /* padding: 16px; */
     border-radius: 8px;
-    color: #888;
+    color: var(--fgdim);
 }
 
 h1.lpdoc-cover-h1 {
@@ -502,12 +565,13 @@ h1.lpdoc-cover-h1 {
 /* Search */
 
 #search-input {
-    font-family:  "Source Code Pro", monospace;
+    font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
     font-size: 14px;
-    line-height:1.0em;
+    line-height: normal;
     padding: 8px;
-    background: #fff8dd;
-    border: 1px solid #fbe89d;
+    color: var(--codeblock-fg);
+    background-color: var(--codeblock-bg);
+    border: 1px solid var(--codeblock-border);
     border-radius: 3px;
     width: 80%;
     box-sizing: border-box;
@@ -555,7 +619,7 @@ h1.lpdoc-cover-h1 {
     }
     div#sidebar.sidebar-toggled {
 	display: block;
-	border-bottom: 1px solid #dedede;
+	border-bottom: 1px solid var(--fgdim);
 	font-size: 16px;
 	z-index: 0;
     }
