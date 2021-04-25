@@ -685,7 +685,7 @@ fmt_topbar(website_layout(Opts), _DocSt, R) :- !,
       htmlenv(a, [href=IndexHRef], [
         htmlenv1(img, [src=LogoSrc,
                        srcset=LogoSrc2x,
-                       height="40px",
+                       height="64px",
                        'ALT'="Ciao",
                        class="lpdoc-logo"])
         ]),
