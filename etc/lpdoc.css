@@ -268,6 +268,23 @@ div.lpdoc-twocolumns {
     column-gap: 20px;
 }
 
+.lpdoc-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.lpdoc-table td, .lpdoc-table th {
+  border: 1px solid var(--border);
+  padding: 8px;
+}
+
+.lpdoc-table th {
+  border: 1px solid var(--border);
+  background: var(--defname-bg);
+  text-align: left;
+  font-weight: bold;
+}
+
 /* --------------------------------------------------------------------------- */
 /* Page elements */
 
