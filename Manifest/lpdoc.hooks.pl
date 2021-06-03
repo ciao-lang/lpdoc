@@ -33,7 +33,7 @@ generate_version_auto_lpdoc :-
 %     working_directory(_, ~bundle_path(lpdoc, '.')),
 %     invoke_ciaopp_batch(['pdb', 'src']),
 %     working_directory(_, ~bundle_path(lpdoc, 'cmds')),
-%     invoke_ciaopp(['-A', Cmd, '-ftypes=none', '-fmodes=pdb', '-fintermod=on', '-fmenu_dump=incremental', '-fmenu_output=off']),
+%     invoke_ciaopp(['-A', Cmd, '-ftypes=none', '-fmodes=pdb', '-fintermod=on', '-fdump=incremental', '-foutput=off']),
 %     invoke_ciaopp_dump([report, reach, CmdDump]),
 %     working_directory(_, ThisDir).
 
