@@ -3,7 +3,7 @@
 :- module(example_module,
       [bar/1,baz/1,aorb/1,tree_of/2,list_or_aorb/2,q/2,r/1, p/1, p/5, u/3,
        long/1, w/1, mytype/1, t/5, s/1, q/1],
-      [assertions,basicmodes,fsyntax,regtypes,hiord,nativeprops]).  
+      [dynamic,assertions,basicmodes,fsyntax,regtypes,hiord,nativeprops]).  
  
 %% We import two types: list/1 and list/2 (now in basic_props, which is 
 %% exported by default from assertions). 
@@ -116,6 +116,7 @@ long(L) :-
 %% This describes all the calls
 :- calls p/3 : foo * bar * baz.
 
+:- prop foo/1.
 foo(_).
 
 %% This describes the successes (for a given type of calls)
