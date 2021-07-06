@@ -212,7 +212,7 @@ begin_env(begin(EnvStr), Env) :- atom_codes(Env, EnvStr).
 
 end_env(end(EnvStr), Env) :- atom_codes(Env, EnvStr).
 
-% Enviroments that finish abruptly (with no @end)
+% Environments that finish abruptly (with no @end)
 nochars_env(section_(_, _)).
 
 build_env(section_(Level, Title), EnvBody, EnvR) :- !,
