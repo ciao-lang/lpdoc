@@ -111,21 +111,20 @@ rw_command(hfill(""),             _, raw("")) :- !.
 rw_command('`'([X]),              _, raw("&"||([X|"grave;"]))) :- !.
 rw_command(''''([X]),             _, raw("&"||([X|"acute;"]))) :- !.
 % NOTE: Escaped ^ due to fsyntax!
-rw_command(^'^'([X]),              _, raw("&"||([X|"circ;"]))) :- !.
+rw_command(^'^'([X]),             _, raw("&"||([X|"circ;"]))) :- !.
 rw_command('..'([X]),             _, raw("&"||([X|"uml;"]))) :- !.
 rw_command('"'([X]),              _, raw("&"||([X|"uml;"]))) :- !.
 % NOTE: Escaped ~ due to fsyntax!
-rw_command(^'~'([X]),              _, raw("&"||([X|"tilde;"]))) :- !.
-% TODO: support for accented characters is incomplete in HTML (fix missing)
-rw_command('='([X]),              _, raw([X])) :- !.
-rw_command('.'([X]),              _, raw([X])) :- !.
-rw_command('u'([X]),              _, raw([X])) :- !.
-rw_command('v'([X]),              _, raw([X])) :- !.
-rw_command('H'([X]),              _, raw([X])) :- !.
-rw_command('t'([X, Y]),           _, raw([X, Y])) :- !.
-rw_command('c'([X]),              _, raw([X])) :- !.
-rw_command('d'([X]),              _, raw([X])) :- !.
-rw_command('b'([X]),              _, raw([X])) :- !.
+rw_command(^'~'([X]),             _, raw("&"||([X|"tilde;"]))) :- !.
+rw_command('='([X]),              _, raw("&"||([X|"macr;"]))) :- !.
+rw_command('.'([X]),              _, raw([X|"&#775;"])) :- !.
+rw_command('u'([X]),              _, raw([X|"&#774;"])) :- !.
+rw_command('v'([X]),              _, raw([X|"&#780;"])) :- !.
+rw_command('H'([X]),              _, raw([X|"&#779;"])) :- !.
+rw_command('t'([X, Y]),           _, raw([X|("&#865;"||[Y])])) :- !.
+rw_command('c'([X]),              _, raw([X|"&#807;"])) :- !.
+rw_command('d'([X]),              _, raw([X|"&#803;"])) :- !.
+rw_command('b'([X]),              _, raw([X|"&#817;"])) :- !.
 rw_command('oe'(""),              _, raw("&oelig;")) :- !.
 rw_command('OE'(""),              _, raw("&OElig;")) :- !.
 rw_command('ae'(""),              _, raw("&aelig;")) :- !.
@@ -134,13 +133,13 @@ rw_command('aa'(""),              _, raw("&aring;")) :- !.
 rw_command('AA'(""),              _, raw("&Aring;")) :- !.
 rw_command('o'(""),               _, raw("&oslash;")) :- !.
 rw_command('O'(""),               _, raw("&Oslash;")) :- !.
-rw_command('l'(""),               _, raw("l")) :- !.
-rw_command('L'(""),               _, raw("L")) :- !.
+rw_command('l'(""),               _, raw("&lstrok;")) :- !.
+rw_command('L'(""),               _, raw("&Lstrok;")) :- !.
 rw_command('ss'(""),              _, raw("&szlig;")) :- !.
 rw_command('?'(""),               _, raw("&iquest;")) :- !.
 rw_command('!'(""),               _, raw("&iexcl;")) :- !.
-rw_command('i'(""),               _, raw("i")) :- !.
-rw_command('j'(""),               _, raw("j")) :- !.
+rw_command('i'(""),               _, raw("&inodot;")) :- !.
+rw_command('j'(""),               _, raw("&jmath;")) :- !.
 rw_command(copyright(""),         _, raw("&#169;")) :- !.
 rw_command(iso(""), _, R) :- !, R = htmlenv(span, [class="lpdoc-iso"], [raw("ISO")]).
 rw_command(bullet(""), _,       raw("&#186;")) :- !.
