@@ -540,6 +540,7 @@ fmt_header_and_cover(TitleR, PaperType, DocSt, R) :-
       infocmd("setfilename", string_esc(NameS)),
       infocmd("settitle", TitleR),
       backend_comment("@paragraphindent 0"),
+      infocmd("documentencoding", raw("UTF-8")),
       infocmd("setchapternewpage", raw(NewPage)),
       backend_comment("@footnotestyle separate"),
       %
