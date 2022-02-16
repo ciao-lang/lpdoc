@@ -1,6 +1,6 @@
 
 %% Syntax files defining assertions, modes, types, etc.
-:- use_package([assertions,basicmodes,fsyntax,regtypes]).
+:- use_package([assertions,basicmodes,nativeprops,fsyntax,regtypes,dynamic]).
 
 %% We declare the type of file (needed for 'user'-type files)
 %% :- doc(filetype,user).
@@ -61,23 +61,23 @@ long(L) :-
 :- pred p/3 
     :  integer * integer * var 
     => integer * integer * list 
-    +  (iso,no_fail) 
+    +  (iso,not_fails) 
     #  "This mode is nice.".
 :- pred p(Preds,Value,Assoc) 
     :  var     * var     * list
     => integer * integer * list 
-    +  no_fail # "This mode is also nice.".
+    +  not_fails # "This mode is also nice.".
 :- pred p/3 
     => list * integer * list 
-    +  (no_fail,no_fail) # "Just playing around.".
+    +  (not_fails,not_fails) # "Just playing around.".
 :- calls p/3 
-    :  foo * bar * baz 
+    :  int * flt * var 
     #  "This documents the calls only".
 
 :- pred q(A) 
     :  list(A) 
     => (list(A),ground(A)) 
-    +  no_fail
+    +  not_fails
     # "Foo".
 :- pred q(A) 
     # "Not a bad use at all.".
@@ -94,14 +94,14 @@ long(L) :-
 :- pred r(A) 
     :  list(A) 
     => (list(integer,A),ground(A)) 
-    +  no_fail 
+    +  not_fails 
     #  "This uses parametric types".
 
 :- doc(doinclude,s/1). %% Forces documentation even if not exported
 :- pred s(A) 
     :  list(A) 
     => (list(A),ground(A)) 
-    +  no_fail.
+    +  not_fails.
 
 :- modedef og(A) 
     => ground(A) 
@@ -117,7 +117,7 @@ long(L) :-
     :: list * list * integer * integer * list 
     :  long(B)
     => (ground(C),ground(A)) 
-    +  no_fail 
+    +  not_fails 
     #  "This predicate uses @em{modes} extensively.".
 
 %% Some other miscellaneous assertions:
