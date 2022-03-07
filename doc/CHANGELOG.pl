@@ -1,3 +1,16 @@
+:- doc(version(3*5+0,2022/3/2,20:34*30+'CET'), "
+   Highlights of this release:
+   @begin{itemize}
+   @item ADDED: Dark color-scheme CSS.
+   @item IMPROVED: Selected test cases can be documented as examples
+      (@tt{example/1} prop).
+   @item IMPROVED: UTF-8 as default encoding in texinfo documentation.
+   @item IMPROVED: Added support for more accented characters in HTML
+      backend.
+   @item IMPROVED: Simpler CSS (vars).
+   @end{itemize}
+").
+
 :- doc(version(3*4+0,2021/3/18,19:33*30+'CET'), "
    Highlights of this release:
    @begin{itemize}
