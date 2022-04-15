@@ -140,7 +140,7 @@ ensure_lpdoc_etc_defined :-
     ; autodoc_message(error, 
 % ___________________________________________________________________________
  "No valid file search path for 'lpdoc_etc' alias.\n"||
- "Please, check this is LPdoc installation.\n", []),
+ "Please, check that LPdoc is installed properly.\n", []),
       fail
     ).
 

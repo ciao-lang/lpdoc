@@ -2660,15 +2660,39 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 
 :- doc(subsection, "Future Work").
 
-:- doc(bug, "in Ciao tree we need to automatically create local
-   subset of (clip) bibtex files to make manuals standalone.").
+:- doc(bug, "We need to automatically create a projected, local subset
+   of the (clip) bibtex files within the Ciao tree in order to make
+   the manuals standalone.").
 
-:- doc(bug, "documentation of exceptions.").
+:- doc(bug, "Fix utf8, texinfo.").
+
+:- doc(bug, "Add a @@flag@{Flag@} command to name Prolog flags
+   (interpret the @pred{define_flag/3} multifile to document flags
+   defined in modules).").
+
+:- doc(bug, "We also need to have a flags index and
+   document them better. Flags like multi_arity_warnings,
+   discontiguous_warnings, single_var_warnings, fileerrors, etc. are
+   not well documented / undocumented. Other flags: read_hiord,
+   read_curly_blocks, read_postfix_blocks, read_string_data_type,
+   read_infix_dot, write_strings, rtchecks_inline, runtime_checks,
+   read_assertions, keep_assertions.").
+
+:- doc(bug, "Better documentation of exceptions.").
+
+:- doc(bug, "LPdoc should set write_strings to on in its top level?").
+
+:- doc(bug, "When including code LPdoc does not break lines. Perhaps
+   use the CiaoPP output command code for breaking lines? Add an
+   option to include source literally (using line numbers)?").
+
+:- doc(bug, "We should complain if option does not exist, e.g., 'lpdoc
+   -t html --doc_mainopts=test code.pl' --should be tests").
 
 :- doc(bug, "Assertions should describe which database predicates are read
    and written by a given predicate.").
 
-:- doc(bug, "add links from types/props to their definition in all
+:- doc(bug, "Add links from types/props to their definition in all
    formats (info, pdf, etc.).  This would be a mess in info, but in
    info it is not necessary: you can go with C-c tab or search... ").
 
@@ -2697,10 +2721,6 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 
    imported in DCG.
 ").
-
-:- doc(bug, "add a @@flag@{Flag@} command to name Prolog flags
-   (interpret the @pred{define_flag/3} multifile to document flags
-   defined in modules)").
 
 :- doc(bug, "generalize @@iso command (for other labels other than ISO)").
 
