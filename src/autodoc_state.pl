@@ -161,11 +161,16 @@ docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt) :-
     %
     atom_concat(FileBase, FileExt, FExt),
     find_file(FExt, I),
+    %
+    cleanup_custom_doc,
+    cleanup_c_itf_data,
+    cleanup_code_and_related_assertions, % make sure that we do not have suprious data from other modules
     ( source_is_doc(FileExt) ->
         load_source_lpdoc(I, M, Base, Dir, Text),
         docst_mvar_lookup(DocSt, plain_content, Text)
     ; load_source_pl_assrt(I, Opts, M, Base, Dir)
     ),
+    %
     path_basename(Base, Name), % TODO: M (the Prolog module name) and Name may be different...
     docst_mvar_lookup(DocSt, fileinfo, fileinfo(M, Base)),
     docst_mvar_lookup(DocSt, dir, dir(Dir)),
@@ -190,6 +195,11 @@ load_source_lpdoc(F, M, Base, Dir, Text) :-
     path_dirname(Base, Dir),
     path_basename(Base, M). % TODO: assume this is correct
 
+% load_source_pl_assrt(+F, +Opts, -M, -Base, -Dir)
+load_source_pl_assrt(F, Opts, M, Base, Dir) :-
+    prolog_flag(quiet, _, off),
+    get_code_and_related_assertions_opts(F, Opts, M, Base, _Suffix, Dir).
+
 %% ---------------------------------------------------------------------------
 
 % Create a state for a subfile
@@ -205,20 +215,6 @@ docst_new_sub(DocSt0, SubSuffix, DocSt) :-
     docst_mvar_replace(DocSt3, nav, _, DocSt).
 
 %% ---------------------------------------------------------------------------
-
-:- pred load_source_pl_assrt(+F, +Opts, -M, -Base, -Dir)
-# "Reads code and assertions:
-
-   @var{F}: full input file name (with dir and suffix). 
-   @var{M}: defined module (or user(file)).
-   @var{Dir}: full directory path.
-   @var{Opts}: options.
-".
-load_source_pl_assrt(F, Opts, M, Base, Dir) :-
-    cleanup_c_itf_data,
-    cleanup_code_and_related_assertions,
-    prolog_flag(quiet, _, off),
-    get_code_and_related_assertions_opts(F, Opts, M, Base, _Suffix, Dir).
 
 % NOTE: The assertions package is treated normally
 %
@@ -525,7 +521,10 @@ get_doc(Id, MessageType, DocSt, Value) :-
     ; autodoc_message(error, "Unrecognized doc/comment declaration type '~w'.",[Id]),
       fail % TODO: recover from this error?
     ). 
-    
+
+get_doc_(Id, single, _ValueType, _MessageType, _DocSt, Value) :-
+    current_fact(custom_doc(Id, Value0)), !,
+    Value = Value0.
 get_doc_(Id, single, ValueType, _MessageType, DocSt, Value) :-
     get_docdecl(Id, RContent, Dict, Loc),
     !,
@@ -618,6 +617,12 @@ new_var_arg_names_(I, N, [Arg|Args]) :-
     new_var_arg_names_(I1, N, Args).
 
 % ---------------------------------------------------------------------------
+
+:- export(custom_doc/2).
+:- data custom_doc/2. % TODO: merge with docst date
+
+cleanup_custom_doc :-
+    retractall_fact(custom_doc(_,_)).
 
 % Note: In order to pass custom variable name dictionaries, those
 %   predicates recognized the special '\6\varnames'/2 structure when

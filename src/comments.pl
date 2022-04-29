@@ -1331,6 +1331,9 @@ stringcommand(codeblock(A,B)    ) :- string(A), string(B). % TODO: internal for 
 stringcommand(bibitem(A,B)      ) :- string(A), string(B).
 stringcommand(newblock(B)       ) :- string(B).
 
+% (for plain .md .lpdoc filetype)
+stringcommand(title(B)         ) :- string(B).
+
 % ---------------------------------------------------------------------------
 
 %% Actually, already in assertions

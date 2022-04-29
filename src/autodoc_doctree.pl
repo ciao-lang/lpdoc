@@ -155,6 +155,8 @@ cmd_type(bullet(s)) :- !.
 cmd_type(result(s)) :- !.
 cmd_type(html_template(s)) :- !. % TODO: move to doc_module?
 cmd_type(tmplvar(s)) :- !. % TODO: move to doc_module?
+% (for plain .md .lpdoc filetype)
+cmd_type(title(d)) :- !.
 %
 % ** Semi-private commamnds **
 %  Those are required just parsing bibrefs resolved with

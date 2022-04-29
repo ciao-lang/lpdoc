@@ -27,13 +27,12 @@
 
 % Ciao libraries
 :- use_module(library(compiler), [use_module/1]).
-:- use_module(library(assertions/assrt_lib),
-	    [
-          clause_read/7,
-          assertion_read/9,
-          assertion_body/7,
-          use_pkg/2
-	    ]).
+:- use_module(library(assertions/assrt_lib), [
+    clause_read/7,
+    assertion_read/9,
+    assertion_body/7,
+    use_pkg/2
+]).
 :- use_module(library(compiler/c_itf)).
 :- use_module(library(pathnames),
     [path_basename/2, path_dirname/2, path_splitext/3, path_concat/3]).
@@ -437,7 +436,8 @@ fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
     FileType = plain,
     !,
     docst_mvar_get(DocSt, plain_content, Text),
-    parse_docstring(DocSt, Text, ContentR),
+    parse_docstring(DocSt, Text, ContentR0),
+    preproc_doctree(ContentR0, ContentR),
     ( docst_backend(DocSt, Backend),
       Backend = texinfo ->
         % TODO: Customize style, make toc optional, etc.
@@ -559,6 +559,17 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
     doctree_simplify([IdxR, CommentR, TocR, InterfaceR, AppendixR, AckR, BugsR, ChangesR], DocR),
     %
     fmt_file_top_section([], DocR, DocSt, ModR).
+
+% Peek some special commands (e.g, title, in plain filetype)
+% TODO: ad-hoc... design a better way
+preproc_doctree([X|Xs], Ys) :-
+    X = title(TitleR), !,
+    assertz_fact(custom_doc(title, TitleR)),
+    preproc_doctree(Xs, Ys).
+preproc_doctree([X|Xs], [Y|Ys]) :- !,
+    preproc_doctree(X, Y),
+    preproc_doctree(Xs, Ys).
+preproc_doctree(X, X).
 
 fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
     get_doc(title, note, DocSt, TitleR),
