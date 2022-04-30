@@ -20,7 +20,7 @@
 :- use_module(library(system), [copy_file/3]).
 :- use_module(library(system_extra), [warn_on_nosuccess/1]).
 :- use_module(library(process), [process_call/3]).
-:- use_module(library(pathnames), [path_basename/2]).
+:- use_module(library(pathnames), [path_basename/2, path_splitext/3]).
 
 % ---------------------------------------------------------------------------
 
@@ -34,18 +34,16 @@
 :- pred locate_and_convert_image(SrcSpecS, AcceptedExts, DocSt, TargetFileS) ::
     string * list(atm) * docstate * string # 
     "The image at @var{SrcSpecS} is located (as one of the known
-     image extensions @pred{known_ext/1}) and converted to one of the
+     image extensions @pred{imgext/1}) and converted to one of the
      @var{AcceptedExts}. The target file is called
      @var{TargetFileS}".
 
 locate_and_convert_image(SrcSpecS, AcceptedExts, DocSt, TargetFileS) :-
     atom_codes(SrcSpec, SrcSpecS),
     % TODO: Use the same rules than for modules to locate the images
-    ( known_ext(SrcExt), % (may backtrack)
-      atom_concat(SrcSpec, SrcExt, SrcSpecExt),
-      catch(find_file(SrcSpecExt, SrcFile), _, fail) ->
+    ( catch(find_file(SrcSpec, imgext, SrcFile), _, fail) ->
         % Image found!
-        atom_concat(SrcBase, SrcExt, SrcFile),
+        path_splitext(SrcFile, SrcBase, SrcExt),
         % Determine the target format
         ( member(SrcExt, AcceptedExts) ->
             % The source format is accepted, keep it
@@ -68,9 +66,9 @@ locate_and_convert_image(SrcSpecS, AcceptedExts, DocSt, TargetFileS) :-
 
 % Known image extensions
 % TODO: extend?
-known_ext('.eps').
-known_ext('.png').
-known_ext('.jpg').
+imgext('.eps').
+imgext('.png').
+imgext('.jpg').
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Cached Image Copy/Conversions").

@@ -56,21 +56,31 @@ add_vpath(Path) :-
 % Find file in any of vpath/1
 % (Fail if not found)
 find_file(File, PathFile) :-
-    path_is_absolute(File), !,
-    PathFile = File,
-    file_exists(PathFile).
-find_file(File, PathFile) :-
-    vpath(Path),
-    path_concat(Path, File, PathFile),
-    file_exists(PathFile),
-    !.
+    find_file(File, noext, PathFile).
+
+noext('').
+
+:- export(find_file/3).
+:- meta_predicate find_file(?, pred(1), ?).
+% find_file(File, ExtP, PathFile): find File (with optional extension
+%   ExtP/1) in any of vpath/1. For each vpath/1, all extensions are
+%   tried first.
+% (Fail if not found)
+find_file(File, ExtP, PathFile) :-
+    ( path_is_absolute(File) -> PathFile0 = File
+    ; vpath(Path), % (nondet)
+      path_concat(Path, File, PathFile0)
+    ),
+    ExtP(Ext), % (nondet)
+    PathFile1 = ~atom_concat(PathFile0, Ext),
+    file_exists(PathFile1),
+    !,
+    PathFile = PathFile1.
 
 :- export(find_doc_source/2).
 % Find the first source that exists (see srcext/1). See @pred{find_file/2}
 find_doc_source(Name, Path) :-
-    Ext = ~srcext,
-    NameExt = ~atom_concat(Name, Ext),
-    find_file(NameExt, Path).
+    find_file(Name, srcext, Path).
 
 % TODO: I am not sure if here is the place to define this.
 srcext := '.pl' | '.lpdoc' | '.md'.
