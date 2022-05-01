@@ -177,7 +177,7 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
     docst_filetype(DocSt, FileType),
     autodoc_message(verbose, "File being documented as '~w'.", [FileType]),
     get_last_version(Version, GlobalVers, DocSt),
-    fmt_module(DocSt, Version, GlobalVers, ModuleR),
+    ModuleR = ~fmt_module(DocSt, Version, GlobalVers),
     % Register document info
     register_main_logo(DocSt),
     register_main_title(Version, DocSt),
@@ -212,7 +212,7 @@ doctree_scan_and_save(R, Mod, DocSt) :-
 
 register_main_logo(DocSt) :-
     ( docst_currmod_is_main(DocSt),
-      get_doc(logo, dofail, DocSt, Logo) ->
+      Logo = ~get_doc(logo, dofail, DocSt) ->
         docst_mdata_assertz(main_logo(Logo), DocSt)
     ; true
     ).
@@ -234,7 +234,7 @@ register_main_title(Version, DocSt) :-
 % This is the title of the manual, including version number (e.g., for
 % the web page window title)
 compose_main_title(Version, DocSt, MainTitleR) :-
-    get_doc(title, ignore, DocSt, TitleR),
+    TitleR = ~get_doc(title, ignore, DocSt),
     MainTitleR = [TitleR|MainTitleR0],
     ( version_numstr(Version, VerStr) ->
         MainTitleR0 = [string_esc(" v"), string_esc(VerStr)]
@@ -245,10 +245,10 @@ compose_main_title(Version, DocSt, MainTitleR) :-
 
 :- doc(subsection, "Format Authors").
 
-get_authors(DocSt, AuthorRs) :-
+get_authors(DocSt) := AuthorRs :-
     ( docst_opt(no_authors, DocSt) ->
         AuthorRs=[]
-    ; get_doc(author, note, DocSt, AuthorRs0),
+    ; AuthorRs0 = ~get_doc(author, note, DocSt),
       ( docst_currmod_is_main(DocSt) ->
           % Do not add defauthor in this case
           % (this is the cover!)
@@ -256,8 +256,8 @@ get_authors(DocSt, AuthorRs) :-
       ; add_author_defs(AuthorRs0, DocSt, AuthorRs1)
       ),
       % TODO: good idea?
-      get_doc(credits, ignore, DocSt, CreditsRs),
-      append(AuthorRs1, CreditsRs, AuthorRs)
+      CreditsRs = ~get_doc(credits, ignore, DocSt),
+      AuthorRs = ~append(AuthorRs1, CreditsRs)
     ).
 
 add_author_defs([], _DocSt, []).
@@ -318,7 +318,7 @@ fmt_infodir_entry(DocSt, Version, Mod) :-
     flush_output(user).
 
 get_default_title(DocSt, TitleR) :-
-    get_doc(title, ignore, DocSt, TitleR0),
+    TitleR0 = ~get_doc(title, ignore, DocSt),
     ( is_nonempty_doctree(TitleR0) ->
         TitleR = TitleR0
     ; docst_modname(DocSt, NDName),
@@ -431,24 +431,7 @@ get_last_local_version(Version, DocSt) :-
     : (docstate(DocSt), version_descriptor(Version),
        version_descriptor(GlobalVers), doctree(ModR)).
 
-fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
-    docst_filetype(DocSt, FileType),
-    FileType = plain,
-    !,
-    docst_mvar_get(DocSt, plain_content, Text),
-    parse_docstring(DocSt, Text, ContentR0),
-    preproc_doctree(ContentR0, ContentR),
-    ( docst_backend(DocSt, Backend),
-      Backend = texinfo ->
-        % TODO: Customize style, make toc optional, etc.
-        cover_prop([], GlobalVers, DocSt, CoverProp),
-        SecProps00 = [CoverProp, level(0)],
-        DocR = ContentR,
-        fmt_file_top_section(SecProps00, DocR, DocSt, ModuleR)
-    ; DocR = ContentR,
-      fmt_file_top_section([level(1)], DocR, DocSt, ModuleR)
-    ).
-fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
+fmt_module(DocSt, _Version, GlobalVers) := ModR :-
     docst_backend(DocSt, Backend),
     Backend = man,
     !,
@@ -467,35 +450,53 @@ fmt_module(DocSt, _Version, GlobalVers, ModuleR) :-
         )
     ; UsageR = []
     ),
-    get_doc(title, note, DocSt, TitleR),
-    get_authors(DocSt, AuthorRs),
-    get_doc(address, ignore, DocSt, AddressRs),
-    get_mod_doc(copyright, DocSt, CopyrightR),
-    get_mod_doc(summary,   DocSt, SummaryR),
-    fmt_stability(DocSt, StabilityR0),
-    add_lines(StabilityR0, StabilityR1),
-    ModuleR = man_page(TitleR, GlobalVers, AuthorRs, AddressRs, StabilityR1, SummaryR, UsageR, CopyrightR).
-fmt_module(DocSt, Version, GlobalVers, ModR) :-
+    TitleR = ~get_doc(title, note, DocSt),
+    AuthorRs = ~get_authors(DocSt),
+    AddressRs = ~get_doc(address, ignore, DocSt),
+    CopyrightR = ~get_mod_doc(copyright, DocSt),
+    SummaryR = ~get_mod_doc(summary, DocSt),
+    StabilityR0 = ~fmt_stability(DocSt),
+    StabilityR1 = ~add_lines(StabilityR0),
+    ModR = man_page(TitleR, GlobalVers, AuthorRs, AddressRs, StabilityR1, SummaryR, UsageR, CopyrightR).
+fmt_module(DocSt, Version, GlobalVers) := ModR :-
+    fmt_module_(DocSt, Version, GlobalVers, SecProps, DocR),
+    fmt_file_top_section(SecProps, DocR, DocSt, ModR).
+    
+fmt_module_(DocSt, _Version, GlobalVers, SecProps00, DocR) :-
+    docst_filetype(DocSt, FileType),
+    FileType = plain,
+    !,
+    docst_mvar_get(DocSt, plain_content, Text),
+    parse_docstring(DocSt, Text, ContentR0),
+    ContentR = ~preproc_doctree(ContentR0),
+    ( docst_backend(DocSt, Backend),
+      Backend = texinfo ->
+        % TODO: Customize style, make toc optional, etc.
+        cover_prop([], GlobalVers, DocSt, CoverProp),
+        SecProps00 = [CoverProp, level(0)],
+        DocR = ContentR
+    ; SecProps00 = [level(1)],
+      DocR = ContentR
+    ).
+fmt_module_(DocSt, Version, GlobalVers, SecProps00, DocR) :-
     docst_currmod_is_main(DocSt),
     !,
-    autodoc_message(verbose, "Generating documentation for main file."),
-    %
     get_mod_doc(copyright, DocSt, CopyrightR),
     % TODO: The right order for non-body sections may depend on
     %       the size of each part. For example, in a book the
     %       acknowledgment part may appear before the
     %       intruduction, while in a paper it can appear at the
     %       end (JFMC)
-    fmt_appendix(DocSt, AppendixR),
-    fmt_acknowledges(DocSt, AckR),
+    AppendixR = ~fmt_appendix(DocSt),
+    AckR = ~fmt_acknowledges(DocSt),
     ( docst_backend(DocSt, html) ->
         % TODO: Move the appendix and/or acknowledges to a separate page?
-        fmt_bugs(yes(bugs), DocSt, BugsR),
-        fmt_changes(yes(changelog), DocSt, ChangesR),
+        BugsR = ~fmt_bugs(yes(bugs), DocSt),
+        ChangesR = ~fmt_changes(yes(changelog), DocSt),
         IntroExtraR = [AppendixR, AckR],
         ExtraR = [BugsR, ChangesR]
-    ; fmt_bugs(no, DocSt, BugsR),
-      fmt_changes(no, DocSt, ChangesR),
+    ; BugsR = ~fmt_bugs(no, DocSt),
+      ChangesR = ~fmt_changes(no, DocSt),
       IntroExtraR = [AppendixR, AckR, BugsR, ChangesR],
       ExtraR = []
     ),
@@ -511,31 +512,30 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
     cover_prop(CopyrightR, GlobalVers, DocSt, CoverProp),
     SecProps00 = [CoverProp, level(0)],
     %
-    fmt_summary(Version, DocSt, SummaryR), % TODO: summary should not be in the TOC
-    fmt_copyright(CopyrightR, DocSt, CopyrightR2),
+    SummaryR = ~fmt_summary(Version, DocSt), % TODO: summary should not be in the TOC
+    CopyrightR2 = ~fmt_copyright(CopyrightR, DocSt),
     %
-    fmt_full_toc(DocSt, TocR),
+    TocR = ~fmt_full_toc(DocSt),
     %
-    doctree_simplify([SummaryR, CopyrightR2,
-                      TocR,
-                      IntroR, AfterIntroR, ExtraR, ComponentsR,
-                      BiblioR, IndicesR, SearchR], DocR),
-    %
-    fmt_file_top_section(SecProps00, DocR, DocSt, ModR).
-fmt_module(DocSt, Version, GlobalVers, ModR) :-
-    autodoc_message(verbose, "Generating documentation for component."),
+    DocR = ~doctree_simplify([
+        SummaryR, CopyrightR2,
+        TocR,
+        IntroR, AfterIntroR, ExtraR, ComponentsR,
+        BiblioR, IndicesR, SearchR
+    ]).
+fmt_module_(DocSt, Version, GlobalVers, SecProps00, DocR) :-
     % Contents inside the cartouche
     module_idx(DocSt, IdxR),
-    get_authors(DocSt, AuthorRs),
-    fmt_authors(AuthorRs, AuthorR2),
-    fmt_version(Version, GlobalVers, VerR),
+    AuthorRs = ~get_authors(DocSt),
+    AuthorR2 = ~fmt_authors(AuthorRs),
+    VerR = ~fmt_version(Version, GlobalVers),
     % 
-    fmt_stability(DocSt, StabilityR0),
-    add_lines(StabilityR0, StabilityR1),
+    StabilityR0 = ~fmt_stability(DocSt),
+    StabilityR1 = ~add_lines(StabilityR0),
     %
-    %%%SUMM fmt_summary([], DocSt, SummaryR),
-    get_doc(module, note, DocSt, ModCommentR0),
-    add_lines(ModCommentR0, ModCommentR1),
+    %%%SUMM SummaryR = ~fmt_summary([], DocSt),
+    ModCommentR0 = ~get_doc(module, note, DocSt),
+    ModCommentR1 = ~add_lines(ModCommentR0),
     %
     %%%SUMM CommentR2 = [AuthorR2, VerR, StabilityR1, SummaryR],
     CommentR2 = [AuthorR2, VerR, StabilityR1, ModCommentR1],
@@ -551,28 +551,29 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
     %
     %%%SUMM doc_interface(DocSt, ModCommentR1, InterfaceR),
     doc_interface(DocSt, InterfaceR),
-    fmt_appendix(DocSt, AppendixR),
-    fmt_acknowledges(DocSt, AckR),
-    fmt_bugs(no, DocSt, BugsR),
-    fmt_changes(no, DocSt, ChangesR),
+    AppendixR = ~fmt_appendix(DocSt),
+    AckR = ~fmt_acknowledges(DocSt),
+    BugsR = ~fmt_bugs(no, DocSt),
+    ChangesR = ~fmt_changes(no, DocSt),
     %
-    doctree_simplify([IdxR, CommentR, TocR, InterfaceR, AppendixR, AckR, BugsR, ChangesR], DocR),
-    %
-    fmt_file_top_section([], DocR, DocSt, ModR).
+    DocR = ~doctree_simplify([
+        IdxR, CommentR, TocR, InterfaceR, AppendixR, AckR, BugsR, ChangesR
+    ]),
+    SecProps00 = [].
 
 % Peek some special commands (e.g, title, in plain filetype)
 % TODO: ad-hoc... design a better way
-preproc_doctree([X|Xs], Ys) :-
+preproc_doctree([X|Xs]) := Ys :-
     X = title(TitleR), !,
     assertz_fact(custom_doc(title, TitleR)),
-    preproc_doctree(Xs, Ys).
-preproc_doctree([X|Xs], [Y|Ys]) :- !,
-    preproc_doctree(X, Y),
-    preproc_doctree(Xs, Ys).
-preproc_doctree(X, X).
+    Ys = ~preproc_doctree(Xs).
+preproc_doctree([X|Xs]) := [Y|Ys] :- !,
+    Y = ~preproc_doctree(X),
+    Ys = ~preproc_doctree(Xs).
+preproc_doctree(X) := X.
 
 fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
-    get_doc(title, note, DocSt, TitleR),
+    TitleR = ~get_doc(title, note, DocSt),
     title_for_module_type(TitleR, DocSt, TitleR2),
     %
     SectLabel = global_label(_),
@@ -582,18 +583,8 @@ fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
         SecProps2 = [paper_opts(StartPage, PaperType)|SecProps0]
     ; % not main file
       SecProps2 = [level(1)|SecProps0]
-      % (add '***' to parts, deprecated)
-%         SecProps1 = [level(1)|SecProps0],
-%         docst_filetype(DocSt, FileType),
-%         ( FileType = part ->
-%             SecProps2 = [unnumbered|SecProps1],
-%             doctree_to_rawtext(TitleR2, DocSt, RwTitle),
-%             SectLabel = global_label("*** "||RwTitle)
-%         ; SecProps2 = SecProps1,
-%           SectLabel = global_label(_)
-%         )
     ),
-    get_doc(pragma, ignore, DocSt, Pragmas), % TODO: Do in other way?
+    Pragmas = ~get_doc(pragma, ignore, DocSt), % TODO: Do in other way?
     SecProps3 = [pragmas(Pragmas)|SecProps2],
     %
     SecProps4 = SecProps3,
@@ -604,7 +595,7 @@ fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
     insert_show_toc(ModR0, DocSt, ModR).
 
 cover_prop(CopyrightR, GlobalVers, DocSt, CoverProp) :-
-    get_authors(DocSt, AuthorRs),
+    AuthorRs = ~get_authors(DocSt),
     %
     ( is_version(GlobalVers) ->
         gen_version_note(GlobalVers, GlobalVersR),
@@ -612,9 +603,9 @@ cover_prop(CopyrightR, GlobalVers, DocSt, CoverProp) :-
     ; GlobalVersR = nop,
       GlobalVersShortR = nop
     ),
-    get_doc(subtitle, ignore, DocSt, SubtitleRs),
-    get_doc(subtitle_extra, ignore, DocSt, SubtitleExtraRs),
-    get_doc(address, ignore, DocSt, AddressRs),
+    SubtitleRs = ~get_doc(subtitle, ignore, DocSt),
+    SubtitleExtraRs = ~get_doc(subtitle_extra, ignore, DocSt),
+    AddressRs = ~get_doc(address, ignore, DocSt),
     CoverProp = coversec(SubtitleRs,
                          SubtitleExtraRs,
                          AuthorRs,
@@ -624,13 +615,13 @@ cover_prop(CopyrightR, GlobalVers, DocSt, CoverProp) :-
                          CopyrightR).
 
 fmt_introduction(IntroExtra, DocSt, IntroR, AfterIntroR) :-
-    fmt_stability(DocSt, StabilityR0),
-    add_lines(StabilityR0, StabilityR1),
+    StabilityR0 = ~fmt_stability(DocSt),
+    StabilityR1 = ~add_lines(StabilityR0),
     % 
     %%%SUMM doc_interface(DocSt, [], InterfaceR),
     doc_interface(DocSt, InterfaceR),
-    get_doc(module, note, DocSt, ModCommentR),
-    add_lines(ModCommentR, ModCommentR2),
+    ModCommentR = ~get_doc(module, note, DocSt),
+    ModCommentR2 = ~add_lines(ModCommentR),
     %
     IntroProps0 = [level(1),subfile('intro')],
     IntroR0 = [StabilityR1, ModCommentR2, InterfaceR|IntroRest],
@@ -694,7 +685,7 @@ module_idx(DocSt, IdxR) :-
     ; IdxR = nop
     ).
 
-fmt_authors(AuthorRs, R) :-
+fmt_authors(AuthorRs) := R :-
     ( AuthorRs = [] -> R = []
     ; fmt_commas_period(AuthorRs, AuthorListR),
       R = [raw_nl,
@@ -747,7 +738,7 @@ gen_version_note(Version, R) :-
          string_esc("."),
          raw_nl].
 
-fmt_version(Version, GlobalVers, [Rov1, Rov2]) :-
+fmt_version(Version, GlobalVers) := [Rov1, Rov2] :-
     gen_opt_version_field("Version:", GlobalVers, Rov1),
     ( Version == GlobalVers -> Rov2 = []
     ; gen_opt_version_field("Version of last change:", Version, Rov2)
@@ -801,7 +792,7 @@ fmt_search(_DocSt, []).
 % Section for search component
 gen_search_section(_DocSt) := SearchR :-
     search_msg(ITitle, IComment),
-    add_lines(IComment, IComment2),
+    IComment2 = ~add_lines(IComment),
     SearchR = section_env(
       [unnumbered,level(1),subfile('search'),is_special(search)],
        global_label(_), 
@@ -846,7 +837,7 @@ gen_index_sections([IdxName|Is], DocSt, [IndexR|IsR]) :-
 gen_index_section(IdxName, _DocSt, IndexR) :-
     get_idxsub(IdxName, SubName),
     typeindex(IdxName, _, _, ITitle, IComment),
-    add_lines(IComment, IComment2),
+    IComment2 = ~add_lines(IComment),
     IndexR = section_env(
       [unnumbered,level(1),subfile(SubName),is_special(index)],
        global_label(_), 
@@ -865,7 +856,7 @@ get_idxsub(IdxName, SubName) :-
 
 :- doc(subsection, "Formatting Abstract/Summary").
 
-fmt_summary(Version, DocSt, SummaryR) :-
+fmt_summary(Version, DocSt) := SummaryR :-
     get_mod_doc(summary, DocSt, SummaryR0),
     fmt_summary_(Version, DocSt, SummaryR0, SummaryR).
 
@@ -880,7 +871,7 @@ fmt_summary_(Version, DocSt, SummaryR0, SummaryR) :-
     ; VersionR = nop
     ),
     % Summary contents and version
-    add_lines(SummaryR0, SummaryR1),
+    SummaryR1 = ~add_lines(SummaryR0),
     SummaryR2 = [SummaryR1, VersionR],
     % Wrap as a section if needed
     summary_sect(DocSt, SummaryR2, SummaryR).
@@ -906,7 +897,7 @@ summary_sect(DocSt, TextR, SummaryR) :-
 
 :- doc(subsection, "Full Table of Contents").
 
-fmt_full_toc(DocSt, R) :-
+fmt_full_toc(DocSt) := R :-
     show_full_toc(DocSt),
     !,
     Opts = [unnumbered,level(1),subfile('fulltoc'),is_special(toc)],
@@ -915,13 +906,13 @@ fmt_full_toc(DocSt, R) :-
                     Label,
                     string_esc("Table of Contents"),
                     [show_toc(full)]).
-fmt_full_toc(_, []).
+fmt_full_toc(_) := [].
 
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Copyright").
 
-fmt_copyright(CopyrightR, DocSt, CopyrightR2) :-
+fmt_copyright(CopyrightR, DocSt) := CopyrightR2 :-
     % TODO: Note: I cannot creat subfiles during the backend treatment (references will not work)
     %       This is why I write the copyright here and not in the HTML cover.
     ( use_copyright_section(DocSt),
@@ -938,9 +929,9 @@ fmt_copyright(CopyrightR, DocSt, CopyrightR2) :-
 :- doc(subsection, "Appendix Section").
 % TODO: Document sections could make this obsolete.
 
-fmt_appendix(DocSt, AppendixR) :-
-    get_doc(appendix, ignore, DocSt, AppendixR0),
-    add_lines(AppendixR0, AppendixR1),
+fmt_appendix(DocSt) := AppendixR :-
+    AppendixR0 = ~get_doc(appendix, ignore, DocSt),
+    AppendixR1 = ~add_lines(AppendixR0),
     nonbody_section(no, 'appdx', "Other information", AppendixR1, DocSt, AppendixR).
 
 % ---------------------------------------------------------------------------
@@ -948,19 +939,19 @@ fmt_appendix(DocSt, AppendixR) :-
 :- doc(subsection, "Acknowledgments").
 % TODO: Support big/small acknowledgment sections?
 
-fmt_acknowledges(DocSt, AckR) :-
-    get_doc(ack, ignore, DocSt, AckR0),
-    add_lines(AckR0, AckR1),
+fmt_acknowledges(DocSt) := AckR :-
+    AckR0 = ~get_doc(ack, ignore, DocSt),
+    AckR1 = ~add_lines(AckR0),
     nonbody_section(no, 'ack', "Acknowledgments", AckR1, DocSt, AckR).
 
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Stability"). 
 
-fmt_stability(DocSt, RText) :-
+fmt_stability(DocSt) := RText :-
     ( docst_opt(no_stability, DocSt) ->
-        RText=[] % Stability documentation turned off
-    ; ( get_doc(stability, dofail, DocSt, Stability) -> 
+        RText = [] % Stability documentation turned off
+    ; Stability = ~get_doc(stability, dofail, DocSt) -> 
         ( fmt_stability_(DocSt, Stability, RText0) ->
             RText = RText0
         ; % MH: Is there a better way? (I had to export it...)
@@ -969,8 +960,7 @@ fmt_stability(DocSt, RText) :-
             "Unrecognized stability level '~w'.", [Stability]),
           RText = []
         )
-      ; RText = [] % No stability assertion
-      )
+    ; RText = [] % No stability assertion
     ).
 
 fmt_stability_(_DocSt, Stability, RText) :-
@@ -1031,10 +1021,10 @@ stability_text_wrapper(warning,Stability,Text,[raw_nl,
 % TODO: This needs a major rework...
 % TODO: Add identifiers to bugs
 
-fmt_bugs(Special, DocSt, BugsR) :-
+fmt_bugs(Special, DocSt) := BugsR :-
     ( docst_opt(no_bugs, DocSt) ->
         BugRs=[]
-    ; get_doc(bug, ignore, DocSt, BugRs)
+    ; BugRs = ~get_doc(bug, ignore, DocSt)
     ),
     gen_bugs(BugRs, Bugs2),
     nonbody_section(Special, 'bugs', "Known bugs and planned improvements", Bugs2, DocSt, BugsR).
@@ -1056,7 +1046,7 @@ gen_bugs_([BugR|BugRs], [C|Cs]) :-
 %       the foreword (which appears just after the contents)
 
 % The changelog.
-fmt_changes(Special, DocSt, ChangesR) :-
+fmt_changes(Special, DocSt) := ChangesR :-
     ( docst_opt(no_changelog, DocSt) ->
         Changes = []
     ; ( docst_opt(no_patches, DocSt) ->
@@ -1187,7 +1177,7 @@ doc_interface(DocSt, R) :-
     % Check if there are definitions to be documented
     check_no_definitions(FileType, Exports, Multifiles, DocSt),
     % Source files whose contents should not be documented
-    get_doc(nodoc, ignore, DocSt, NoDocS),
+    NoDocS = ~get_doc(nodoc, ignore, DocSt),
     autodoc_message(verbose, "Not documenting: ~w.", [NoDocS]),
     % - Operators
     get_ops(FileType, NoDocS, SOps),
@@ -1223,7 +1213,7 @@ doc_interface(DocSt, R) :-
     fmt_definitions_kind(nodecl, "multifiles", Multifiles, DocSt, MultifilesR),
     %  - predicates for which it is explicitly requested (via a
     % @tt{:- doc(doinclude,<PredName>)} directive)
-    get_doc(doinclude, ignore, DocSt, DoInclPreds),
+    DoInclPreds = ~get_doc(doinclude, ignore, DocSt),
     filter_out_exports(DoInclPreds, Exports, Internals),
     fmt_definitions_kind(_DefKind, "internals", Internals, DocSt, InternalsR),
     %
@@ -1315,7 +1305,7 @@ fmt_module_usage_and_itf(DocSt, CExports, Mults,
         ).
 
 fmt_module_usage(DocSt, UsageR) :-
-    get_doc(usage, ignore, DocSt, UsageR0),
+    UsageR0 = ~get_doc(usage, ignore, DocSt),
     ( is_nonempty_doctree(UsageR0) ->
         % Usage comment to override automatic one
         UsageR = UsageR0
@@ -1907,7 +1897,7 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
                 "} (see the corresponding documentation for details)."],
             Text),
         parse_docstring0(DocSt, Text, RText),
-        add_lines(RText, RText1),
+        RText1 = ~add_lines(RText),
         R = [defpred(local_label(_), Type, PText, F/A, [], [RText1]), sp("1"), raw_nl]
     ).
 fmt_definition(P, _, _FileSt, _DocSt, R) :-
@@ -1944,9 +1934,10 @@ enum_predicate_usages(P, DefKind, M, DocSt, Assrt) :-
 %% Get any comment declarations, compute CommentHead:
 predicate_level_comment(F/A, DocSt, CommentR, CommentHead) :-
     functor(CP, F, A),
-    ( get_doc(pred(F/A), dofail, DocSt, CommentR),
+    % TODO: cuts were missing here, remove this comment if everything is OK
+    ( CommentR = ~get_doc(pred(F/A), dofail, DocSt) ->
         CommentHead = F/A
-    ; get_doc(pred(CP), dofail, DocSt, CommentR),
+    ; CommentR = ~get_doc(pred(CP), dofail, DocSt) ->
         CommentHead = CP
     ; CommentHead = F/A, empty_doctree(CommentR)
     ).
