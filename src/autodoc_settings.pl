@@ -118,6 +118,10 @@ load_settings(InFile, InKind, Opts) :-
         add_name_value(filepath, InDir),
         add_name_value(docformat, html), % default format
         add_name_value('$implements', 'doccfg'),
+        ( member(name_value(doc_mainopts, biblio), Opts) -> % TODO: generalize
+            true
+        ; add_name_value(doc_mainopts, no_biblio) % (default, use option to enable)
+        ),
         add_name_value(doc_structure, [InFile]) % TODO: or InFile2?
     ; fail
     ),

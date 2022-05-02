@@ -621,7 +621,7 @@ filetype(include).
 filetype(package).
 filetype(application).
 filetype(part). % (introduction of a part)
-filetype(documentation). % (like a part, not at first level)
+filetype(documentation). % (like a part, usually not at first level)
 
 % ----------------------------------------------------------------------------
 
@@ -1331,7 +1331,7 @@ stringcommand(codeblock(A,B)    ) :- string(A), string(B). % TODO: internal for 
 stringcommand(bibitem(A,B)      ) :- string(A), string(B).
 stringcommand(newblock(B)       ) :- string(B).
 
-% (for plain .md .lpdoc filetype)
+% (for .md .lpdoc components)
 stringcommand(title(B)         ) :- string(B).
 
 % ---------------------------------------------------------------------------

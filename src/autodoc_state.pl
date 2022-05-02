@@ -175,10 +175,7 @@ docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt) :-
     docst_mvar_lookup(DocSt, fileinfo, fileinfo(M, Base)),
     docst_mvar_lookup(DocSt, dir, dir(Dir)),
     %
-    ( docst_mvar_get(DocSt, plain_content, _) ->
-        FileType = plain
-    ; detect_filetype(DocSt, FileType)
-    ),
+    detect_filetype(DocSt, FileType),
     docst_mdata_assertz(filetype(FileType), DocSt),
     docst_mvar_lookup(DocSt, filetype, FileType). % TODO: redundant
 
@@ -709,6 +706,11 @@ detect_filetype(DocSt, FileType) :-
     ; autodoc_message(error, "Unrecognized value in doc(filetype) declaration"),
       fail % TODO: recover from this error?
     ).
+%% Documentation - (plain_content)
+detect_filetype(DocSt, FileType) :-
+    docst_mvar_get(DocSt, plain_content, _),
+    !,
+    FileType = documentation.
 %% Application - no interface, so no complication
 detect_filetype(DocSt, FileType) :-
     docst_mvar_get(DocSt, fileinfo, fileinfo(_, Base)),
