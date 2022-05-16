@@ -94,7 +94,7 @@
     }
   }
 
-  window.onload = function() {
+  function setup_search() {
     /* Find search divs */
     text_input = document.getElementById('search-input');
     results_div = document.getElementById("search-results");
@@ -122,5 +122,9 @@
       timeout = setTimeout(function() {
 	do_search(text_input.value); }, 100); 
     };
-  };
+  }
+
+  window.addEventListener('DOMContentLoaded', function(){
+    setup_search();
+  });
 })();
