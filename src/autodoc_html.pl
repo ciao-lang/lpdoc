@@ -399,6 +399,11 @@ sec_is_cover(SecProps) :-
 
 :- use_module(library(format), [format/2]).
 
+fmt_codeblock(Lang, Text, DocSt, R) :- Lang = 'ciao_runnable', !, % TODO: document
+    % (special case for blocks runnable by ciao_playground)
+    R = htmlenv(pre, [class="lpdoc-codeblock-runnable"], TextR),
+    escape_string(normal, Text, DocSt, NText),
+    TextR = raw_string(NText).
 fmt_codeblock(Lang, Text, DocSt, R) :-
     R = htmlenv(pre, [class="lpdoc-codeblock"], TextR),
     ( try_highlight(Lang, Text, TextR0) ->
