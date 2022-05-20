@@ -887,6 +887,10 @@ get_script(X) :-
     % Mathematical notation
     % Note: currently, only MathJax is supported
     script_mathjax(X).
+get_script(X) :-
+    setting_value(allow_runnable, yes), !, % (default is 'no')
+    % TODO: customize path? copy assets?
+    X = script('text/javascript', url('/playground/js/lpdoc-runnable.js')).
 
 :- use_module(lpdoc(autodoc_html_assets), [using_mathjax/1]).
 

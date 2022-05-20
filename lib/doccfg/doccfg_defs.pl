@@ -280,6 +280,13 @@
     allow_markdown(yes)
 ]).
 
+:- export(allow_runnable/1).
+:- pred allow_runnable/1 => yesno
+# "Allow runnable code blocks (Ciao Playground)".
+:- default_def(allow_runnable/1, [
+    allow_runnable(no)
+]).
+
 :- export(syntax_highlight/1).
 :- pred syntax_highlight/1 => yesno
 # "Syntax highlight code blocks (only for HTML backend)".
