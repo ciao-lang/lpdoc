@@ -631,6 +631,8 @@ fmt_introduction(ModCommentR, IntroExtra, DocSt, IntroR, AfterIntroR) :-
 
 % TODO: revisit rules here
 intro_in_cover(_DocSt) :- custom_html_layout, !.
+% TODO: MH: Testing this. Useful for html documents: have introductory text in first page if no summary.
+intro_in_cover(DocSt) :- doctree_is_empty(~get_mod_doc(summary, DocSt)), !.
 intro_in_cover(DocSt) :- single_file_doc(DocSt).
 
 single_file_doc(_DocSt) :- all_component_specs([]). % no components, only one main module
@@ -2663,6 +2665,8 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
    the manuals standalone.").
 
 :- doc(bug, "Fix utf8, texinfo.").
+
+:- doc(bug, "Include a quick tutorial (e.g., the calculator.pl one).").
 
 :- doc(bug, "Add a @@flag@{Flag@} command to name Prolog flags
    (interpret the @pred{define_flag/3} multifile to document flags
