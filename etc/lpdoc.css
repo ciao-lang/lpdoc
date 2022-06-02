@@ -1,13 +1,13 @@
 /*
  * LPdoc stylesheet for the HTML backend
  *
- * Author: Jose F. Morales
+ * (c) 2018-2022 The Ciao Development Team
  */
 
 /* --------------------------------------------------------------------------- */
 /* Color theme */
 
-:root {
+html {
     --bg: #FFFFFF;
     --fg: #000000;
     --sidebar-link: #4263ab;
@@ -32,32 +32,29 @@
     --cartouche-fg: #1d609a;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        color-scheme: dark;
-        --bg: #23272D;
-        --fg: #AFBAC6;
-        --sidebar-link: #73869c;
-        --link-fg: #5c9cec;
-        --code-fg: #AFBAC6;
-        --code-bg: #2E333A;
-        --codeblock-bg: #2E333A;
-        --codeblock-border: #2E333A;
-        --var-fg: #fdce56;
-        --border: #383838;
-        --fgdim: #747b84;
-        --header: #E0E0E0;
-        --defname-bg: #1e2125;
-        --note-accent: #0085fa;
-        --note-bg: #172531;
-        --note-border: #01396a;
-        --alert-accent: #ff6060;
-        --alert-bg: #33272D;
-        --alert-border: #53272D;
-        --cartouche-border: #23334d;
-        --cartouche-bg: #1b2432;
-        --cartouche-fg: #9bdcf3;
-    }
+html[data-theme='dark'] {
+    --bg: #23272D;
+    --fg: #AFBAC6;
+    --sidebar-link: #73869c;
+    --link-fg: #5c9cec;
+    --code-fg: #AFBAC6;
+    --code-bg: #2E333A;
+    --codeblock-bg: #2E333A;
+    --codeblock-border: #2E333A;
+    --var-fg: #fdce56;
+    --border: #383838;
+    --fgdim: #747b84;
+    --header: #E0E0E0;
+    --defname-bg: #1e2125;
+    --note-accent: #0085fa;
+    --note-bg: #172531;
+    --note-border: #01396a;
+    --alert-accent: #ff6060;
+    --alert-bg: #33272D;
+    --alert-border: #53272D;
+    --cartouche-border: #23334d;
+    --cartouche-bg: #1b2432;
+    --cartouche-fg: #9bdcf3;
 }
 
 /* --------------------------------------------------------------------------- */

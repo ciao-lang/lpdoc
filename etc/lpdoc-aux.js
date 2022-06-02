@@ -1,8 +1,32 @@
 /*
  * Auxiliary functionality for LPdoc generated documentation
  *
- * (c) 2018 Jose F. Morales
+ * (c) 2018-2022 The Ciao Development Team
  */
+
+/* --------------------------------------------------------------------------- */
+/* LPdoc - setup theme */
+
+(function() {
+  /* TODO: merge with ciao_playground.js theme selection */
+  function update_css_theme() {
+    var theme = ((window.matchMedia &&
+                  window.matchMedia('(prefers-color-scheme: dark)').matches) ?
+                 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+  // Update theme when on dark/light events
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    update_css_theme();
+  });
+  // Update as soon as DOM is there
+  window.addEventListener('DOMContentLoaded', (event) => {
+    update_css_theme();
+  });
+})();
+
+/* --------------------------------------------------------------------------- */
+/* LPdoc - Toogle sidebar */
 
 (function() {
   /* Toogle sidebar (for mobile-friendly) */
@@ -32,6 +56,9 @@
     setup_toggle();
   });
 })();
+
+/* --------------------------------------------------------------------------- */
+/* LPdoc - seachbox */
 
 (function() {
   /* Index search */
