@@ -47,11 +47,6 @@ asset_file(css, Path) :-
     F = 'lpdoc.css',
     setting_value(lpdoc_etc, Dir),
     path_concat(Dir, F, Path).
-asset_file(css, Path) :-
-    \+ setting_value(syntax_highlight, no),
-    F = 'ciao-htmlfontify.css',
-    bundle_path(core, 'library/syntax_highlight/css', Dir),
-    path_concat(Dir, F, Path).
 asset_file(js, Path) :-
     F = 'lpdoc-aux.js',
     setting_value(lpdoc_etc, Dir),

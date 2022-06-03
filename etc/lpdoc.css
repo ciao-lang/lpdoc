@@ -30,6 +30,7 @@ html {
     --cartouche-border: #c8e2f0;
     --cartouche-bg: #eff6fc;
     --cartouche-fg: #1d609a;
+    --dropdown-bg: whitesmoke;
 }
 
 html[data-theme='dark'] {
@@ -55,6 +56,7 @@ html[data-theme='dark'] {
     --cartouche-border: #23334d;
     --cartouche-bg: #1b2432;
     --cartouche-fg: #9bdcf3;
+    --dropdown-bg: #000000;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -577,6 +579,160 @@ h1.lpdoc-cover-h1 {
 }
 
 /* --------------------------------------------------------------------------- */
+/* Ciao syntax highlight (htmlfontify) */
+
+html {
+    --face-sectioning: #000080;
+    --face-funexp-atom: #6b8e23;
+    --face-type-assrt: #0000cd;
+    --face-prop-assrt: #0000ff;
+    --face-entry-assrt: #a52a2a;
+    --face-trust-assrt: #ff7f50;
+    --face-false-assrt: #ff0000;
+    --face-true-assrt: #228b22;
+    --face-check-assrt: #000080;
+    --face-checked-assrt: #006400;
+    --face-lpdoc-command: #4169e1;
+    --face-lpdoc-verbatim: #000080;
+    --face-lpdoc-include: #000080;
+    --face-concurrency-op: #ff7f50;
+    --face-prompt: #ff7f50;
+    --face-variable: #a0522d;
+    --face-string: #bc8f8f;
+    --face-lpdoc-comment: #000080;
+    --face-lpdoc-bug-comment: #ff0000;
+    --face-clauseheadname: #0000ff;
+    --face-user-directive: #000080;
+    --face-library-directive: #000080;
+    --face-predicate-directive: #4169e1;
+    --face-builtin-directive: #0000ff;
+    --face-quoted-atom: #666666;
+    --face-module-directive: #000080;
+    --face-comment: #b22222;
+    --face-cut: #4169e1;
+}
+
+html[data-theme='dark'] {
+    --face-sectioning: #ffec8b;
+    --face-funexp-atom: #b3ee3a;
+    --face-type-assrt: #1e90ff;
+    --face-prop-assrt: #1e90ff;
+    --face-trust-assrt: #ff7f50;
+    --face-false-assrt: #ff0000;
+    --face-true-assrt: #32cd32;
+    --face-checked-assrt: #90ee90;
+    --face-check-assrt: #1e90ff;
+    --face-cut: #6495ed;
+    --face-concurrency-op: #ff7f50;
+    --face-prompt: #ff7f50;
+    --face-variable: #eedd82;
+    --face-string: #ffa07a;
+    --face-lpdoc-command: #c6e2ff;
+    --face-lpdoc-bug-comment: #ff0000;
+    --face-lpdoc-comment: #9fb6cd;
+    --face-clauseheadname: #87cefa;
+    --face-user-directive: #1e90ff;
+    --face-library-directive: #1e90ff;
+    --face-predicate-directive: #1e90ff;
+    --face-builtin-directive: #87cefa;
+    --face-quoted-atom: #e5e5e5;
+    --face-module-directive: #9f79ee;
+    --face-comment: #6c7b8b;
+    --face-script-header: #32cd32;
+}
+
+span.ciao-face-sectioning-5-face   { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; text-decoration: none; }
+span.ciao-face-sectioning-5-face a { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; text-decoration: underline; }
+span.ciao-face-sectioning-4-face   { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; font-size: 15pt; text-decoration: none; }
+span.ciao-face-sectioning-4-face a { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; font-size: 15pt; text-decoration: underline; }
+span.ciao-face-sectioning-3-face   { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; font-size: 18pt; text-decoration: none; }
+span.ciao-face-sectioning-3-face a { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; font-size: 18pt; text-decoration: underline; }
+span.ciao-face-sectioning-2-face   { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; font-size: 20pt; text-decoration: none; }
+span.ciao-face-sectioning-2-face a { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; font-size: 20pt; text-decoration: underline; }
+span.ciao-face-funexp-atom   { color: var(--face-funexp-atom); font-weight: 500; text-decoration: none; }
+span.ciao-face-funexp-atom a { color: var(--face-funexp-atom); font-weight: 500; text-decoration: underline; }
+span.ciao-face-type-assrt   { color: var(--face-type-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-type-assrt a { color: var(--face-type-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-prop-assrt   { color: var(--face-prop-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-prop-assrt a { color: var(--face-prop-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-entry-assrt   { color: var(--face-entry-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-entry-assrt a { color: var(--face-entry-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-trust-assrt   { color: var(--face-trust-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-trust-assrt a { color: var(--face-trust-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-false-assrt   { color: var(--face-false-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-false-assrt a { color: var(--face-false-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-true-assrt   { color: var(--face-true-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-true-assrt a { color: var(--face-true-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-check-assrt   { color: var(--face-check-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-check-assrt a { color: var(--face-check-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-checked-assrt   { color: var(--face-checked-assrt); font-weight: 700; text-decoration: none; }
+span.ciao-face-checked-assrt a { color: var(--face-checked-assrt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-lpdoc-command   { color: var(--face-lpdoc-command); font-weight: 500; text-decoration: none; }
+span.ciao-face-lpdoc-command a { color: var(--face-lpdoc-command); font-weight: 500; text-decoration: underline; }
+span.ciao-face-lpdoc-verbatim   { color: var(--face-lpdoc-verbatim); font-weight: 700; text-decoration: none; }
+span.ciao-face-lpdoc-verbatim a { color: var(--face-lpdoc-verbatim); font-weight: 700; text-decoration: underline; }
+span.ciao-face-lpdoc-include   { color: var(--face-lpdoc-include); font-weight: 700; text-decoration: none; }
+span.ciao-face-lpdoc-include a { color: var(--face-lpdoc-include); font-weight: 700; text-decoration: underline; }
+span.ciao-face-concurrency-op   { color: var(--face-concurrency-op); font-weight: 700; text-decoration: none; }
+span.ciao-face-concurrency-op a { color: var(--face-concurrency-op); font-weight: 700; text-decoration: underline; }
+span.ciao-face-prompt   { color: var(--face-prompt); font-weight: 700; text-decoration: none; }
+span.ciao-face-prompt a { color: var(--face-prompt); font-weight: 700; text-decoration: underline; }
+span.ciao-face-variable   { color: var(--face-variable); font-weight: 500; text-decoration: none; }
+span.ciao-face-variable a { color: var(--face-variable); font-weight: 500; text-decoration: underline; }
+span.ciao-face-string   { color: var(--face-string); font-weight: 500; text-decoration: none; }
+span.ciao-face-string a { color: var(--face-string); font-weight: 500; text-decoration: underline; }
+span.ciao-face-lpdoc-comment   { color: var(--face-lpdoc-comment); font-weight: 500; text-decoration: none; }
+span.ciao-face-lpdoc-comment a { color: var(--face-lpdoc-comment); font-weight: 500; text-decoration: underline; }
+span.ciao-face-lpdoc-bug-comment   { color: var(--face-lpdoc-bug-comment); font-weight: 700; text-decoration: none; }
+span.ciao-face-lpdoc-bug-comment a { color: var(--face-lpdoc-bug-comment); font-weight: 700; text-decoration: underline; }
+span.ciao-face-clauseheadname   { color: var(--face-clauseheadname); font-weight: 500; text-decoration: none; }
+span.ciao-face-clauseheadname a { color: var(--face-clauseheadname); font-weight: 500; text-decoration: underline; }
+span.ciao-face-user-directive   { color: var(--face-user-directive); font-weight: 500; text-decoration: none; }
+span.ciao-face-user-directive a { color: var(--face-user-directive); font-weight: 500; text-decoration: underline; }
+span.ciao-face-library-directive   { color: var(--face-library-directive); font-weight: 700; text-decoration: none; }
+span.ciao-face-library-directive a { color: var(--face-library-directive); font-weight: 700; text-decoration: underline; }
+span.ciao-face-predicate-directive   { color: var(--face-predicate-directive); font-weight: 500; text-decoration: none; }
+span.ciao-face-predicate-directive a { color: var(--face-predicate-directive); font-weight: 500; text-decoration: underline; }
+span.ciao-face-builtin-directive   { color: var(--face-builtin-directive); font-weight: 700; text-decoration: none; }
+span.ciao-face-builtin-directive a { color: var(--face-builtin-directive); font-weight: 700; text-decoration: underline; }
+span.ciao-face-quoted-atom   { color: var(--face-quoted-atom); font-weight: 500; text-decoration: none; }
+span.ciao-face-quoted-atom a { color: var(--face-quoted-atom); font-weight: 500; text-decoration: underline; }
+span.ciao-face-module-directive   { color: var(--face-module-directive); font-weight: 700; text-decoration: none; }
+span.ciao-face-module-directive a { color: var(--face-module-directive); font-weight: 700; text-decoration: underline; }
+span.ciao-face-comment   { color: var(--face-comment); font-weight: 500; text-decoration: none; }
+span.ciao-face-comment a { color: var(--face-comment); font-weight: 500; text-decoration: underline; }
+span.ciao-face-cut   { color: var(--face-cut); font-weight: 500; text-decoration: none; }
+span.ciao-face-cut a { color: var(--face-cut); font-weight: 500; text-decoration: underline; }
+
+/* Other languages */
+span.constant   { color: #008b8b; font-weight: 500; text-decoration: none; }
+span.constant a { color: #008b8b; font-weight: 500; text-decoration: underline; }
+span.negation-char   { font-weight: 500; color: #000000; text-decoration: none; }
+span.negation-char a { font-weight: 500; color: #000000; text-decoration: underline; }
+span.variable-name   { color: #a0522d; font-weight: 500; text-decoration: none; }
+span.variable-name a { color: #a0522d; font-weight: 500; text-decoration: underline; }
+span.type   { color: #228b22; font-weight: 500; text-decoration: none; }
+span.type a { color: #228b22; font-weight: 500; text-decoration: underline; }
+span.hc-tab   { background: #000000; font-weight: 500; color: #000000; text-decoration: none; }
+span.hc-tab a { background: #000000; font-weight: 500; color: #000000; text-decoration: underline; }
+span.hc-trailing-whitespace   { background: #000000; font-weight: 500; color: #000000; text-decoration: none; }
+span.hc-trailing-whitespace a { background: #000000; font-weight: 500; color: #000000; text-decoration: underline; }
+span.function-name   { color: #0000ff; font-weight: 500; text-decoration: none; }
+span.function-name a { color: #0000ff; font-weight: 500; text-decoration: underline; }
+span.keyword   { color: #a020f0; font-weight: 500; text-decoration: none; }
+span.keyword a { color: #a020f0; font-weight: 500; text-decoration: underline; }
+span.string   { color: #8b2252; font-weight: 500; text-decoration: none; }
+span.string a { color: #8b2252; font-weight: 500; text-decoration: underline; }
+span.preprocessor   { color: #483d8b; font-weight: 500; text-decoration: none; }
+span.preprocessor a { color: #483d8b; font-weight: 500; text-decoration: underline; }
+span.comment   { color: #b22222; font-weight: 500; text-decoration: none; }
+span.comment a { color: #b22222; font-weight: 500; text-decoration: underline; }
+span.comment-delimiter   { color: #b22222; font-weight: 500; text-decoration: none; }
+span.comment-delimiter a { color: #b22222; font-weight: 500; text-decoration: underline; }
+span.sh-quoted-exec   { color: #ff00ff; font-weight: 500; text-decoration: none; }
+span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: underline; }
+
+/* --------------------------------------------------------------------------- */
 /* Search */
 
 #search-input {
@@ -593,6 +749,65 @@ h1.lpdoc-cover-h1 {
 }
 #search-input:focus {
     outline: none;
+}
+
+/* --------------------------------------------------------------------------- */
+/* UI - Dropdown menus */
+
+/* dropdown buttons */
+.dropdown-btn {
+  font-family: -apple-system,Helvetica,Arial,sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--sidebar-link);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  padding: 5px 5px;
+  background-color: var(--dropdown-bg);
+  border-radius: 6px;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  overflow: hidden;
+}
+
+div.dropdown-content a {
+  font-family: -apple-system,Helvetica,Arial,sans-serif;
+  font-size: 15px;
+  color: var(--fg);
+  padding: 5px 10px;
+  text-align: justify;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+div.dropdown-content a:hover {
+  text-decoration: none;
+  background-color: var(--fg);
+  color: var(--dropdown-bg);
+  border-radius: 3px;
+}
+
+.dropdown-mark {
+  display: inline-block;
+  width: 14px;
+}
+
+.show {
+  display: block;
 }
 
 /* --------------------------------------------------------------------------- */
