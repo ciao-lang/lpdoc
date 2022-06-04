@@ -31,6 +31,7 @@ html {
     --cartouche-bg: #eff6fc;
     --cartouche-fg: #1d609a;
     --dropdown-bg: whitesmoke;
+    --scrollbar-thumb: #b0b0b0;
 }
 
 html[data-theme='dark'] {
@@ -58,6 +59,20 @@ html[data-theme='dark'] {
     --cartouche-bg: #1b2432;
     --cartouche-fg: #9bdcf3;
     --dropdown-bg: #000000;
+    --scrollbar-thumb: #3a4859;
+}
+
+::-webkit-scrollbar {
+    background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+}
+::-webkit-scrollbar-corner {
+    background: var(--bg);
+}
+html {
+    scrollbar-color: var(--scrollbar-thumb) var(--bg);
 }
 
 /* --------------------------------------------------------------------------- */
