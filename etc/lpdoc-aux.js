@@ -64,16 +64,18 @@ window.addEventListener('click', e => {
 });
 
 class DropdownButton {
-  constructor(menu, btn_el, items, onchange) {
+  constructor(menu, title, btn_el, items, onchange) {
     this.values = Array.from(items);
-    var c = this.#setup(btn_el, onchange);
+    var c = this.#setup(title, btn_el, onchange);
     menu.appendChild(c);
   }
-  #setup(btn_el, onchange) {
+  #setup(title, btn_el, onchange) {
     var c = elem_cn('div', 'dropdown');
     var dropdown = elem_cn('div', 'dropdown-content');
     var b;
     b = elem_cn('button', 'dropdown-btn');
+    this.btn_el = b;
+    b.title = title;
     b.onclick = e => { 
       active_dropdown = dropdown;
       clicked_dropdown = true;
@@ -118,6 +120,25 @@ class DropdownButton {
     }
   }
 }
+
+/* =========================================================================== */
+/* SVGs (Note: clone with .cloneNode(true) if needed) */
+
+const theme_svg = elem_from_str(`<svg class="header-icon-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+<rect height="3" width="2" x="15" y="2" fill="currentColor"/>
+<rect height="2" width="3" x="27" y="15" fill="currentColor"/>
+<rect height="3" width="2" x="15" y="27" fill="currentColor"/>
+<rect height="2" width="3" x="2" y="15" fill="currentColor"/>
+<rect height="3" transform="translate(-3 7.23) rotate(-45)" width="2" x="6.22" y="5.73" fill="currentColor"/>
+<rect height="2" transform="translate(2.14 19.63) rotate(-45)" width="3" x="23.27" y="6.23" fill="currentColor"/>
+<rect height="3" transform="translate(-10.26 24.77) rotate(-45)" width="2" x="23.77" y="23.27" fill="currentColor"/>
+<polygon points="5.47 25.13 7.59 23 9 24.42 6.88 26.54 5.47 25.13" fill="currentColor"/>
+<path d="M16,8a8,8,0,1,0,8,8A8,8,0,0,0,16,8Zm0,14a6,6,0,0,1,0-12Z" fill="currentColor"/>
+</svg>`);
+const search_svg = elem_from_str(`<svg class="header-icon-img" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<path d="M344.5,298c15-23.6,23.8-51.6,23.8-81.7c0-84.1-68.1-152.3-152.1-152.3C132.1,64,64,132.2,64,216.3  c0,84.1,68.1,152.3,152.1,152.3c30.5,0,58.9-9,82.7-24.4l6.9-4.8L414.3,448l33.7-34.3L339.5,305.1L344.5,298z M301.4,131.2  c22.7,22.7,35.2,52.9,35.2,85c0,32.1-12.5,62.3-35.2,85c-22.7,22.7-52.9,35.2-85,35.2c-32.1,0-62.3-12.5-85-35.2  c-22.7-22.7-35.2-52.9-35.2-85c0-32.1,12.5-62.3,35.2-85c22.7-22.7,52.9-35.2,85-35.2C248.5,96,278.7,108.5,301.4,131.2z" fill="currentColor"/>
+</svg>`);
+search_svg.style.marginRight = '0px';
 
 /* =========================================================================== */
 /* UI - Themes */
@@ -190,13 +211,14 @@ update_theme_hook = () => {
 /* =========================================================================== */
 /* (LPdoc specific) */
 
+// TODO: Generate better HTML, avoid patching
 (function() {
   /* --------------------------------------------------------------------------- */
-  /* LPdoc - Toogle sidebar, adjust lpdoc-nav, add theme button */
+  /* LPdoc - Toogle sidebar, adjust lpdoc-nav, add theme button, patch search button */
 
   /* Toogle sidebar (for mobile-friendly) */
   /* NOTE: need sidebar and sidebar-toogle-button */
-  function setup_toggle() {
+  function setup_nav() {
     var trigger = document.getElementById('sidebar-toggle-button');
     if (trigger === null) {
       return; /* no trigger */
@@ -229,7 +251,8 @@ update_theme_hook = () => {
         var dummy = document.createElement('div');
         const theme_button =
               new DropdownButton(dummy,
-                                 elem_from_str('<span style="margin-right: 10px;">&#9788;</span>'),
+                                 "Change theme",
+                                 theme_svg,
                                  theme_list,
                                  value => {
                                    theme_button.highlight(value);
@@ -253,15 +276,19 @@ update_theme_hook = () => {
       toggle_el.classList.toggle(toggle_class); 
       return false;
     });
+    /* Patch search button */
+    for (const e of document.getElementsByClassName('lpdoc-navbutton')) {
+      if (e.innerHTML === "🔍") { e.innerHTML = ""; e.appendChild(search_svg); }
+    }
   }
 
   window.addEventListener('DOMContentLoaded', function(){
-    setup_toggle();
+    setup_nav();
   });
 })();
 
 /* =========================================================================== */
-/* LPdoc - seachbox */
+/* LPdoc - interactive index search */
 
 (function() {
   /* Index search */

@@ -34,6 +34,7 @@ html {
 }
 
 html[data-theme='dark'] {
+    color-scheme: dark;
     --bg: #23272D;
     --fg: #AFBAC6;
     --sidebar-link: #73869c;
@@ -315,6 +316,13 @@ div.lpdoc-nav li {
     display:inline;
     margin:0;
     padding:0;
+}
+
+div.lpdoc-nav .header-icon-img {
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  margin-right: 10px;
 }
 
 div.lpdoc-main {
