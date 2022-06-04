@@ -64,16 +64,10 @@ window.addEventListener('click', e => {
 });
 
 class DropdownButton {
-  constructor(menu, title, btn_el, items, onchange) {
-    this.values = Array.from(items);
-    var c = this.#setup(title, btn_el, onchange);
-    menu.appendChild(c);
-  }
-  #setup(title, btn_el, onchange) {
+  constructor(menu, title, btn_text_el, items, onchange) {
     var c = elem_cn('div', 'dropdown');
     var dropdown = elem_cn('div', 'dropdown-content');
-    var b;
-    b = elem_cn('button', 'dropdown-btn');
+    var b = elem_cn('button', 'dropdown-btn');
     this.btn_el = b;
     b.title = title;
     b.onclick = e => { 
@@ -81,20 +75,23 @@ class DropdownButton {
       clicked_dropdown = true;
       dropdown.classList.toggle("show");
     };
-    b.appendChild(btn_el);
+    b.appendChild(btn_text_el);
     c.appendChild(b);
-    //
-    for (const item of this.values) {
+    // Add items and create links
+    this.values = [];
+    for (const i of items) {
+      let item = { k:i.k, n:i.n };
       var li = document.createElement('a');
       li.innerHTML = item.n;
       li.onclick = () => {
         onchange(item.k);
       };
       item.el = li;
+      this.values.push(item);
       dropdown.appendChild(item.el);
     }
     c.appendChild(dropdown);
-    return c;
+    menu.appendChild(c);
   }
 
   get_item(value) {
@@ -252,7 +249,7 @@ update_theme_hook = () => {
         const theme_button =
               new DropdownButton(dummy,
                                  "Change theme",
-                                 theme_svg,
+                                 theme_svg.cloneNode(true),
                                  theme_list,
                                  value => {
                                    theme_button.highlight(value);
@@ -278,7 +275,7 @@ update_theme_hook = () => {
     });
     /* Patch search button */
     for (const e of document.getElementsByClassName('lpdoc-navbutton')) {
-      if (e.innerHTML === "🔍") { e.innerHTML = ""; e.appendChild(search_svg); }
+      if (e.innerHTML === "🔍") { e.innerHTML = ""; e.appendChild(search_svg.cloneNode(true)); }
     }
   }
 
