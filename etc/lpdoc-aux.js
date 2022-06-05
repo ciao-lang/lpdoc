@@ -156,7 +156,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
 });
 /* Update as soon as DOM is there */
 window.addEventListener('DOMContentLoaded', (event) => {
-  update_theme_hook();
+  update_theme_hook(); // TODO: this happens too late and causes flickering with ciao_playground.js
 });
 
 /* Get theme from local storage */

@@ -32,6 +32,11 @@ html {
     --cartouche-fg: #1d609a;
     --dropdown-bg: whitesmoke;
     --scrollbar-thumb: #b0b0b0;
+    /* toplevel */
+    --button-bg: rgb(239, 239, 239);
+    --button-color: #111111;
+    --button-border: lightgray;
+    --button-border-hover: #B0B0B0;
 }
 
 html[data-theme='dark'] {
@@ -59,7 +64,12 @@ html[data-theme='dark'] {
     --cartouche-bg: #1b2432;
     --cartouche-fg: #9bdcf3;
     --dropdown-bg: #000000;
-    --scrollbar-thumb: #3a4859;
+    --scrollbar-thumb: #39414c;
+    /* toplevel */
+    --button-bg: #000000;
+    --button-color: #ffffff;
+    --button-border: #000000;
+    --button-border-hover: #3b4756;
 }
 
 ::-webkit-scrollbar {
@@ -940,6 +950,62 @@ div.dropdown-content a:hover {
 
 .show {
   display: block;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Toplevel (editor+control) */
+
+.toplevel-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+}
+.toplevel-editor-container {
+  flex: 1 1 auto;
+  border: 1px solid var(--codeblock-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+/* control bar for toplevel query buttons */
+.toplevel-control {
+  flex: 0 1 26px;
+  margin-top: 8px; /* (only top margin to separate from toplevelEd) */
+}
+
+/* avoid scrollback (use instead of 'hidden'; solution from https://github.com/microsoft/monaco-editor/issues/1588) */
+/*
+.editor-container .monaco-editor { overflow: unset; } 
+.toplevel-container .monaco-editor { overflow: unset; } 
+*/
+
+.toplevel-button {
+  font-family: -apple-system,Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  color: var(--button-color);
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  padding: 4px 8px 4px 8px;
+  background: var(--button-bg);
+  display: none;
+  margin-right: 5px;
+}
+
+.toplevel-button:hover {
+  border: 1px solid var(--button-border-hover);
+  cursor: pointer;
+}
+
+.toplevel-button-abort {
+  /* width: 115px; */
+  float: right;
+  /* transition: all 0.3s ease; */
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 0.5s;
+  margin-right: 0px;
 }
 
 /* --------------------------------------------------------------------------- */
