@@ -75,6 +75,16 @@ html {
     scrollbar-color: var(--scrollbar-thumb) var(--bg);
 }
 
+body, html {
+    margin:0;
+    padding:0;
+    font-family: -apple-system,Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    line-height: 1.3em;
+    color: var(--fg);
+    background-color: var(--bg);
+}
+
 /* --------------------------------------------------------------------------- */
 /* Language and documentation elements */
 
@@ -302,21 +312,6 @@ div.lpdoc-twocolumns {
 
 /* --------------------------------------------------------------------------- */
 /* Page elements */
-
-html {
-    /* Force a vertical scrollbar to avoid centering jumps */
-    overflow-y: scroll;
-}
-
-body, html {
-    margin:0;
-    padding:0;
-    font-family: -apple-system,Helvetica,Arial,sans-serif;
-    font-size: 16px;
-    line-height: 1.3em;
-    color: var(--fg);
-    background-color: var(--bg);
-}
 
 div.lpdoc-nav {
     padding: 5px 0px 5px 0px;
