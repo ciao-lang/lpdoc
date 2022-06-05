@@ -770,6 +770,120 @@ span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: under
 }
 
 /* --------------------------------------------------------------------------- */
+/* LPdoc runnable code blocks (see ciao_playground) */
+
+.lpdoc-codeblock-runnable {
+    display: none;
+}
+
+.lpdoc-runnable-container {
+    position: relative;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.lpdoc-runnable-results {
+    position: relative;
+}
+
+.lpdoc-runnable-container details {
+    font-size: 12px;
+    padding: .25em .5em 0 .5em;
+}
+
+.lpdoc-runnable-container summary {
+    margin: -.25em -.5em 0 -.5em;
+    padding: .25em .5em .25em .5em;
+    user-select: none;
+    color: var(--link-fg);
+}
+
+.lpdoc-runnable-container details[open] {
+    padding: .25em .5em .25em .5em;
+}
+
+.lpdoc-runnable-statusmark {
+    margin-right: 5px;
+    font-size: 16px;
+    width: 24px;
+    height: 24px;
+}
+.lpdoc-runnable-status-failed {
+    color: #ff6262;
+}
+.lpdoc-runnable-status-checked {
+    color: #6eb88c;
+}
+.lpdoc-runnable-status-unknown {
+    color: #ffa162;
+}
+.lpdoc-runnable-logbar {
+    font-size: 12px;
+    font-family: -apple-system,Helvetica,Arial,sans-serif;
+    line-height: normal;
+    position: absolute;
+    z-index: 100;
+    right: 5px;
+    top: 5px;
+    padding: 2px 4px 2px 4px;
+    border-radius: 3px;
+}
+.log-booting {
+    background: orange;
+    color: black;
+}
+.log-waiting {
+    background: skyblue;
+    color: black;
+}
+.log-error {
+    background: red;
+    color: black;
+}
+.log-hidden {
+    display: none
+}
+
+.lpdoc-runnable-buttons {
+    position: absolute;
+    z-index: 100;
+    right: 5px;
+    top: 5px;
+    color: var(--fgdim);
+    cursor: pointer;
+}
+
+.lpdoc-runnable-button-play span {
+    color: var(--fgdim);
+}
+
+.lpdoc-runnable-button-load span {
+    color: var(--fgdim);
+}
+
+.lpdoc-runnable-button-play, .lpdoc-runnable-button-load {
+    margin-left: 5px;
+    padding: 0px;
+    font-size: 12px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--fgdim);
+    border-radius: 3px;
+    width: 20px;
+    height: 20px;
+}
+
+/* .lpdoc-runnable-button-play {
+    background-color: transparent;
+    width: 24px;
+    height: 24px;
+    border-style: solid;
+    border-width: 12px 0px 12px 24px;
+    border-color: transparent transparent transparent #078c17;
+    cursor: pointer;
+} */
+
+/* --------------------------------------------------------------------------- */
 /* UI - Dropdown menus */
 
 /* dropdown buttons */
