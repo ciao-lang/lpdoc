@@ -26,13 +26,6 @@ function elem_cn(kind, cn) {
   return el;
 }
 
-/* clean div contents */
-function clean_div(elm) {
-  while (elm.hasChildNodes()) {
-    elm.removeChild(elm.firstChild);
-  }
-}
-
 /* create a button */
 function btn(style, title, text, onclick) {
   const e = elem_cn('button', style);

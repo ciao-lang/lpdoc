@@ -953,6 +953,21 @@ div.dropdown-content a:hover {
 }
 
 /* --------------------------------------------------------------------------- */
+/* Runnable code (editor) */
+
+.lpdoc-runnable-editor-container {
+  border: 1px solid var(--codeblock-border);
+  border-radius: 3px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  background: var(--codeblock-bg);
+}
+
+.monaco-editor .scroll-decoration { /* (does not look nice in our setting) */
+  box-shadow: none !important;
+}
+
+/* --------------------------------------------------------------------------- */
 /* Toplevel (editor+control) */
 
 .toplevel-container {
