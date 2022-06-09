@@ -838,11 +838,7 @@ span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: under
     padding: 2px 4px 2px 4px;
     border-radius: 3px;
 }
-.log-booting {
-    background: orange;
-    color: black;
-}
-.log-waiting {
+.log-running {
     background: skyblue;
     color: black;
 }
