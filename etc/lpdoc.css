@@ -790,11 +790,7 @@ span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: under
     margin-bottom: 1em;
 }
 
-.lpdoc-runnable-results {
-    position: relative;
-}
-
-.lpdoc-runnable-container details {
+/* .lpdoc-runnable-container details {
     font-size: 12px;
     padding: .25em .5em 0 .5em;
 }
@@ -808,6 +804,15 @@ span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: under
 
 .lpdoc-runnable-container details[open] {
     padding: .25em .5em .25em .5em;
+}*/
+
+.lpdoc-runnable-help {
+    color: var(--sidebar-link);
+    border: 1px solid var(--note-bg);
+    border-radius: 5px;
+    background: var(--note-bg);
+    font-size: 12px;
+    cursor: pointer;
 }
 
 .lpdoc-runnable-statusmark {
@@ -825,26 +830,23 @@ span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: under
 .lpdoc-runnable-status-unknown {
     color: #ffa162;
 }
-.lpdoc-runnable-logbar {
-    font-size: 12px;
+.comint-echo {
+    font-size: 14px;
     font-family: -apple-system,Helvetica,Arial,sans-serif;
+    font-weight: bold;
     line-height: normal;
-    position: absolute;
-    z-index: 100;
     right: 5px;
     top: 5px;
     padding: 2px 4px 2px 4px;
     border-radius: 3px;
 }
-.log-running {
-    background: skyblue;
-    color: black;
+.comint-echo-running {
+    color: var(--link-fg);
 }
-.log-error {
-    background: red;
-    color: black;
+.comint-echo-error {
+    color: red;
 }
-.log-hidden {
+.comint-echo-hidden {
     display: none
 }
 
@@ -949,7 +951,8 @@ div.dropdown-content a:hover {
 /* --------------------------------------------------------------------------- */
 /* Runnable code (editor) */
 
-.lpdoc-runnable-editor-container {
+.lpdoc-runnable-editor-container,
+.lpdoc-runnable-container .comint-editor-container {
   border: 1px solid var(--codeblock-border);
   border-radius: 3px;
   padding-top: 8px;
@@ -1016,6 +1019,11 @@ div.dropdown-content a:hover {
   animation-timing-function: ease-in;
   animation-duration: 0.5s;
   margin-right: 0px;
+}
+
+@keyframes fadeInOpacity {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 /* --------------------------------------------------------------------------- */
