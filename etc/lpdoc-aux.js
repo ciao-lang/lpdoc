@@ -206,6 +206,21 @@ update_theme_hook = () => {
   /* --------------------------------------------------------------------------- */
   /* LPdoc - Toogle sidebar, adjust lpdoc-nav, add theme button, patch search button */
 
+  function new_theme_button(base_el) {
+    const theme_button =
+          new DropdownButton(base_el,
+                             "Change theme",
+                             theme_svg.cloneNode(true),
+                             theme_list,
+                             value => {
+                               theme_button.highlight(value);
+                               theme_set_value(value);
+                               update_theme_hook();
+                             });
+    theme_button.highlight(theme_get_value());
+    return theme_button;
+  }
+
   /* Toogle sidebar (for mobile-friendly) */
   /* NOTE: need sidebar and sidebar-toogle-button */
   function setup_nav() {
@@ -238,25 +253,19 @@ update_theme_hook = () => {
         nav_el.style.padding="10px 0px 0px 0px"; /* amend padding */
 
         /* Insert theme selection button */
-        var dummy = document.createElement('div');
-        const theme_button =
-              new DropdownButton(dummy,
-                                 "Change theme",
-                                 theme_svg.cloneNode(true),
-                                 theme_list,
-                                 value => {
-                                   theme_button.highlight(value);
-                                   theme_set_value(value);
-                                   update_theme_hook();
-                                 });
+        let dummy = document.createElement('div');
+        let thm_btn_el = new_theme_button(dummy);
         nav_el.prepend(dummy.firstChild);
-        theme_button.highlight(theme_get_value());
       }
     } else {
       /* Horiz menu (e.g., website layout)? */
       toggle_el = document.getElementsByClassName('lpdoc-horiz-menu')[0];
       if (toggle_el !== null) { /* ok */
         toggle_class = 'lpdoc-horiz-menu-toggled';
+        /* Insert theme selection button */
+        let li = document.createElement('li');
+        let thm_btn_el = new_theme_button(li);
+        toggle_el.prepend(li);
       } else {
 	return; /* Nothing to be toggled */
       }
