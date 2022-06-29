@@ -1,5 +1,5 @@
 /*
- * LPdoc stylesheet for the HTML backend
+ * LPdoc stylesheet for the HTML backend (+playground components)
  *
  * (c) 2018-2022 The Ciao Development Team
  */
@@ -59,13 +59,13 @@ html[data-theme='dark'] {
     --alert-accent: #ff6060;
     --alert-bg: #33272D;
     --alert-border: #53272D;
-    --cartouche-border: #23334d;
-    --cartouche-bg: #1b2432;
-    --cartouche-fg: #9bdcf3;
+    --cartouche-border: #2e333b; /* #23334d */
+    --cartouche-bg: #1e2125; /* #1b2432 */
+    --cartouche-fg: #a8dbff; /* #9bdcf3 */
     --dropdown-bg: #000000;
     --scrollbar-thumb: #39414c;
     --button-bg: #000000;
-    --button-color: #ffffff;
+    --button-color: white;
     --button-border: #000000;
     --button-border-hover: #3b4756;
 }
@@ -846,6 +846,13 @@ span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: under
     display: none
 }
 
+.lpdoc-runnable-comint {
+    display: none
+}
+.lpdoc-runnable-preview {
+    display: none
+}
+
 .lpdoc-runnable-buttons {
     position: absolute;
     z-index: 100;
@@ -895,7 +902,8 @@ span.sh-quoted-exec a { color: #ff00ff; font-weight: 500; text-decoration: under
   padding: 5px 5px;
   background-color: var(--dropdown-bg);
   border-radius: 6px;
-  min-width: 160px;
+  /* min-width: 160px; */
+  width: max-content;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   overflow: hidden;
@@ -926,6 +934,86 @@ div.dropdown-content a:hover {
 
 .show {
   display: block;
+}
+
+/* --------------------------------------------------------------------------- */
+/* UI - Menu bars */
+
+/* Top left menu */
+.main-menu {
+  flex: 0 1 auto;
+  font-family: -apple-system,Helvetica,Arial,sans-serif;
+  font-size: 15px;
+  width: 100%;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 8px;
+  display: flex;
+}
+
+.file-upload {
+  opacity: 0;
+  width: 0.1px;
+  height: 0.1px;
+  position: absolute;
+}
+
+.main-menu label {
+  display: block;
+  position: relative;
+  color: var(--button-color);
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  background: var(--button-bg);
+  /* background: linear-gradient(90deg, rgba(239, 239, 239, 1) 0%, rgba(233, 233, 237, 1) 35%, rgba(241, 243, 244, 1) 100%); */
+  /* height: 21px; */
+  width: 50px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-menu label:hover {
+  border: 1px solid var(--button-border-hover);
+  cursor: pointer;
+}
+
+.main-menu .header-icon-img {
+  height: 20px;
+  width: 20px;
+  margin-top: 0px;
+}
+
+.main-menu .header-icon-img:hover {
+  transform: scale(1.0);
+}
+
+.menu-button {
+  font-family: -apple-system,Helvetica,Arial,sans-serif;
+  font-size: 15px;
+  color: var(--button-color);
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  padding: 4px 8px 4px 8px;
+  background: var(--button-bg);
+  margin-right: 5px;
+  /* background: linear-gradient(90deg, rgba(239, 239, 239, 1) 0%, rgba(233, 233, 237, 1) 35%, rgba(241, 243, 244, 1) 100%); */
+  /*    height: 23px; */
+}
+.menu-button:hover {
+  border: 1px solid var(--button-border-hover);
+  cursor: pointer;
+}
+
+.right-menu {
+  margin-left: auto;
+  margin-right: 0px;
+  display: flex;
+}
+.right-menu .menu-button {
+  margin-right: 0px;
+  margin-left: 5px;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -1007,6 +1095,47 @@ div.dropdown-content a:hover {
 }
 
 /* --------------------------------------------------------------------------- */
+/* Playgroung editing and toplevel */
+
+.playground {
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  flex: 1 1 auto;
+  /*height: calc(100% - 35px);*/
+  width: 100%;
+  /* box-sizing: border-box; */
+}
+
+/* (see split.js documentation) */
+.split-vert {
+}
+.split-horiz {
+  display: flex;
+  flex-direction: row;
+}
+.gutter.gutter-vertical {
+  cursor: row-resize;
+}
+.gutter.gutter-horizontal {
+  cursor: col-resize;
+}
+
+.editor-container {
+  border: 1px solid var(--codeblock-border);
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.preview-container {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--codeblock-border);
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+/* --------------------------------------------------------------------------- */
 /* Mobile-friendly */
 
 @media (max-width: 700px) {
@@ -1051,3 +1180,17 @@ div.dropdown-content a:hover {
     }
 }
 
+@media (max-width: 700px) {
+  .right-header {
+    margin-top: 10px;
+  }
+  .main-menu .header-icon-img {
+    margin-top: 0px;
+  }
+  .menu-button {
+    font-size: 14px;
+  }
+  .main-menu {
+    font-size: 14px;
+  }
+}

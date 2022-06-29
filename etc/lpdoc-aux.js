@@ -11,6 +11,23 @@
  */
 
 /* =========================================================================== */
+/* Dynamic imports */
+
+function importScript(src, is_async = false) {
+  let el = document.createElement('script');
+  el.src = src;
+  el.async = is_async;
+  document.head.appendChild(el);
+}
+function importCSS(src) {
+  let el = document.createElement('link');
+  el.rel = 'stylesheet';
+  el.type = "text/css";
+  el.href = src;
+  document.head.appendChild(el);
+}
+
+/* =========================================================================== */
 /* DOM helper */
 
 /* element from str */
@@ -39,12 +56,11 @@ function btn(style, title, text, onclick) {
 /* UI - Dropdown menus */
 
 // TODO: avoid globals?
-var clicked_dropdown;
-var active_dropdown;
+var clicked_dropdown = false;
+var active_dropdown = null;
 
 /* close dropdown menu */
 window.addEventListener('click', e => {
-  if (active_dropdown === undefined) return;
   if (active_dropdown === null) return;
   if (clicked_dropdown === true) { // skip first click
     clicked_dropdown = false;
@@ -64,9 +80,16 @@ class DropdownButton {
     this.btn_el = b;
     b.title = title;
     b.onclick = e => { 
-      active_dropdown = dropdown;
+      if (active_dropdown !== null) { // close other
+        active_dropdown.classList.toggle("show");
+      }
+      if (active_dropdown !== dropdown) { // open new
+        dropdown.classList.toggle("show");
+        active_dropdown = dropdown;
+      } else { // keep closed
+        active_dropdown = null;
+      }
       clicked_dropdown = true;
-      dropdown.classList.toggle("show");
     };
     b.appendChild(btn_text_el);
     c.appendChild(b);
@@ -196,7 +219,25 @@ function update_css_theme() {
 /* (default theme update hook) */
 update_theme_hook = () => {
   update_css_theme();
+  if (typeof github_stars_el !== 'undefined') {
+    update_github_stars_theme();
+  }
 };
+
+function new_theme_button(base_el) {
+  const theme_button =
+        new DropdownButton(base_el,
+                           "Change theme",
+                           theme_svg.cloneNode(true),
+                           theme_list,
+                           value => {
+                             theme_button.highlight(value);
+                             theme_set_value(value);
+                             update_theme_hook();
+                           });
+  theme_button.highlight(theme_get_value());
+  return theme_button;
+}
 
 /* =========================================================================== */
 /* (LPdoc specific) */
@@ -205,21 +246,6 @@ update_theme_hook = () => {
 (function() {
   /* --------------------------------------------------------------------------- */
   /* LPdoc - Toogle sidebar, adjust lpdoc-nav, add theme button, patch search button */
-
-  function new_theme_button(base_el) {
-    const theme_button =
-          new DropdownButton(base_el,
-                             "Change theme",
-                             theme_svg.cloneNode(true),
-                             theme_list,
-                             value => {
-                               theme_button.highlight(value);
-                               theme_set_value(value);
-                               update_theme_hook();
-                             });
-    theme_button.highlight(theme_get_value());
-    return theme_button;
-  }
 
   /* Toogle sidebar (for mobile-friendly) */
   /* NOTE: need sidebar and sidebar-toogle-button */
@@ -266,6 +292,7 @@ update_theme_hook = () => {
         let li = document.createElement('li');
         let thm_btn_el = new_theme_button(li);
         toggle_el.prepend(li);
+        setup_github_stars(toggle_el);
       } else {
 	return; /* Nothing to be toggled */
       }
@@ -276,9 +303,9 @@ update_theme_hook = () => {
       return false;
     });
     /* Patch search button */
-    for (const e of document.getElementsByClassName('lpdoc-navbutton')) {
-      if (e.innerHTML === "🔍") { e.innerHTML = ""; e.appendChild(search_svg.cloneNode(true)); }
-    }
+    function patch_search(e) { if (e.innerHTML === "🔍") { e.innerHTML = ""; e.appendChild(search_svg.cloneNode(true)); } }
+    for (const e of document.getElementsByClassName('lpdoc-navbutton')) { patch_search(e); }
+    for (const e of document.getElementsByClassName('lpdoc-searchmenu')) { patch_search(e); }
   }
 
   window.addEventListener('DOMContentLoaded', function(){
@@ -384,3 +411,33 @@ update_theme_hook = () => {
     setup_search();
   });
 })();
+
+/* =========================================================================== */
+
+/* Official github buttons (See https://buttons.github.io/) */
+/* Hack to support light/dark themes: we create two buttons and set visibility based on theme */
+function setup_github_stars(base_el) {
+  if (typeof github_stars_el !== 'undefined') return; /* already setup */
+  importScript('https://buttons.github.io/buttons.js', true);
+  function b(m) { // Append an initially hidden gh star to base_el with style 'm' and
+    const elb = elem_from_str(`<a class='github-button' style='display: none;' href='https://github.com/ciao-lang/ciao' data-color-scheme='no-preference: ${m}; light: ${m}; dark: ${m};' data-size='large' data-show-count='true' aria-label='Star ciao-lang/ciao on GitHub'>Star</a>`);
+    const el = document.createElement('div');
+    el.style.padding = '6px 0 0 0';
+    el.style.marginLeft = '16px';
+    el.style.display = 'none';
+    el.appendChild(elb);
+    base_el.appendChild(el);
+    return el;
+  }
+  window.github_stars_el = {};
+  window.github_stars_el['dark'] = b('dark');
+  window.github_stars_el['light'] = b('light');
+  update_github_stars_theme();
+}
+
+function update_github_stars_theme() {
+  const dark = get_actual_theme() === 'dark';
+  window.github_stars_el['dark'].style.display = dark ? "inline-block" : "none";
+  window.github_stars_el['light'].style.display = (!dark) ? "inline-block" : "none";
+}
+
