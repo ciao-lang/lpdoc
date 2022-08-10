@@ -822,11 +822,11 @@ sidebar_toggle(R) :-
 % ===========================================================================
 % Obtain the current date (for '@today' command)
 
-:- use_module(library(system), [time/1, datime/9]).
+:- use_module(library(system), [now/1, datime/9]).
 
 % TODO: Share with other backends?
 fmt_date(R) :-
-    time(Time),
+    now(Time),
     datime(Time, Year, Month, Day, _Hour, _Min, _Sec, _, _),
     format_to_string("~w/~w/~w", [Year,Month,Day], S),
     R = string_esc(S).
