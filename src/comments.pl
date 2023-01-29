@@ -743,6 +743,12 @@ version_maintenance_type(dir(Path)) :-
    produce these characters the following @index{escape sequences}
    should be used, respectively: @tt{@@@@}, @tt{\\\\\\\\}, @tt{@@@{}, and @tt{@@@}}.
 
+   Note that in strings, each @tt{\\\\} character must be escaped
+   (with @tt{\\\\}, @tt{\\\\\\\\}), so to get one backslash four
+   backslashes (@tt{\\\\\\\\\\\\\\\\}) have to be used, i.e., in a
+   string @tt{\\\\\\\\\\\\\\\\} is used to represent @tt{\\\\\\\\},
+   and that is the command that will output a @tt{\\\\} character.
+
    @item In order to allow better formatting of on-line and printed
    manuals, in addition to normal text, certain formatting commands
    can be used within these strings. The syntax @cindex{syntax of
