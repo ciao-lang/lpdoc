@@ -17,7 +17,7 @@ filepath := '/path/to/doc/sources'|'/other/path/to/doc/sources'.
 
 doc_structure := 'main_module'.
 
-commonopts := no_patches|no_bugs.
+commonopts := no_patches|no_bugs|no_biblio.
 doc_mainopts := ~commonopts.
 doc_compopts := ~commonopts.
 
