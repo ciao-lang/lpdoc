@@ -64,7 +64,7 @@ autodoc_escape_string_hook(texinfo, InputType, NS, _DocSt, VS) :- !,
 
 % Other tips from previous versions of LPdoc:
 %
-%    "In texinfo, it is important to eliminates any blanks or tabs
+%    "In texinfo, it is important to eliminate any blanks or tabs
 %    that appear at the beginning of a line. Although leading blanks
 %    are OK for the printed manuals, they produce weird info files."
 
