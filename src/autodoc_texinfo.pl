@@ -64,7 +64,7 @@ autodoc_escape_string_hook(texinfo, InputType, NS, _DocSt, VS) :- !,
 
 % Other tips from previous versions of LPdoc:
 %
-%    "In texinfo, it is important to eliminate any blanks or tabs
+%    "In texinfo, it is important to eliminates any blanks or tabs
 %    that appear at the beginning of a line. Although leading blanks
 %    are OK for the printed manuals, they produce weird info files."
 
@@ -540,7 +540,9 @@ fmt_header_and_cover(TitleR, PaperType, DocSt, R) :-
       infocmd("setfilename", string_esc(NameS)),
       infocmd("settitle", TitleR),
       backend_comment("@paragraphindent 0"),
-      infocmd("documentencoding", raw("UTF-8")),
+      % Depends on TeXinfo version, current one supports utf8 without
+      % requiring this:
+      % infocmd("documentencoding", raw("UTF-8")),
       infocmd("setchapternewpage", raw(NewPage)),
       backend_comment("@footnotestyle separate"),
       %
