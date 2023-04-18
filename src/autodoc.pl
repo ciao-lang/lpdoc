@@ -630,6 +630,11 @@ fmt_introduction(ModCommentR, IntroExtra, DocSt, IntroR, AfterIntroR) :-
     ).
 
 % TODO: revisit rules here
+intro_in_cover(DocSt) :- % avoid in texinfo (pdf looks ugly)
+    docst_backend(DocSt, Backend),
+    Backend = texinfo,
+    !,
+    fail.
 intro_in_cover(_DocSt) :- custom_html_layout, !.
 % TODO: MH: Testing this. Useful for html documents: have introductory text in first page if no summary.
 intro_in_cover(DocSt) :- doctree_is_empty(~get_mod_doc(summary, DocSt)), !.
