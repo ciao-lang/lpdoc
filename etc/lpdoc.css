@@ -636,6 +636,13 @@ html {
     --face-module-directive: #000080;
     --face-comment: #b22222;
     --face-cut: #4169e1;
+    --face-error-mess: #ff0000;
+    --face-warning-mess: #a52a2a;
+    --face-other-mess: #a52a2a;
+    --face-no-answer: #b8860b;
+    --face-yes-answer: #228b22;
+    --face-answer-var: #a020f0;
+    --face-answer-val: #0000ff;
 }
 
 html[data-theme='dark'] {
@@ -665,6 +672,13 @@ html[data-theme='dark'] {
     --face-module-directive: #9f79ee;
     --face-comment: #6c7b8b;
     --face-script-header: #32cd32;
+    --face-error-mess: #ff0000;
+    --face-warning-mess: #ff8c69;
+    --face-other-mess: #ff8c69;
+    --face-no-answer: #eedd82;
+    --face-yes-answer: #32cd32;
+    --face-answer-var: #00ffff;
+    --face-answer-val: #87cefa;
 }
 
 span.ciao-face-sectioning-5-face   { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; text-decoration: none; }
@@ -729,6 +743,21 @@ span.ciao-face-comment   { color: var(--face-comment); font-weight: 500; text-de
 span.ciao-face-comment a { color: var(--face-comment); font-weight: 500; text-decoration: underline; }
 span.ciao-face-cut   { color: var(--face-cut); font-weight: 500; text-decoration: none; }
 span.ciao-face-cut a { color: var(--face-cut); font-weight: 500; text-decoration: underline; }
+span.ciao-face-error-mess   { color: var(--face-error-mess); font-weight: 700; text-decoration: none; }
+span.ciao-face-error-mess a { color: var(--face-error-mess); font-weight: 700; text-decoration: underline; }
+span.ciao-face-warning-mess { color: var(--face-warning-mess); font-weight: 700; text-decoration: none; }
+span.ciao-face-warning-mess a { color: var(--face-warning-mess); font-weight: 700; text-decoration: underline; }
+span.ciao-face-other-mess { color: var(--face-other-mess); font-weight: 700; text-decoration: none; }
+span.ciao-face-other-mess a { color: var(--face-other-mess); font-weight: 700; text-decoration: underline; }
+span.ciao-face-no-answer { color: var(--face-no-answer); font-weight: 700; text-decoration: none; }
+span.ciao-face-no-answer a { color: var(--face-no-answer); font-weight: 700; text-decoration: underline; }
+span.ciao-face-yes-answer { color: var(--face-yes-answer); font-weight: 700; text-decoration: none; }
+span.ciao-face-yes-answer a { color: var(--face-yes-answer); font-weight: 700; text-decoration: underline; }
+ciao-face-answer-var { color: var(--face-answer-var); font-weight: 700; text-decoration: none; }
+ciao-face-answer-var a { color: var(--face-answer-var); font-weight: 700; text-decoration: underline; }
+ciao-face-answer-val { color: var(--face-answer-val); font-weight: 700; text-decoration: none; }
+ciao-face-answer-val a { color: var(--face-answer-val); font-weight: 700; text-decoration: underline; }
+
 
 /* Other languages */
 span.constant   { color: #008b8b; font-weight: 500; text-decoration: none; }
