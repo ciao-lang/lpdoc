@@ -52,6 +52,10 @@ add_vpath(Path) :-
     ; assertz_fact(vpath(Path))
     ).
 
+:- export(vpath_indir/1).
+% InDir is the first path in vpath (see load_vpaths/1)
+vpath_indir(Path) :- vpath(Path0), !, Path=Path0.
+
 :- export(find_file/2).
 % Find file in any of vpath/1
 % (Fail if not found)
