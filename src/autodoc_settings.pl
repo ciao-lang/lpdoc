@@ -264,6 +264,10 @@ tex := 'tex'.
 :- export(texindex/1).
 texindex := 'texindex'.
 
+%% (Awk for modern texindex.awk versions)
+:- export(awk/1).
+awk := 'awk'.
+
 %% The command that converts dvi to postscript in your system.
 :- export(dvips/1).
 dvips := 'dvips'.

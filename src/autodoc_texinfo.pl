@@ -757,10 +757,13 @@ autodoc_is_operational_hook(texinfo, Alt) :-
 find_all_execs([]).
 find_all_execs([X|Xs]) :- find_executable(X,_), find_all_execs(Xs).
 
+texindex_or_awk := ~texindex.
+texindex_or_awk := ~awk.
+
 alt_requires_cmd('') := [].
-alt_requires_cmd(dvi) := [~tex, ~texindex].
-alt_requires_cmd(ps) := [~tex, ~texindex, ~dvips].
-alt_requires_cmd(pdf) := [~tex, ~texindex, ~dvips, ~ps2pdf].
+alt_requires_cmd(dvi) := [~tex, ~texindex_or_awk].
+alt_requires_cmd(ps) := [~tex, ~texindex_or_awk, ~dvips].
+alt_requires_cmd(pdf) := [~tex, ~texindex_or_awk, ~dvips, ~ps2pdf].
 alt_requires_cmd(info) := [~makeinfo].
 alt_requires_cmd(ascii) := [~makeinfo].
 
@@ -863,9 +866,8 @@ do_texi_to_dvi(TexiFile, DVIFile, FileBase) :-
     ( Indices = [] ->
         true
     ; % No indices, do not call texindex
-      cmd_logbase(texinfo, 'run_texinfo', LogBaseIdx),
-      autodoc_process_call(path(~texindex), Indices,
-                           [logbase(LogBaseIdx), cwd(TexiDir)])
+      cmd_logbase(texinfo, 'run_texindex', LogBaseIdx),
+      run_texindex(Indices, LogBaseIdx, TexiDir)
     ),
     cmd_logbase(texinfo, 'run_tex2', LogBase2),
     autodoc_process_call(path(~tex), TexArgs,
@@ -874,6 +876,17 @@ do_texi_to_dvi(TexiFile, DVIFile, FileBase) :-
     file_exists(DVIFile0),
     del_file_nofail(DVIFile),
     rename_file(DVIFile0, DVIFile).
+
+run_texindex(Indices, LogBaseIdx, TexiDir) :-
+    ( find_executable(~awk,_) ->
+        autodoc_message(progress, "Using awk texindex version"),
+        setting_value(lpdoc_etc, EtcDir),
+        TexIndexAwk = ~path_concat(EtcDir, 'texindex.awk'),
+        autodoc_process_call(path(~awk), ['-f', TexIndexAwk|Indices],
+                             [logbase(LogBaseIdx), cwd(TexiDir)])
+    ; autodoc_process_call(path(~texindex), Indices,
+                           [logbase(LogBaseIdx), cwd(TexiDir)])
+    ).
 
 % Get all indices for texindex associated to FileBase pathname (no extension)
 % TODO: replace .?? by the real suffixes: .li, .pd, .pr, .te, .de, .co, .gl, .au, etc.
@@ -894,7 +907,7 @@ copy_texinfo_style_if_needed(TexiDir) :-
       In = ~path_concat(EtcDir, 'texinfo.tex'),
       Out = ~path_concat(TexiDir, 'texinfo.tex'),
       warn_on_nosuccess(copy_file(In, Out, [overwrite])),
-      autodoc_message(note, note, "Using internal texinfo.tex style", [])
+      autodoc_message(note, "Using internal texinfo.tex style", [])
     ).
 
 %% Make sure it generates postscript fonts, not bitmaps (selecting
