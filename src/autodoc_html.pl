@@ -798,8 +798,8 @@ html_blank_lines(N, "<br>"||R) :-
     N1 is N-1,
     html_blank_lines(N1, R).
 
-html_escape("``"||S0, "&ldquo;"||S) :- !, html_escape(S0, S).
-html_escape("''"||S0, "&rdquo;"||S) :- !, html_escape(S0, S).
+%html_escape("``"||S0, "&ldquo;"||S) :- !, html_escape(S0, S).
+%html_escape("''"||S0, "&rdquo;"||S) :- !, html_escape(S0, S).
 html_escape([0'"|S0], "&quot;"||S) :- !, html_escape(S0, S).
 html_escape([0''|S0], "&apos;"||S) :- !, html_escape(S0, S).
 html_escape("&#"||S0, "&#"||S) :- !, html_escape(S0, S).
