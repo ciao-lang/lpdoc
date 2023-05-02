@@ -19,6 +19,25 @@ function importScript(src, is_async = false) {
   el.async = is_async;
   document.head.appendChild(el);
 }
+//function tryImportScript(src, onerr) {
+//  let el = document.createElement('script');
+//  el.onerror = onerr; // (make sure that this field is set before src)
+//  el.src = src;
+//  el.async = false;
+//  document.head.appendChild(el);
+//}
+/* (as a promise) */
+function tryImportScript(src, is_async = false) {
+  return new Promise((resolve, reject) => {
+    let el = document.createElement('script');
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error(`could not load ${src}`));
+    el.async = is_async;
+    el.src = src; // (make sure onload is set before, it may be cached)
+    document.head.append(el);
+  });
+}
+
 function importCSS(src) {
   let el = document.createElement('link');
   el.rel = 'stylesheet';
@@ -441,3 +460,31 @@ function update_github_stars_theme() {
   window.github_stars_el['light'].style.display = (!dark) ? "inline-block" : "none";
 }
 
+/* =========================================================================== */
+/* Load playground functionality if needed */
+
+if (typeof lpdocPG !== 'undefined') {
+  var urlPREFIX = null; /* global */
+  (async() => {
+    const pg = '/playground/js/ciao_playground.js';
+    const prefixes = [
+      // Default prefix (assume playground is fetched from the same location)
+      // Due to CORS restrictions this only works properly when accessing from HTTP
+      // (not file:///).
+      '',
+      // // Site symlink from local docs // TODO: due to CORS restrictions loading wasm from file:/// may not work
+      // 'site',
+      // ciao-lang site
+      'https://ciao-lang.org' // TODO: missing version // TODO: add some CDN
+    ];
+    for (const p of prefixes) {
+      urlPREFIX = p;
+      try {
+        await tryImportScript(urlPREFIX+pg);
+        console.log(`Loaded playground from ${urlPREFIX+pg}`);
+        break;
+      } catch(e) {
+      }
+    }
+  })();
+}

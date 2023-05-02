@@ -48,7 +48,7 @@ asset_file(css, Path) :-
     setting_value(lpdoc_etc, Dir),
     path_concat(Dir, F, Path).
 asset_file(js, Path) :-
-    F = 'lpdoc-aux.js',
+    F = 'lpdoc.js',
     setting_value(lpdoc_etc, Dir),
     path_concat(Dir, F, Path).
 
