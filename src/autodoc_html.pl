@@ -882,8 +882,10 @@ get_css_url(Layout, URL) :-
 
 % (nondet)
 get_script(X) :-
+    % Enable runnable code blocks (ciao_playground.js) explitly (this
+    % option is turned on by default if a lpdoc-codeblock-runnable is
+    % detected dynamically)
     setting_value(allow_runnable, yes), % (default is 'no')
-    % LPdoc interactive document (w/ ciao_playground.js)
     X = script('text/javascript', inline("var lpdocPG='runnable';")).
 get_script(script('text/javascript', url(URL))) :-
     asset_file(js, F), path_basename(F, URL).

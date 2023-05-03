@@ -463,20 +463,24 @@ function update_github_stars_theme() {
 /* =========================================================================== */
 /* Load playground functionality if needed */
 
-if (typeof lpdocPG !== 'undefined') {
-  var urlPREFIX = null; /* global */
+var urlPREFIX = null; /* global */
+
+function load_playground() {
   (async() => {
     const pg = '/playground/js/ciao_playground.js';
-    const prefixes = [
-      // Default prefix (assume playground is fetched from the same location)
-      // Due to CORS restrictions this only works properly when accessing from HTTP
-      // (not file:///).
-      '',
-      // // Site symlink from local docs // TODO: due to CORS restrictions loading wasm from file:/// may not work
-      // 'site',
-      // ciao-lang site
-      'https://ciao-lang.org' // TODO: missing version // TODO: add some CDN
-    ];
+    const prefixes = [];
+    // Default prefix (assume playground is fetched from the same location)
+    // Due to CORS restrictions this only works properly when accessing from HTTP
+    // (not file:///).
+    prefixes.push('');
+    // // Site symlink from local docs // TODO: due to CORS restrictions loading wasm from file:/// may not work
+    // prefixes.push('site');
+    // Local server (for development)
+    if (window.location.protocol === 'file:') {
+      prefixes.push('http://localhost:8001'); // (see ciao-serve-mt)
+    }
+    // ciao-lang site
+    prefixes.push('https://ciao-lang.org'); // TODO: missing version // TODO: add some CDN
     for (const p of prefixes) {
       urlPREFIX = p;
       try {
@@ -487,4 +491,21 @@ if (typeof lpdocPG !== 'undefined') {
       }
     }
   })();
+}
+
+if (typeof lpdocPG !== 'undefined') {
+  // Enable playground now
+  load_playground();
+} else {
+  // Wait for document to be loaded and load playground only if some
+  // some runnable codeblock is detected
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof lpdocPG === 'undefined') {
+      const runnables = document.getElementsByClassName("lpdoc-codeblock-runnable");
+      if (runnables.length > 0) {
+        lpdocPG = 'runnable';
+        load_playground();
+      }
+    }
+  });
 }
