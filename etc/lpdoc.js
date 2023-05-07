@@ -19,13 +19,6 @@ function importScript(src, is_async = false) {
   el.async = is_async;
   document.head.appendChild(el);
 }
-//function tryImportScript(src, onerr) {
-//  let el = document.createElement('script');
-//  el.onerror = onerr; // (make sure that this field is set before src)
-//  el.src = src;
-//  el.async = false;
-//  document.head.appendChild(el);
-//}
 /* (as a promise) */
 function tryImportScript(src, is_async = false) {
   return new Promise((resolve, reject) => {
@@ -485,7 +478,7 @@ function load_playground() {
       urlPREFIX = p;
       try {
         await tryImportScript(urlPREFIX+pg);
-        console.log(`Loaded playground from ${urlPREFIX+pg}`);
+        console.log(`{loaded playground from '${urlPREFIX+pg}'}`);
         break;
       } catch(e) {
       }
