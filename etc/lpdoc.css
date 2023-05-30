@@ -643,6 +643,13 @@ html {
     --face-yes-answer: #228b22;
     --face-answer-var: #a020f0;
     --face-answer-val: #0000ff;
+
+    --face-debug-call: #6a5acd80;
+    --face-debug-exit: #00ff0080;
+    --face-debug-fail: #b2222280;
+    --face-debug-redo: #ffa50080;
+    --face-debug-expansion: #ffff0080;
+    --face-debug-breakpoint: #ff000080;
 }
 
 html[data-theme='dark'] {
@@ -679,6 +686,19 @@ html[data-theme='dark'] {
     --face-yes-answer: #32cd32;
     --face-answer-var: #00ffff;
     --face-answer-val: #87cefa;
+
+    --face-debug-call: #6a5acd80;
+    --face-debug-exit: #00ff0080;
+    --face-debug-fail: #b2222280;
+    --face-debug-redo: #ffa50080;
+    --face-debug-expansion: #ffff0080;
+    --face-debug-breakpoint: #ff000080;
+    /*--face-debug-call: #0000cd80;
+    --face-debug-exit: #556b2f80;
+    --face-debug-fail: #b2222280;
+    --face-debug-redo: #ffa50080;
+    --face-debug-expansion: #ffff0080;
+    --face-debug-breakpoint: #ff000080;*/
 }
 
 span.ciao-face-sectioning-5-face   { color: var(--face-sectioning); font-weight: 700; font-family: "Trebuchet MS", Helvetica, sans-serif; text-decoration: none; }
@@ -758,6 +778,12 @@ ciao-face-answer-var a { color: var(--face-answer-var); font-weight: 700; text-d
 ciao-face-answer-val { color: var(--face-answer-val); font-weight: 700; text-decoration: none; }
 ciao-face-answer-val a { color: var(--face-answer-val); font-weight: 700; text-decoration: underline; }
 
+span.ciao-face-debug-call { background: var(--face-debug-call); }
+span.ciao-face-debug-exit { background: var(--face-debug-exit); }
+span.ciao-face-debug-fail { background: var(--face-debug-fail); }
+span.ciao-face-debug-redo { background: var(--face-debug-redo); }
+span.ciao-face-debug-expansion { background: var(--face-debug-expansion); }
+span.ciao-face-debug-breakpoint { background: var(--face-debug-breakpoint); }
 
 /* Other languages */
 span.constant   { color: #008b8b; font-weight: 500; text-decoration: none; }
