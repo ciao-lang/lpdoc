@@ -25,6 +25,9 @@ doc_structure :=
       'comments'-[
           'doccomments_doc' % Maturity?
       ],
+      'ALD'-[
+          'ALD_runnables'
+          ],
       'assertions/assertions_doc'-[
           'assertions/assertions_props',
           'regtypes/regtypes_doc',
@@ -64,5 +67,5 @@ doc_structure :=
 bibfile := ~ciao_bibfile.
 
 % TODO: port this manual
-allow_markdown := no.
-syntax_highlight := no.
+allow_markdown := yes.
+syntax_highlight := yes.
