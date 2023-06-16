@@ -1146,6 +1146,11 @@ escapeseq --> "@{"
    within the file are not interpreted. This is useful for including
    code fragments in documentation.
 
+   @item{@tt{@@includecode@{}@em{lang}@tt{@}@{}@em{filename}@tt{@}}}
+   @cindex{@@includecode command} same as above, but the contents of
+   @em{filename} will be included in-line and represented in language
+   @em{lang}.
+
    @item{@tt{@@includeverbatim@{}@em{filename}@tt{@}}}
    @cindex{@@includeverbatim command} (DEPRECATED) as above, but the
    contents of the file are not necessarily represented in verbatim
@@ -1328,6 +1333,7 @@ stringcommand('}'               ).
 
 stringcommand(include(B)        ) :- string(B).
 stringcommand(includecode(B)    ) :- string(B).
+stringcommand(includecode(A,B)  ) :- string(A), string(B).
 stringcommand(includeverbatim(B)) :- string(B).
 stringcommand(includefact(B)    ) :- string(B).
 stringcommand(includedef(B)     ) :- string(B).

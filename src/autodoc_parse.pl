@@ -495,6 +495,12 @@ handle_incl_command(includecode(FileS), DocSt, _Verb, RContent) :- !,
     atom_codes(RelFile, FileS),
     handle_incl_file(includeverbatim, RelFile, DocSt, plain, RContent0),
     build_env('verbatim', [RContent0], RContent).
+handle_incl_command(includecode(Lang,FileS), DocSt, _Verb, RContent) :- !,
+    atom_codes(RelFile, FileS),
+    handle_incl_file(includeverbatim, RelFile, DocSt, plain, RContent0),
+    ( RContent0 = string_esc(Text) -> RContent = codeblock(Lang, Text)
+    ; RContent = RContent0 % err(_)
+    ).
 handle_incl_command(includeverbatim(FileS), DocSt, _Verb, RContent) :- !, % TODO: deprecate (at least direct usage)
     atom_codes(RelFile, FileS),
     handle_incl_file(includeverbatim, RelFile, DocSt, plain, RContent).
