@@ -25,9 +25,7 @@ doc_structure :=
       'comments'-[
           'doccomments_doc' % Maturity?
       ],
-      'ALD'-[
-          'ALD_runnables'
-          ],
+      'Runnables',
       'assertions/assertions_doc'-[
           'assertions/assertions_props',
           'regtypes/regtypes_doc',

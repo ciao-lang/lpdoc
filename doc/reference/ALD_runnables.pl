@@ -7,11 +7,16 @@
 
 :- doc(module,"
 
-The combination of @tt{```ciao_runnable} and @tt{```} results in an interactive panel in the output. This panel displays editable and executable code. The type of executability varies depending on the directives employed. Below, we provide an overview of the available types along with a brief explanation for each:
+The combination of @tt{```ciao_runnable} and @tt{```} results in an
+interactive panel in the output. This panel displays editable and
+executable code. The type of executability varies depending on the
+directives employed. Below, we provide an overview of the available
+types along with a brief explanation for each:
 
 @begin{itemize}
 
 @item Code @bf{focus}:
+
 By utilizing the begin focus and end focus directives:
 
 ~~~
@@ -37,8 +42,14 @@ partition([X|L],Y,L1,[X|L2]) :-
 ```
 ~~~
 
-you can selectively display certain sections of the code in the output. This feature allows you to hide irrelevant lines of code, such as module declarations, imports, or auxiliary code, that may not contribute to the current discussion.
-To reload or reset the program's state, simply click on the green tick mark located in the top left corner of the pane. This functionality enables you to reload the code at any time.
+you can selectively display certain sections of the code in the
+output. This feature allows you to hide irrelevant lines of code, such
+as module declarations, imports, or auxiliary code, that may not
+contribute to the current discussion.
+
+To reload or reset the program's state, simply click on the green tick
+mark located in the top left corner of the pane. This functionality
+enables you to reload the code at any time.
 
 @item @bf{Queries}: You have the option to include one or multiple queries.
 
@@ -48,10 +59,20 @@ To reload or reset the program's state, simply click on the green tick mark loca
 ```
 ~~~
 
-@item Interactive @bf{exercises}: In this interactive pane, you can engage in exercises by editing the code and adding comments, which serve as hints or instructions. Alternatively, the description of the exercise may be provided in the surrounding text. By clicking on the yellow face icon, the code undergoes evaluation, including the execution of hidden unit tests, which provide feedback to the student.
-If a student wishes to give up and view the solution, they can request it, and the proposed solution will be displayed.
+@item Interactive @bf{exercises}: In this interactive pane, you can
+engage in exercises by editing the code and adding comments, which
+serve as hints or instructions. Alternatively, the description of the
+exercise may be provided in the surrounding text. By clicking on the
+yellow face icon, the code undergoes evaluation, including the
+execution of hidden unit tests, which provide feedback to the student.
 
-Segments enclosed within hint directives function similarly to focus segments, offering hints or instructions. However, if the solution is requested, the hint segment will be replaced with the corresponding solution, indicated by the solution directives.
+If a student wishes to give up and view the solution, they can request
+it, and the proposed solution will be displayed.
+
+Segments enclosed within hint directives function similarly to focus
+segments, offering hints or instructions. However, if the solution is
+requested, the hint segment will be replaced with the corresponding
+solution, indicated by the solution directives.
 
 ~~~
 ```ciao_runnable
@@ -67,7 +88,10 @@ Solution
 ```
 ~~~
 
-@item @bf{miniplayground}: A miniplayground can be displayed, offering a simplified version of the playground. It retains the structure of the playground but includes only the debugger feature, omitting other functionalities.
+@item @bf{miniplayground}: A miniplayground can be displayed, offering
+a simplified version of the playground. It retains the structure of
+the playground but includes only the debugger feature, omitting other
+functionalities.
 
 ~~~
 ```ciao_runnable
@@ -120,15 +144,22 @@ partition([X|L],Y,L1,[X|L2]) :-
 ```
 @end{itemize}
 
-The `ciao_runnable` language tag also allows the following additional annotations to interact with the browser using Javascript and/or Prolog code running through WebAssembly. 
+The `ciao_runnable` language tag also allows the following additional
+annotations to interact with the browser using Javascript and/or
+Prolog code running through WebAssembly.
 
 @begin{alert}
-These are experimental features whose API may change in future versions. Usage requires knowledge of HTML, Javascript (and some internals of `ciao_playground.js`).
+These are experimental features whose API may change in future
+versions. Usage requires knowledge of HTML, Javascript (and some
+internals of `ciao_playground.js`).
 @end{alert}
 
 @begin{itemize}
 
-@item @bf{jseval}: Escape mechanism to allow execution of arbitrary Javascript code. The text within `jseval` is executed at document initialization (following the sequential order of playground cells) as a Javascript asynchronous function. Typically this is done as:
+@item @bf{jseval}: Escape mechanism to allow execution of arbitrary
+  Javascript code. The text within `jseval` is executed at document
+  initialization (following the sequential order of playground cells)
+  as a Javascript asynchronous function. Typically this is done as:
 
 ~~~
 ```ciao_runnable
@@ -148,7 +179,10 @@ async() => { document.body.style.transform = \"rotate(180deg);\" }
 ~~~
 
 @item @bf{dynpreview}:
-Allow dynamically generated HTML fragments. See for example `catalog_ui/bundles_dyn.pl` in the website bundle. It requires a JSON structure that is passed to `setup_dynpreview` (see `ciao_playground.js`). For example:
+  Allow dynamically generated HTML fragments. See for example
+  `catalog_ui/bundles_dyn.pl` in the website bundle. It requires a
+  JSON structure that is passed to `setup_dynpreview` (see
+  `ciao_playground.js`). For example:
 
 ~~~
 ```ciao_runnable
@@ -162,7 +196,12 @@ Allow dynamically generated HTML fragments. See for example `catalog_ui/bundles_
 %! \\end{dynpreview}
 ```
 ~~~
-The `render_pred` field specifies the predicate that will generate the HTML contents (as a string, e.g., using @lib{pillow}). The `state_hash` field specifies if the URL hash is passed as parameter (e.g., to maintain a state). The rest of fields indicate the bundle dependencies and initialization goals.
+
+The `render_pred` field specifies the predicate that will generate the
+HTML contents (as a string, e.g., using @lib{pillow}). The
+`state_hash` field specifies if the URL hash is passed as parameter
+(e.g., to maintain a state). The rest of fields indicate the bundle
+dependencies and initialization goals.
 
 @end{itemize}
 
