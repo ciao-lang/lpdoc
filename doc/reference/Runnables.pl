@@ -10,8 +10,9 @@
 :- doc(module,"
 
 This section describes how to include editable and runnable code
-blocks in @apl{LPdoc} documents with an @em{embedded} playground, to
-create interactive @em{Active Logic Documents} (@apl{ALD}s). 
+blocks in @apl{LPdoc} documents, to create interactive @em{Active
+Logic Documents} (@apl{ALD}s). These code blocks can either run
+embedded in the document or be loaded into a playground,
 
 @section{Runnable Code Blocks}
 
@@ -25,11 +26,12 @@ the language is marked as @tt{ciao_runnable}, as follows:
 ~~~
 
 These code fragments are automatically rendered as editable cells that
-can be run in place or loaded into a separate playground. Additional
-commands can be included within the code which allow marking code
-areas specially to provide different behaviors and functionality.
-Below, we provide an overview of the available commands along with a
-brief explanation for each:
+can be run, either in place, embedded in the document, for
+formats/backends that support this (typically @tt{html}), or loaded
+into a separate playground. Additional commands can be included within
+the code which allow marking code areas specially to provide different
+behaviors and functionality.  Below, we provide an overview of the
+available commands along with a brief explanation for each:
 
 @begin{itemize}
 
