@@ -20,14 +20,15 @@ the language is marked as @tt{ciao_runnable}, as follows:
 
 ~~~
 ```ciao_runnable
-...
+
 ```
 ~~~
 
 These code fragments are automatically rendered as editable cells that
 can be run in place or loaded into a separate playground. Additional
-marks within the code provides different behaviors and functionality.
-Below, we provide an overview of the available modes along with a
+commands can be included within the code which allow marking code
+areas specially to provide different behaviors and functionality.
+Below, we provide an overview of the available commands along with a
 brief explanation for each:
 
 @begin{itemize}
@@ -65,6 +66,30 @@ partition([X|L],Y,L1,[X|L2]) :-
 ```
 ~~~
 
+  Which produces the following cell:
+
+```ciao_runnable
+:- module(_, [qsort/2], []).
+%! \\begin{focus}
+qsort(Data, Out) :-
+    qsort_(Data, Out, []).
+
+qsort_([], R, R).
+qsort_([X|L], R, R0) :-
+    partition(L, X, L1, L2),
+    qsort_(L2, R1, R0),
+    qsort_(L1, R, [X|R1]).
+%! \\end{focus}
+
+partition([],_,[],[]).
+partition([X|L],Y,[X|L1],L2) :-
+    X =< Y, !,
+    partition(L,Y,L1,L2).
+partition([X|L],Y,L1,[X|L2]) :-
+    partition(L,Y,L1,L2).
+```
+
+
 @item @bf{Queries}: A query cell is specified by a runnable code block
   where the code begins with `?-`. Example:
 
@@ -74,21 +99,40 @@ partition([X|L],Y,L1,[X|L2]) :-
 ```
 ~~~
 
-@item Interactive @bf{exercises}: In this interactive cell, you can
-  engage in exercises by editing the code and adding comments, which
-  serve as hints or instructions. Alternatively, the description of
-  the exercise may be provided in the surrounding text. By clicking on
-  the @bf{yellow face} icon, the code undergoes evaluation, e.g.,
-  including the execution of hidden unit tests, which provide feedback
-  to the reader.
+  Which produces: 
+
+```ciao_runnable
+?- qsort([1,5,4,2,3],X).
+```
+
+  There is essentially one toplevel per page; all programs in a given
+  @apl{ALD} page are loaded into this toplevel and all queries in the
+  page are executed in that toplevel, against all the code (possibly
+  separate modules) that has been loaded into the toplevel at that
+  point.
+
+@item Interactive @bf{exercises}: Interactive cells can be easily
+  configured to serve as exercises, where the reader can
+  provide or edit the code, which can then be played with or checked
+  automaticaly against expectations. Instructions can be added 
+  either in the text surrounding the ecxecutable cell(s),  or as
+  comments in the code itself in the cells. The code can also contain
+  hints to the solution, such as partially completed predicates,
+  predicates that need fixing, etc. The behavior of the code can be
+  checked for example by including test assertions (unit tests)
+  in the code. Clicking on the @bf{yellow face} icon executes the code,
+  including the execution of hidden unit tests, which then provide
+  feedback to the reader.
+
 
 @comment{If the reader wishes to give up and view the solution, they can
   request it, and the proposed solution will be displayed.}
 
   Segments enclosed within hint directives function similarly to focus
-  segments, offering hints or instructions. However, if the solution
-  is requested, the hint segment will be replaced with the
-  corresponding solution, indicated by the solution directives.
+  segments, and are used typically to offer the hints or instructions
+  mentioned above. However, if the reader requests to see the
+  solution, then, the hint segment will be replaced with the
+  corresponding solution, marked by solution directives.
 
   Example:
 ~~~
@@ -175,7 +219,7 @@ dependencies and initialization goals.
 @section{Examples}
 
 The following example shows a programming task with some initial
-hints, one valid solution (there may be others), a some set of tests
+hints, a valid solution (there may be others), and some tests
 to validate the user code:
 
 ~~~
@@ -250,12 +294,12 @@ factorial(N,F) :-
 %! \\end{solution}
 ```
 
-As shown above, tests can be included, hints and solutions provided,
+The examples shows how tests can be included, hints and solutions provided,
 etc.
 
-It is also possible to specify that only some parts of the code be
-shown by placing those parts between begin focus and end focus
-directives. For example:
+The following example illustrates the use of @tt{\\@begin\\{focus\\}}
+and @tt{\\@end\\{focus\\}} directives to specify that only some parts
+of the code be shown:
 
 ~~~
 ```ciao_runnable
@@ -304,8 +348,7 @@ facility can be used as shown above to select whether boilerplate
 lines (such as, e.g., module declarations, imports, auxiliary code,
 etc.) are shown in the output or not.
 
-Finally, runnable and editable queries can also be easily defined as
-follows:
+Finally, the following are examples of runnable and editable queries:
 
 ~~~
 ```ciao_runnable
@@ -319,10 +362,11 @@ resulting in:
 ?- factorial(X,s(s(s(s(s(s(0))))))).
 ``` 
 
-There is essentially one toplevel per page; all programs in @apl{ALD}
-are loaded into this toplevel and all queries in the page are executed
-in that toplevel, against all the code (possibly separate modules)
-that has been loaded into the toplevel at that point.
+As mentioned before, there is essentially one toplevel per page; all
+programs in a given @apl{ALD} are loaded into this toplevel and all
+queries in the page are executed in that toplevel, against all the
+code (possibly separate modules) that has been loaded into the
+toplevel at that point.
 
 @section{Full page example}
 
