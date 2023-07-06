@@ -45,7 +45,7 @@
    Note that in addition to the more structured @decl{doc/2}
    declarations and mark-up language described here, these
    declarations can also be written in a @em{wiki}
-   (@index{mark-down}) style -- see @lib{doccomments} for details.
+   (@index{markdown}) style -- see @lib{doccomments} for details.
 
    ").
 

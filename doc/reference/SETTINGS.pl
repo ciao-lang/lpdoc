@@ -25,6 +25,7 @@ doc_structure :=
       'comments'-[
           'doccomments_doc' % Maturity?
       ],
+      'Markdown',
       'Runnables',
       'assertions/assertions_doc'-[
           'assertions/assertions_props',
