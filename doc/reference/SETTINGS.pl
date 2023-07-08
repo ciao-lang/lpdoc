@@ -26,7 +26,6 @@ doc_structure :=
           'doccomments_doc' % Maturity?
       ],
       'Markdown',
-      'Runnables',
       'assertions/assertions_doc'-[
           'assertions/assertions_props',
           'regtypes/regtypes_doc',
@@ -45,7 +44,11 @@ doc_structure :=
           %
           'metaprops/meta_props'
       ],
-      'lpdoc_examples'
+      'lpdoc_examples',
+      'Runnables'-[ 
+          'factorial_peano_iso_source',
+          'factorial_peano_iso'
+      ]
       %
       % TODO: If we want to include it, it should be in a
       %         different manual so that we do not mess the
