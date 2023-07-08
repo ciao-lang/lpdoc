@@ -370,14 +370,18 @@ queries in the page are executed in that toplevel, against all the
 code (possibly separate modules) that has been loaded into the
 toplevel at that point.
 
-@section{Full page example}
-
-The following pointers provide a complete example of a class exercise
-that uses embedded code, showing the full source and the full output:
-
-@begin{itemize}
-@item This is the [source of the page (written in this case in markdown)](/ciao/build/doc/lpdoc.html/factorial_peano_iso_source.html)
-@item and this is the [ALD produced by LPdoc](/ciao/build/doc/lpdoc.html/factorial_peano_iso.html).
-@end{itemize}
-
+You can consult the subparts below to view a complete example,
+including the full source code and generated output.
 ").
+
+
+% @section{Full page example}
+% 
+% The following pointers provide a complete example of a class exercise
+% that uses embedded code, showing the full source and the full output:
+% 
+% @begin{itemize}
+% @item This is the [source of the page (written in this case in markdown)](/ciao/build/doc/lpdoc.html/factorial_peano_iso_source.html)
+% @item and this is the [ALD produced by LPdoc](/ciao/build/doc/lpdoc.html/factorial_peano_iso.html).
+% @end{itemize}
+
