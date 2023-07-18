@@ -1,4 +1,4 @@
-:- module(lpdoc_help, [], [assertions, dcg, fsyntax]).
+:- module(lpdoc_help, [], [assertions, modes, dcg, fsyntax]).
 
 :- doc(title, "Open help on module or predicates").
 

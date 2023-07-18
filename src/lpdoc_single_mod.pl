@@ -1,4 +1,4 @@
-:- module(lpdoc_single_mod, [], [assertions, dcg, fsyntax]).
+:- module(lpdoc_single_mod, [], [assertions, modes, dcg, fsyntax]).
 
 :- doc(title, "Generate single module documentation").
 % TODO: this code still needs some cleanups, add to LPdoc manual
