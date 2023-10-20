@@ -40,7 +40,8 @@ General options:
 
   -h|--help              Show help
   --version              Show version and exit
-  -T                     Start an LPdoc toplevel (single option)
+  -T <toplevel-opts>     Start an LPdoc toplevel (single option)
+                         (using <toplevel-opts> as options for the toplevel)
 
   -t TARGET              Format (pdf|ps|html|info|manl|nil)
 
@@ -105,7 +106,7 @@ error_bad_args(Args) :-
 select_cmd(Cmd) :-
     ( opt_mode(help) -> Cmd = help
     ; opt_mode(version) -> Cmd = version
-    ; opt_mode(toplevel) -> Cmd = toplevel
+    ; opt_mode(toplevel(ToplevelOpts)) -> Cmd = toplevel(ToplevelOpts)
     ; opt_mode(clean(Mode)) -> Cmd = clean(Mode)
     ; opt_mode(view) -> view_target(Target), Cmd = view(Target)
     ; gen_target(Target), Cmd = gen(Target)
@@ -113,7 +114,7 @@ select_cmd(Cmd) :-
 
 check_args(help, []).
 check_args(version, []).
-check_args(toplevel, []).
+check_args(toplevel(_), []).
 check_args(clean(_), [_]). % TODO: fixme, InFile not used?
 check_args(view(_), [_]).
 check_args(gen(_), [_]).
@@ -136,8 +137,8 @@ lpdoc_cmd(help, _) :- !, usage.
 lpdoc_cmd(version, _) :- !,
     version(Version),
     format(user_error, "LPdoc version ~w~n", [Version]).
-lpdoc_cmd(toplevel, _) :- !,
-    lpdoc_toplevel([]).
+lpdoc_cmd(toplevel(ToplevelOpts), _) :- !,
+    lpdoc_toplevel(ToplevelOpts).
 lpdoc_cmd(Cmd, [InFile]) :-
     get_opts(Opts),
     doc_cmd(InFile, Opts, Cmd).
@@ -161,6 +162,10 @@ parse_opts([Opt|Args], Rest) :-
     !,
     handle_option0(Opt),
     parse_opts(Args, Rest).
+parse_opts(['-T'|ToplevelOpts], Rest) :- !,
+    % TODO: make behavior consistent with other ciao tools
+    assertz_fact(opt_mode(toplevel(ToplevelOpts))),
+    Rest = [].
 parse_opts([Opt|Args], Rest) :-
     parse_name_value(Opt, Name, Value),
     !,
@@ -247,10 +252,6 @@ handle_option0('--help') :-
 is_option0('--version').
 handle_option0('--version') :-
     assertz_fact(opt_mode(version)).
-
-is_option0('-T').
-handle_option0('-T') :-
-    assertz_fact(opt_mode(toplevel)).
 
 %%%% ****
 is_option0('-q').
