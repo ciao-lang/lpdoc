@@ -1,7 +1,9 @@
 :- module(autodoc_parse,
     [parse_docstring_loc/4,
      parse_docstring/3,
-     parse_docstring0/3],
+     parse_docstring0/3,
+     %
+     spaces_or_tabs/2],
     [dcg, assertions, regtypes, basicmodes]).
 
 :- doc(module, "Parser for the lpdoc mark-up language (@regtype{docstring/1})").

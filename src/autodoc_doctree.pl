@@ -20,6 +20,7 @@
 
 % Local libraries
 :- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_parse), [spaces_or_tabs/2]).
 :- use_module(lpdoc(autodoc_refsdb)).
 :- use_module(lpdoc(autodoc_index)).
 :- use_module(lpdoc(autodoc_structure)).
@@ -1129,6 +1130,29 @@ version_string(Version, Str) :-
 version_string(Version, Str) :-
     autodoc_message(warning, "unrecognized version format '~w'", [Version]),
     Str = "".
+
+:- export(parse_changelog_version/3).
+% "[Version] - Date" for changelog entries
+parse_changelog_version(Vers) -->
+    "[", parse_nat(Major), ".", parse_nat(Minor), ".", parse_nat(Patch), "]",
+    spaces_or_tabs,
+    "-",
+    spaces_or_tabs,
+    parse_nat(Year), "-", parse_nat(Month), "-", parse_nat(Day),
+    spaces_or_tabs,
+    !,
+    { Vers = version(Major*Minor+Patch,Year/Month/Day,[]) }.
+
+parse_nat(Num) -->
+    digits(Ds),
+    { number_codes(Num, Ds) }.
+
+digits([C|Cs]) --> digit(C), !, digits(Cs).
+digits([]) --> [].
+
+digit(C) --> [C], { digit_p(C) }.
+
+digit_p(C) :- C >= 0'0, C =< 0'9.
 
 % ===========================================================================
 

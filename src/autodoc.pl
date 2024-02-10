@@ -21,6 +21,7 @@
 % ---------------------------------------------------------------------------
 
 :- use_module(library(format), [format_to_string/3]).
+:- use_module(library(sort), [sort/2]).
 :- use_module(engine(stream_basic)).
 :- use_module(library(read), [read/2]).
 :- use_module(library(aggregates), [findall/3]).
@@ -176,8 +177,10 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
     %
     docst_filetype(DocSt, FileType),
     autodoc_message(verbose, "File being documented as '~w'.", [FileType]),
-    get_last_version(Version, GlobalVers, DocSt),
-    ModuleR = ~fmt_module(DocSt, Version, GlobalVers),
+    get_mod_comment(DocSt, ModCommentR, Changes),
+    get_last_version(Changes, Version, GlobalVers, DocSt),
+    %
+    ModuleR = ~fmt_module(DocSt, ModCommentR, Changes, Version, GlobalVers),
     % Register document info
     register_main_logo(DocSt),
     register_main_title(Version, DocSt),
@@ -239,6 +242,72 @@ compose_main_title(Version, DocSt, MainTitleR) :-
         MainTitleR0 = [string_esc(" v"), string_esc(VerStr)]
     ; MainTitleR0 = []
     ).
+
+% ---------------------------------------------------------------------------
+
+:- doc(subsection, "Get module documentation"). % (including changelog)
+
+% TODO: doc_interface and mod_comment should be treated *together* so that we can
+%   interleave text and module comments 
+% TODO: only once, may modify state
+get_mod_comment(DocSt, ModCommentR, Changes) :-
+    % Module contents: extract from plain_content or module doc
+    ( docst_mvar_get(DocSt, plain_content, Text) ->
+        parse_docstring(DocSt, Text, ContentR0),
+        ContentR = ~preproc_doctree(ContentR0),
+        ModCommentR0 = ContentR
+    ; ModCommentR0 = ~get_doc(module, note, DocSt)
+    ),
+    % Extract changelog (if available)
+    get_changelog(DocSt, ModCommentR0, ModCommentR, Changes).
+
+% Peek some special commands (e.g, title, in plain filetype)
+% TODO: ad-hoc... design a better way
+preproc_doctree([X|Xs]) := Ys :-
+    X = title(TitleR), !,
+    assertz_fact(custom_doc(title, TitleR)),
+    Ys = ~preproc_doctree(Xs).
+preproc_doctree([X|Xs]) := [Y|Ys] :- !,
+    Y = ~preproc_doctree(X),
+    Ys = ~preproc_doctree(Xs).
+preproc_doctree(X) := X.
+
+% Extract changes from both changelog section and doc(version(...),_).
+% Sort in reverse order.
+get_changelog(DocSt, ModCommentsR, ModCommentsR2, SChanges) :-
+    extract_changelog(ModCommentsR, 1, DocSt, ModCommentsR2, Changes, Changes0),
+    get_doc_changes(DocSt, Changes0),
+    sort(Changes, SChanges0),
+    reverse(SChanges0, SChanges).
+
+% Extract changelog from doctree R0 the Changelog and obtain R (without that section).
+% Only one changelog section is supported (any other is ignored).
+extract_changelog(R0, Level, DocSt, R, Chgs, Chgs0) :- ( R0 = [] ; R0 = [_|_] ), !,
+    extract_changelog_(R0, Level, DocSt, R, Chgs, Chgs0).
+extract_changelog(R0, Level, DocSt, R, Chgs, Chgs0) :- 
+    R0 = section_env(_SecProps, _SectLabel, TitleR, Body),
+    doctree_to_rawtext(TitleR, DocSt, Title),
+    parse_changelog_title(Level, Entry, Title, []),
+    !,
+    R = [],
+    ( Entry = changelog -> % the changelog section
+        extract_changelog(Body, 2, DocSt, _, Chgs, Chgs0)
+    ; Chgs = [change(Entry, Body)|Chgs0] % assume version/2
+    ).
+extract_changelog(R, _Level, _DocSt, R, Chgs, Chgs).
+
+extract_changelog_([], _Level, _DocSt, [], Chgs, Chgs).
+extract_changelog_([X|Xs], Level, DocSt, [Y|Ys], Chgs, Chgs0) :-
+    extract_changelog(X, Level, DocSt, Y, Chgs, Chgs1),
+    extract_changelog_(Xs, Level, DocSt, Ys, Chgs1, Chgs0).
+
+% Support for https://common-changelog.org/:
+%   "# Changelog" (section)
+%   "## [Version] - Date" (subsection)
+parse_changelog_title(1, Entry) --> spaces_or_tabs, "Changelog", spaces_or_tabs, !,
+    { Entry = changelog }.
+parse_changelog_title(2, Entry) --> spaces_or_tabs, parse_changelog_version(Vers), spaces_or_tabs, !,
+    { Entry = Vers }.
 
 % ---------------------------------------------------------------------------
 
@@ -351,16 +420,16 @@ infodir_version(Version, VersionR) :-
 % TODO: This could be extended to extract version info other revision
 %       control system (such as SVN, GIT, Hg)
 
-get_last_version(Version, GlobalVers, DocSt) :-
+get_last_version(Changes, Version, GlobalVers, DocSt) :-
     ( docst_opt(no_version, DocSt) ->
         Version = [], GlobalVers = []
     ; docst_filetype(DocSt, FileType), FileType = part ->
         Version = [], GlobalVers = []
     ; docst_mvar_get(DocSt, dir, dir(Dir)),
-      get_last_version_(Version, GlobalVers, Dir, DocSt)
+      get_last_version_(Changes, Version, GlobalVers, Dir, DocSt)
     ).
 
-get_last_version_(Version, GlobalVers, Dir, DocSt) :-
+get_last_version_(Changes, Version, GlobalVers, Dir, DocSt) :-
     % TODO: Indeed, directory in 'version_maintenance' could be
     %       avoided if automatic Manifest.pl detection is
     %       implemented. The version_maintenance directory is
@@ -380,16 +449,15 @@ get_last_version_(Version, GlobalVers, Dir, DocSt) :-
             [ChangeLogFile]),
       GlobalVers = Version
     ),
-    get_last_local_version(Version, DocSt).
-get_last_version_(Version, Version, _Dir, DocSt) :-
+    get_last_local_version(Changes, Version, DocSt).
+get_last_version_(Changes, Version, Version, _Dir, DocSt) :-
     %% else, component or version maintained in doc/2 decls in file
-    get_last_local_version(Version, DocSt).
+    get_last_local_version(Changes, Version, DocSt).
 
-get_last_local_version(Version, DocSt) :-
+get_last_local_version(Changes, Version, DocSt) :-
     %% get last version in doc/2 decls in file
     autodoc_message(verbose, "Getting local version from file."),
-    ( get_doc_changes(DocSt, _, Changes),
-      Changes = [change(LVersion, _)|_] ->
+    ( Changes = [change(LVersion, _)|_] ->
         Version = LVersion
     ; ( setting_value(comment_version, yes) ->
           docst_inputfile(DocSt, I),
@@ -406,12 +474,9 @@ get_last_local_version(Version, DocSt) :-
 
 :- doc(subsection, "Document Module").
 
-:- doc(fmt_module(DocSt,Version,GlobalVers,ModR),
+:- doc(fmt_module(DocSt,ModCommentR,Changes,Version,GlobalVers,ModR),
    "This predicate defines the first part of the format of the main
    file of a manual, the introduction, and some auxiliary information.
-%
-   @var{TitleR} is the intended title of the application (taken from
-   the approriate @pred{doc/2} declaration). 
 
    @var{Version} is the version of the first @pred{doc/2} entry which
    specifies a version number (which should be the current
@@ -425,54 +490,17 @@ get_last_local_version(Version, DocSt) :-
 % the input file). @var{NDName} is the same, but without @tt{_doc},
 % if applicable. 
 
-:- pred fmt_module(DocSt,Version,GlobalVers,ModR)
+:- pred fmt_module(DocSt,ModCommentR,Changes,Version,GlobalVers,ModR)
     : (docstate(DocSt), version_descriptor(Version),
        version_descriptor(GlobalVers), doctree(ModR)).
 
-fmt_module(DocSt, _Version, GlobalVers) := ModR :- docst_backend(DocSt, man), !,
+fmt_module(DocSt, _ModCommentR, _Changes, _Version, GlobalVers) := ModR :- docst_backend(DocSt, man), !,
     ModR = ~fmt_module_man(DocSt, GlobalVers).
-fmt_module(DocSt, Version, GlobalVers) := ModR :-
-    ModCommentR = ~get_mod_comment(DocSt),
-    fmt_module_(DocSt, ModCommentR, Version, GlobalVers, SecProps, DocR),
+fmt_module(DocSt, ModCommentR, Changes, Version, GlobalVers) := ModR :-
+    fmt_module_(DocSt, ModCommentR, Changes, Version, GlobalVers, SecProps, DocR),
     ModR = ~fmt_top_section(SecProps, DocR, DocSt).
 
-% TODO: doc_interface and mod_comment should be treated *together* so that we can
-%   interleave text and module comments 
-% TODO: only once, may modify state
-get_mod_comment(DocSt) := ModCommentR :-
-    % Module contents: extract from plain_content or module doc
-    ( docst_mvar_get(DocSt, plain_content, Text) ->
-        parse_docstring(DocSt, Text, ContentR0),
-        ContentR = ~preproc_doctree(ContentR0),
-        ModCommentR = ContentR
-    ; ModCommentR = ~get_doc(module, note, DocSt)
-    ).
-
-% Peek some special commands (e.g, title, in plain filetype)
-% TODO: ad-hoc... design a better way
-preproc_doctree([X|Xs]) := Ys :-
-    X = title(TitleR), !,
-    assertz_fact(custom_doc(title, TitleR)),
-    Ys = ~preproc_doctree(Xs).
-preproc_doctree([X|Xs]) := [Y|Ys] :- !,
-    Y = ~preproc_doctree(X),
-    Ys = ~preproc_doctree(Xs).
-preproc_doctree(X) := X.
-
-%% TODO: for plain_content, no longer needed
-% fmt_module_(DocSt, ModCommentR, _Version, GlobalVers, SecProps00, DocR) :-
-%     docst_filetype(DocSt, FileType),
-%     FileType = plain,
-%     !,
-%     ( docst_backend(DocSt, texinfo) ->
-%         % TODO: Customize style, make toc optional, etc.
-%         cover_prop([], GlobalVers, DocSt, CoverProp),
-%         SecProps00 = [CoverProp, level(0)],
-%         DocR = ModCommentR
-%     ; SecProps00 = [level(1)],
-%       DocR = ModCommentR
-%     ).
-fmt_module_(DocSt, ModCommentR, Version, GlobalVers, SecProps00, DocR) :-
+fmt_module_(DocSt, ModCommentR, Changes, Version, GlobalVers, SecProps00, DocR) :-
     docst_currmod_is_main(DocSt),
     !,
     CopyrightR = ~get_mod_doc(copyright, DocSt),
@@ -486,11 +514,11 @@ fmt_module_(DocSt, ModCommentR, Version, GlobalVers, SecProps00, DocR) :-
     ( docst_backend(DocSt, html) ->
         % TODO: Move the appendix and/or acknowledges to a separate page?
         BugsR = ~fmt_bugs(yes(bugs), DocSt),
-        ChangesR = ~fmt_changes(yes(changelog), DocSt),
+        ChangesR = ~fmt_changes(yes(changelog), Changes, DocSt),
         IntroExtraR = [AppendixR, AckR],
         ExtraR = [BugsR, ChangesR]
     ; BugsR = ~fmt_bugs(no, DocSt),
-      ChangesR = ~fmt_changes(no, DocSt),
+      ChangesR = ~fmt_changes(no, Changes, DocSt),
       IntroExtraR = [AppendixR, AckR, BugsR, ChangesR],
       ExtraR = []
     ),
@@ -518,7 +546,7 @@ fmt_module_(DocSt, ModCommentR, Version, GlobalVers, SecProps00, DocR) :-
         IntroR, AfterIntroR, ExtraR, ComponentsR,
         BiblioR, IndicesR, SearchR
     ]).
-fmt_module_(DocSt, ModCommentR, Version, GlobalVers, SecProps00, DocR) :-
+fmt_module_(DocSt, ModCommentR, Changes, Version, GlobalVers, SecProps00, DocR) :-
     % Contents inside the cartouche
     IdxR = ~module_idx(DocSt),
     AuthorR = ~fmt_authors(~get_authors(DocSt)),
@@ -544,7 +572,7 @@ fmt_module_(DocSt, ModCommentR, Version, GlobalVers, SecProps00, DocR) :-
     AppendixR = ~fmt_appendix(DocSt),
     AckR = ~fmt_acknowledges(DocSt),
     BugsR = ~fmt_bugs(no, DocSt),
-    ChangesR = ~fmt_changes(no, DocSt),
+    ChangesR = ~fmt_changes(no, Changes, DocSt),
     %
     DocR = ~doctree_simplify([
         IdxR, CommentR, TocR, InterfaceR, AppendixR, AckR, BugsR, ChangesR
@@ -1056,33 +1084,33 @@ gen_bugs_([BugR|BugRs], [C|Cs]) :-
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Release Notes / Changelog"). % also corrigendum?
+:- doc(subsection, "Format the Changelog").
 % TODO: In a real book, changes w.r.t. real editions are explained in
 %       the foreword (which appears just after the contents)
 
-% The changelog.
-fmt_changes(Special, DocSt) := ChangesR :-
-    ( docst_opt(no_changelog, DocSt) ->
-        Changes = []
-    ; ( docst_opt(no_patches, DocSt) ->
-          VPatch = 0
-      ; true
-      ),
-      get_doc_changes(DocSt, VPatch, Changes)
+fmt_changes(Special, Changes, DocSt) := ChangesR :-
+    ( docst_opt(no_changelog, DocSt) -> Changes2 = nop
+    ; ( docst_opt(no_patches, DocSt) -> NoPatches = yes ; NoPatches = no ),
+      gen_changes(Changes, NoPatches, Changes2)
     ),
-    gen_changes(Changes, Changes2),
-    ChangesR = ~nonbody_section(Special, 'changes', "Version/Change Log", Changes2, DocSt).
+    ChangesR = ~nonbody_section(Special, 'changes', "Changelog", Changes2, DocSt).
 
-gen_changes([], nop) :- !.
-gen_changes(Xs, R) :-
-    gen_changes_(Xs, Items),
+gen_changes([], _NoPatches, nop) :- !.
+gen_changes(Xs, NoPatches, R) :-
+    gen_changes_(Xs, NoPatches, Items),
     R = description_env(Items).
 
-gen_changes_([], []).
-gen_changes_([change(Version, ChangeTextR)|Changes], [C|Cs]) :- !,
-    version_string(Version, VersionStr),
-    C = [item(bf(string_esc("Version "||VersionStr))), ChangeTextR],
-    gen_changes_(Changes, Cs).
+gen_changes_([], _, []).
+gen_changes_([change(Version, ChangeTextR)|Changes], NoPatches, Cs) :-
+    ( ( NoPatches = yes, version_patch(Version, 0)
+      ; NoPatches = no
+      ) ->
+        version_string(Version, VersionStr),
+        Cs = [C|Cs0],
+        C = [item(bf(string_esc("Version "||VersionStr))), ChangeTextR]
+    ; Cs = Cs0
+    ),
+    gen_changes_(Changes, NoPatches, Cs0).
 
 % ---------------------------------------------------------------------------
 

@@ -560,21 +560,18 @@ treat_missing_docdecl(MessageType, Id, DocSt) :-
     autodoc_message(MessageType, loc(S, 1, 1),
         "no "":- doc(~w,...)"" declaration found", [Id]).
 
-:- export(get_doc_changes/3).
+:- export(get_doc_changes/2).
 % Retrieve the changelog (list of change/2).
-get_doc_changes(DocSt, VPatch, Changes) :-
-    ( setof(Change,
-        VPatch^change_field(VPatch, DocSt, Change),
-        RChanges) ->
-        reverse(RChanges, Changes)
-    ; Changes = []
-    ).
+get_doc_changes(DocSt, Changes) :-
+    findall(Change, change_field(DocSt, Change), Changes).
 
-change_field(VPatch, DocSt, change(Version, RC)) :-
-    version_patch(V, VPatch),
+change_field(DocSt, change(Version, RC)) :-
+    ( V = version(_,_)
+    ; V = version(_,_,_)
+    ),
     get_docdecl(V, C, _Dict, Loc),
     parse_docstring_loc(DocSt, Loc, C, RC),
-    ( V = version(Ver, Date) ->
+    ( V = version(Ver, Date) -> % TODO: normalize before?
         Version = version(Ver, Date, [])
     ; Version = V
     ).
