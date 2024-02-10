@@ -352,7 +352,7 @@ New functionality:
  - Default @concept{pdf viewer} is now @apl{ghostview}, since recent
    versions handle `pdf` well.  (Manuel Hermenegildo)
 
- - Changed default style sheet in order to show `<PRE>` lines with a
+ - Changed default style sheet in order to show HTML `pre` lines with a
    monospaced font.  (Daniel Cabeza Gras)
 
  - Mode definitions now documented in a separate section. The way they
