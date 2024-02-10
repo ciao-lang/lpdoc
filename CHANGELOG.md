@@ -444,7 +444,7 @@ the LPdoc group.  (Manuel Hermenegildo)
 
 ## [1.9.29] - 1999-11-24
 
-Changed default style sheet in order to show <PRE> lines with a
+Changed default style sheet in order to show HTML `pre` lines with a
 monospaced font.  (Daniel Cabeza Gras)
 
 ## [1.9.24] - 1999-11-23
