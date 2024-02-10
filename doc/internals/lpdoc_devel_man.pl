@@ -41,5 +41,5 @@ Hermenegildo and Jos@'{e} Francisco Morales.
 % ===========================================================================
 
 :- doc(version_maintenance,dir('../../Manifest')).
-%:- include('../CHANGELOG').
+% :- doc(module, "@include{'../../CHANGELOG.md'}").
 
