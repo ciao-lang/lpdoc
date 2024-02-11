@@ -781,7 +781,7 @@ fmt_module_man(DocSt, GlobalVers) := ModR :-
         % TODO: Move this to a package instead?
         ( clause_read(_, usage_message(_), true, _, S, LB, LE) ->
             Loc = loc(S, LB, LE),
-            UsageString = "@begin{verbatim}@includefact{usage_message/1}@end{verbatim}",
+            UsageString = "@includefact{usage_message/1}",
             parse_docstring_loc(DocSt, Loc, UsageString, UsageR)
         ; autodoc_message(note, 'No usage_message/1 fact found for application'),
           UsageR = []

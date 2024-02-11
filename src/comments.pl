@@ -1164,11 +1164,11 @@ escapeseq --> "@{"
    @cindex{@@includefact command} it is assumed that the file being
    documented contains a fact of the predicate @em{factname}@tt{/1},
    whose argument is a character string. The contents of that
-   character string will be included in-line, as if they were part of
-   the documentation string. This is useful for @index{sharing pieces
-   of text} between the documentation and the running code. An example
-   is the text which explains the @index{usage of a command} (options,
-   etc.).
+   character string will be included in-line, in verbatim mode, as if
+   they were part of the documentation string. This is useful for
+   @index{sharing pieces of text} between the documentation and the
+   running code. An example is the text which explains the
+   @index{usage of a command} (options, etc.).
 
    @item{@tt{@@includedef@{}@em{predname}@tt{@}}} @cindex{@@includedef
    command} it is assumed that the file being documented contains a

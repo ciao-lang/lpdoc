@@ -508,7 +508,7 @@ handle_incl_command(includeverbatim(FileS), DocSt, _Verb, RContent) :- !, % TODO
     handle_incl_file(includeverbatim, RelFile, DocSt, plain, RContent).
 % TODO: Treat this command here or in autodoc? --JF
 %       It adds a dependency to clause_read.
-handle_incl_command(includefact(Pred), DocSt, Verb, RContent) :-
+handle_incl_command(includefact(Pred), DocSt, _Verb, RContent) :-
     Pred = Functor/Arity,
     !,
     ( Functor \== 0,
@@ -520,7 +520,9 @@ handle_incl_command(includefact(Pred), DocSt, Verb, RContent) :-
         ),
         arg(1, Pattern, Content),
         ( is_string(Content) -> 
-            parse_docstring__1(DocSt, Verb, Content, RContent)
+            % TODO: here type is not 'normal' but 'verb'
+            escape_string(normal, Content, DocSt, NContent),
+            build_env('verbatim', [raw_string(NContent)], RContent)
         ; RContent = err(parse_error(notstring, []))
         )
     ; RContent = err(parse_error(tryinclude, [Pred]))
