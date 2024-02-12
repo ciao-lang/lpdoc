@@ -17,9 +17,7 @@ available when invoking @apl{lpdoc}:
 
 @sp{2}
 
-@begin{verbatim}
 @includefact{usage_message/1}
-@end{verbatim}
 ").
 
 :- use_module(library(errhandle), [default_error_message/1]).
