@@ -800,7 +800,10 @@ rewrite_command_(codeblock(_Lang,Content), DocSt, R) :-
     \+ Backend = html,
     !,
     % TODO: here type is not 'normal' but 'verb' (<- sure?)
-    escape_string(normal, Content, DocSt, NContent),
+    escape_string(normal, Content, DocSt, NContent0),
+    ( remove_first_nl_str(NContent0, NContent1) -> NContent = NContent1
+    ; NContent = NContent0
+    ),
     rewrite_command_(env_('verbatim', [raw_string(NContent)]), DocSt, R).
 % TODO: Hack to fix unwanted blanks after "@begin{verbatim}", solve it in a better way
 rewrite_command_(env_('verbatim', Body0), DocSt, R) :-
