@@ -1,5 +1,47 @@
 # Changelog
 
+## [3.6.0] - 2022-9-28
+
+### Added
+
+ - Merged CSS changes for playground and runnable code into `lpdoc.css`.
+ - Basic JS functionality from playground moved to `lpdoc-aux.js`.
+ - Theme button for website layout.
+ - New `allow_runnable` configuration setting to enable interactive
+   `code_runnable` code blocks (loading internally the playground).
+
+### Improved
+
+ - Allow `\\title` (or `@@title`) in plain file documentation entries (this
+   allows specifying titles from `.lpdoc` or `.md` files in docstructure
+   without need of auxiliary `.pl` files).
+ - Included modern `texindex.awk` version.
+ - Enable utf8 support by default in texinfo backend
+   This backports utf8 support from modern `texinfo.tex` files into our 
+   `texinfo.tex` version (until we support new `texinfo.tex` versions).
+ - `info` output now auto-refreshes, for a single file in info format
+   (`C-cDF` info; `C-cDB`) and viewing it in Emacs (`C-cDV`)
+ - Added small note for escaping backslash characters inside strings
+   in documentations correctly.
+ - Nicer style for scrollbars, do not force vertical scrollbar anymore.
+
+### Fixed
+
+ - Do not escape @tt{``} and `''` in HTML strings.
+ - Fix texinfo generation in single file doc mode.
+   There was no top node and this produced a messed up index.
+ - Fix error generating info for single file from Emacs (missing
+   no_biblio option in default settings file).
+
+### Changed
+
+ - Introductory text included in first page if there is no summary
+   (better for html).
+ - File location (`find_file/3`) tries all possible extensions for each
+   `vpath` instead of trying all `vpath`s for each possible extension.
+ - Better heuristics for formatting individual `.lpdoc`/`.md`
+   components (without `.pl` files).
+
 ## [3.5.0] - 2022-3-2
 
 Highlights of this release:
