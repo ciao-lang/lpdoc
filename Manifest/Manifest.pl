@@ -1,4 +1,5 @@
 :- bundle(lpdoc).
+version('3.7.0').
 depends([core]).
 alias_paths([
     lpdoc = 'src',
