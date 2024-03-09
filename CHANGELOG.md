@@ -1,5 +1,31 @@
 # Changelog
 
+## [3.7.0] - 2024-2-16
+
+### Added
+
+ - Support common-changelog format for changelogs.
+ - Document deployment of active logic documents (ADL)
+ - Added `@@includecode@{Lang@}@{File@}` to lpdoc
+
+### Fixed
+
+ - Remove leading blank lines in code block env for non-html backends.
+
+### Improved
+
+ - Simplified usage of `@@includefact`, produces verbatim output.
+ - Allow toplevel options in `lpdoc -T`.
+ - Improved documentation of markdown syntax.
+ - Improved documentation of runnable code blocks.
+ - Better CSS colors in HTML backend for debugging marks.
+ - Playground support code (HTML backend) loaded dynamically when
+   runnable code blocks are detected.
+
+### Changed
+
+ - Changelog ported to markdown
+
 ## [3.6.0] - 2022-9-28
 
 ### Added
