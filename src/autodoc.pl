@@ -1513,13 +1513,28 @@ export_list(Base, DocSt, AllExports) :-
 %% ---------------------------------------------------------------------------
 :- pred eliminate_hidden/2 # "Eliminates from the export list those
    predicates affected by a comment with @tt{hide} in the second
-   argument.".
+   argument. It also eliminates by default predicates that start with
+   $, which are typically internal predicates, unless they have a
+   @tt{doinclude} property (treated separately). We also catch
+   @pred{call_in_module/2} (temporary artifact).".
 
 eliminate_hidden([],           []).
 eliminate_hidden([Pred|Preds], EPreds) :-
     pred_has_docprop(Pred, hide),
     !,
     eliminate_hidden(Preds, EPreds).
+% Special case for preds that start with $:
+% do not document unless they have a doinclude.
+eliminate_hidden([F/N|Preds], EPreds) :- 
+    atom_concat('$',_,F),
+    \+ pred_has_docprop(F/N, doinclude),
+    !,
+    eliminate_hidden(Preds, EPreds).
+% Special case for call_in_module/2 (temporary artifact).
+eliminate_hidden([call_in_module/2|Preds], EPreds) :-
+    !,
+    eliminate_hidden(Preds, EPreds).
+% Special case for call_in_module/2 (temporary artifact).
 eliminate_hidden([Pred|Preds], [Pred|EPreds]) :-
     eliminate_hidden(Preds, EPreds).
 
@@ -2671,7 +2686,7 @@ autodoc_gen_alternative(Backend, Alt) :-
 
 % ===========================================================================
 
-:- doc(section, "Auxiliar Definitions").
+:- doc(section, "Auxiliary Definitions").
 
 :- pred eliminate_duplicates(X,Y) # "@var{Y} is @var{X} where
    duplicated elements has been removed".
@@ -2693,11 +2708,13 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 
 :- doc(subsection, "Future Work").
 
+:- doc(bug, "Need to suppport reexports better.").
+
 :- doc(bug, "We need to automatically create a projected, local subset
    of the (clip) bibtex files within the Ciao tree in order to make
    the manuals standalone.").
 
-:- doc(bug, "Fix utf8, texinfo.").
+:- doc(bug, "Fix utf8, texinfo (basically done).").
 
 :- doc(bug, "Include a quick tutorial (e.g., the calculator.pl one).").
 

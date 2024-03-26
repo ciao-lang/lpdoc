@@ -489,12 +489,14 @@ doc_id_type(doinclude, multiple, term). % ignore
      are included in the documentation. Normally, only exported
      predicates are documented. A declaration @tt{:-
      doc(doinclude,}@var{PredName}@tt{).} forces documentation for
-     predicate (or type, property, function, ...)  @var{PredName} to be
-     included even if @var{PredName} is not exported. Also, if
+     predicate (or type, property, function, ...)  @var{PredName} to
+     be included even if @var{PredName} is not exported. Also, if
      @var{PredName} is reexported from another module, a declaration
      @tt{:- doc(doinclude,}@var{PredName}@tt{).} will force the
      documenation for @var{PredName} to appear directly in this
-     module.
+     module. Finally, predicates whose name starts with $ (often used
+     for internal predicates) are not documented by default 
+     and @tt{doinclude} should be used to force their inclusion. 
 
      @begin{itemize}
      @item @em{Example:}
@@ -1351,7 +1353,7 @@ stringcommand(title(B)         ) :- string(B).
 %% Actually, already in assertions
 %% :- new_declaration(doc/2). 
 
-:- doc(bug, "I think that There should be a dependency from here to
+:- doc(bug, "I think that there should be a dependency from here to
    autodoc_doctree.  This is the textual representation of a doctree
    (JFMC)").
 
