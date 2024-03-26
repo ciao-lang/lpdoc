@@ -3,7 +3,9 @@
 :- doc(title, "Admissible values for the documentation configuration options").
 
 :- doc(module, "This module defines the regular types that define the
-   admissible values for the documentation configuration options.").
+   admissible values for the @ref{Documentation configuration
+   options}. See also See @ref{Writing documentation} for an
+   introduction.").
 
 :- doc(section, "Paths").
 

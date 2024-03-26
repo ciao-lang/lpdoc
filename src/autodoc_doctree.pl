@@ -1229,7 +1229,7 @@ toc_kind := subparts      % First level of TOC subtree
       | single(_)     % Special, single section (e.g. toc, copyright, etc.)
       | full          % Global (all except local contents)
       | navmenu(_)    % Navigation menu (for web pages)
-      | global        % Global (all except local contents, hide childs)
+      | global        % Global (all except local contents, hide children)
       | local         % Local contents (current page)
       | indices.      % Indices
 

@@ -11,6 +11,7 @@
 :- doc(module,"
 
 @cindex{generating manuals}
+@cindex{manuals generating}
 
 This section describes how to generate a manual (semi-)automatically
 from a set of source files using @apl{lpdoc} and how to access it. See
@@ -19,11 +20,11 @@ from a set of source files using @apl{lpdoc} and how to access it. See
 
 @section{Basic usage}
 
-@apl{lpdoc} can be used directly from the command line, the
-@apl{Emacs} editor, or from @concept{bundle} manifest files (see
-@lib{bundles} in the Ciao reference manual).
+@apl{lpdoc} can be used directly from the command line, the supported
+IDEs (@apl{Emacs}, @apl{VSC}, the @tt{playground}, etc.), or from
+@concept{bundle} manifest files.
 
-The following provides the basic command-line usage and the main
+The following describes the basic command-line usage and the main
 command line options available when invoking @apl{lpdoc}. The basic
 usage is:
 
@@ -34,20 +35,23 @@ lpdoc [Options] Input
 where @tt{Input} is the input file (a module or a @index{documentation
 configuration} file), and (optional) options specifying the selected
 target format (@tt{-t Format}, as described in @pred{docformat/1}),
-generation options @tt{--Name=Value} (see @lib{doccfg} for a complete
-list), as well as options to view or clean the generated documentation
-files.
+generation options @tt{--Name=Value} as well as options to view or
+clean the generated documentation files.
 
-Use @tt{lpdoc --help} to see a complete list of the available command
-line options.
+Use @tt{lpdoc --help}, @ref{Documentation configuration options} and
+@ref{Admissible values for the documentation configuration options},
+or @lib{doccfg} for a complete list of the available command line and
+configuration file options.
 
 @subsection{Generating manuals}
 
-Manuals can be generated from single module or from a collection of
-modules specified in a @index{documentation configuration} file (as
-described in @ref{Writing documentation}) which defines how the
-documentation is structured, as well as options for its
-generation). For example, executing from the command line:
+Manuals can be generated from a single module, in which case no
+configuration file is needed. More complex documentation can be
+generated from a collection of modules, which are then specified in a
+@index{documentation configuration} file (generally @tt{SETTINGS.pl}
+as described in @ref{Writing documentation}). This file defines how
+the documentation is structured, as well as options for its
+generation. For example, executing from the @em{command line}:
 
 @begin{verbatim}
 lpdoc file.pl
@@ -61,12 +65,14 @@ in @pred{docformat/1} for complex manuals), while the command:
 lpdoc -t pdf file.pl
 @end{verbatim}
 
-@noindent generates a PDF manual. The manuals generated will generally
-be written in the same directory as the input file, and they will have
-the same name but with the format as extension (i.e., in the example
-above it would be @tt{file.pdf}). See @pred{output_dir/1} and
-@pred{output_name/1} options to change the location or name of the
-output).
+@noindent generates a PDF manual. The input file can be in several
+formats including source @tt{.pl} files and files containing only
+markup and/or markdown (@tt{.lpdoc} and @tt{.md} files).  The manuals
+generated will generally be written in the same directory as the input
+file, and they will have the same name but with the format as
+extension (i.e., in the example above it would be @tt{file.pdf}). See
+the @pred{output_dir/1} and @pred{output_name/1} options to change the
+location or name of the output).
 
 To enable incremental documentation generation, @apl{lpdoc} maintains
 intermediate files in a directory named @tt{file.cachedoc/}. See
@@ -74,12 +80,14 @@ intermediate files in a directory named @tt{file.cachedoc/}. See
 and target files.
 
 @cindex{Emacs, generating manuals from}
-@cindex{generating from Emacs}
+@cindex{manuals, generating from Emacs}
 @cindex{Ciao} 
 @cindex{Prolog, Ciao} 
 @cindex{Emacs, LPdoc mode} 
-@noindent @textbf{Generating a manual from the Ciao Emacs mode:} If
-you use the @apl{Emacs} editor (highly recommended in all
+@noindent
+@comment{Generating a manual from the Ciao Emacs mode:}
+
+@noindent If you use the @apl{Emacs} editor (highly recommended in all
 circumstances), then the simplest way to quickly generate a manual is
 by doing it from the @concept{Ciao Emacs mode} (this mode comes with
 the Ciao distribution and is automatically installed with Ciao). The
@@ -89,6 +97,21 @@ corresponding to the file in the buffer being visited by Emacs.  This
 is specially useful while modifying the source of a file, in order to
 check the output that will be produced when incorporating this file
 into a larger document.
+
+@cindex{VSC, generating manuals from}
+@cindex{manuals, generating from VSC}
+@cindex{Playground, generating manuals from}
+@cindex{manuals, generating from the Playground}
+@comment{Generating manuals from other IDEs and from bundles:}
+
+@noindent As mentioned before, you can generate manuals easily also
+from the the other supported IDEs such as @apl{VSC}, the
+@tt{playground}, etc. which all have buttons and menus for the task.
+@concept{Bundle}s can also be configured through their manifest files
+to generate manuals automatically from builder commands (@tt{ciao
+build --docs}), see the documentation on @lib{bundles} in the Ciao
+reference manual.
+
 
 @subsection{Cleaning up documentation}
 
@@ -180,8 +203,29 @@ variable @tt{MANPATH}.
 
 @subsection{Accessing Active Logic Documents} 
 
-The @tt{.html} pages generated by @apl{lpdoc} can be
-conveniently accessed by users in their web browsers without requiring any
-installation. This facilitates easy sharing of @apl{ALD}s.
+@cindex{Active Logic Documents}
 
+Active Logic Documents (ALDs) are standard @apl{lpdoc} documents that
+contain runnable examples and queries within them.  These examples and
+queries run directly in the browser without requiring any
+installation, which greatly facilitates the sharing of ALDs without
+external dependiencies.  The @tt{.html} pages for source files
+containing such code are generated with @apl{lpdoc} in the standard
+way, and they can be viewed in the same way, i.e.:
+
+@begin{verbatim}
+lpdoc file.pl
+@end{verbatim}
+
+or 
+
+@begin{verbatim}
+lpdoc file.md
+@end{verbatim}
+
+and 
+
+@begin{verbatim}
+lpdoc --view file.html/index.html
+@end{verbatim}
 ").

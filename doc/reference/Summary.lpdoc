@@ -27,10 +27,11 @@ style).
 @end{itemize}
 
 The assertions and comments included in the source file need to be
-written using the Ciao system @em{assertion language}.  A simple
-compatibility library is available to make traditional (constraint)
-logic programming systems ignore these assertions and comments
-allowing normal treatment of programs documented in this way.
+written using the Ciao system @em{assertion language} as well as in
+machine-readable comments with @apl{lpdoc}''s markup and/or markdown.
+A simple compatibility library is available to make traditional
+(constraint) logic programming systems ignore these assertions and
+comments allowing normal treatment of programs documented in this way.
 
 The documentation is currently generated directly in @apl{HTML} or
 @apl{texinfo} format. From the @apl{texinfo} output, @apl{lpdoc} also
