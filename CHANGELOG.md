@@ -170,8 +170,8 @@ General improvements and bug fixes:
    Hermenegildo)
  - Eliminated unsupported chars that broke texi manual
    cross-referencing. (Manuel Hermenegildo)
- - Improved treatment of accents (dotless i and dotless j, \o,
-   etc.). (Manuel Hermenegildo)
+ - Improved treatment of accents (dotless i, dotless j, etc.).
+   (Manuel Hermenegildo)
  - Initial size passed to `xdvi` more appropriate for current
    `xdvis`. (Manuel Hermenegildo)
  - Accents in bibliography fixed.  (Manuel Hermenegildo)
