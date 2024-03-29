@@ -1207,8 +1207,11 @@ doc_interface(DocSt) := R :-
     % Multifiles
     findall(F/A, def_multifile_no_internal(Base, F, A, _), RMultifiles),
     eliminate_hidden(RMultifiles, Multifiles),
+    %  - predicates for which it is explicitly requested (via a
+    % @tt{:- doc(doinclude,<PredName>)} directive)
+    DoInclPreds = ~get_doc(doinclude, ignore, DocSt),
     % Check if there are definitions to be documented
-    check_no_definitions(FileType, Exports, Multifiles, DocSt),
+    check_no_definitions(FileType, Exports, Multifiles, DoInclPreds, DocSt),
     % Source files whose contents should not be documented
     NoDocS = ~get_doc(nodoc, ignore, DocSt),
     autodoc_message(verbose, "Not documenting: ~w", [NoDocS]),
@@ -1244,9 +1247,6 @@ doc_interface(DocSt) := R :-
     fmt_definitions_kind(nodecl, "exports", Exports, DocSt, ExportsR),
     %  - multifile predicates
     fmt_definitions_kind(nodecl, "multifiles", Multifiles, DocSt, MultifilesR),
-    %  - predicates for which it is explicitly requested (via a
-    % @tt{:- doc(doinclude,<PredName>)} directive)
-    DoInclPreds = ~get_doc(doinclude, ignore, DocSt),
     filter_out_exports(DoInclPreds, Exports, Internals),
     fmt_definitions_kind(_DefKind, "internals", Internals, DocSt, InternalsR),
     %
@@ -1275,8 +1275,8 @@ filetype_include_or_package(include).
 filetype_include_or_package(package).
 
 % Show a warning if there are no definitions to be documented.
-check_no_definitions(FileType, Exports, Multifiles, DocSt) :-
-    ( ( Exports=[], Multifiles=[],
+check_no_definitions(FileType, Exports, Multifiles, DoInclPreds, DocSt) :-
+    ( ( Exports=[], Multifiles=[], DoInclPreds=[], 
         \+ filetype_include_or_package(FileType)
       ) ->
         docst_inputfile(DocSt, I),
