@@ -1072,6 +1072,9 @@ where each line of input produces a line of output.}
 %
 \let\implicitmath = $
 \def\math#1{\implicitmath #1\implicitmath}
+%% MH Added
+\def\frac#1#2{{\begingroup#1\endgroup\over#2}}
+\def\dfrac#1#2{{\displaystyle\frac{#1}{#2}}}
 
 % @bullet and @minus need the same treatment as @math, just above.
 \def\bullet{\implicitmath\ptexbullet\implicitmath}
@@ -5666,6 +5669,7 @@ width0pt\relax} \fi
   \DeclareUnicodeCharacter{20AC}{\euro}
 
   \DeclareUnicodeCharacter{2192}{\expansion}
+  \DeclareUnicodeCharacter{2197}{$\nearrow$}
   \DeclareUnicodeCharacter{21D2}{\result}
 
   \DeclareUnicodeCharacter{2212}{\minus}

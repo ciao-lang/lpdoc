@@ -418,7 +418,7 @@ parse_predname(Functor, Arity, PredNameS) :-
     atom_codes(Functor, FunctorS),
     number_codes(Arity, ArityS).
 parse_predname(0, 0, PredNameS) :-
-    autodoc_message(error, "illegal predicate name ~s in code inclusion command",
+    autodoc_message(error, "Illegal predicate name ~s in code inclusion command",
         [PredNameS]).
 
 % TODO: incomplete parsing

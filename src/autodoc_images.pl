@@ -60,7 +60,7 @@ locate_and_convert_image(SrcSpecS, AcceptedExts, DocSt, TargetFileS) :-
         cached_image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt),
         %
         atom_codes(TargetFile, TargetFileS)
-    ; autodoc_message(error, "-> Image ~w not found in any known format", [SrcSpec]),
+    ; autodoc_message(error, "-> Image ~w not found in (or convertible to) format accepted by backend: ~w", [SrcSpec,AcceptedExts]),
       fail
     ).
 

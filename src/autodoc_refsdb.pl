@@ -99,7 +99,7 @@ pretty_cite(Ref, DocSt, Text) :-
     ; Text = "?", % Unknown cite
       % TODO: Improve warning message
       atom_codes(RefAtom, Ref),
-      autodoc_message(error, "unresolved bibliographical reference '~w'", [RefAtom])
+      autodoc_message(error, "Unresolved bibliographical reference '~w'", [RefAtom])
     ).
 
 % ---------------------------------------------------------------------------

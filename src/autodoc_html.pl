@@ -153,12 +153,16 @@ rw_command(email(Address), _DocSt, NBody) :- !,
 rw_command(email(Text, Address), _DocSt, NBody) :- !,
     NBody = [raw("<a href=""mailto:"), Address, raw(""">"), Text, raw("</a>")].
 rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
-    locate_and_convert_image(IFile0, ['.png', '.jpg'], DocSt, IFile),
-    ( Opts = [] ->
-        NBody = [raw("<img src="""), raw(IFile), raw(""">")]
-    ; Opts = [Width, Height] ->
-        NBody = [raw("<img src="""), raw(IFile), raw(""" width="), raw(Width),
-                 raw(" height="), raw(Height), raw(">")]
+    ( locate_and_convert_image(IFile0, ['.png', '.jpg'], DocSt, IFile) -> 
+        ( Opts = [] ->
+            NBody = [raw("<img src="""), raw(IFile), raw(""">")]
+        ; Opts = [Width, Height] ->
+            NBody = [raw("<img src="""), raw(IFile), raw(""" width="), raw(Width),
+                     raw(" height="), raw(Height), raw(">")]
+        )
+    ; autodoc_message(error, "-> Skipping image ~w", [IFile0]),
+      NBody = [htmlenv(tt, [raw("[ Image: "),raw(IFile0),raw(" ]<br //>")])]
+      % NBody = [raw("[ Image: "),raw(IFile0),raw(" ]<br //>")]
     ).
 rw_command(bf(Body),  _DocSt, R) :- !, R = htmlenv(strong, Body).
 rw_command(em(Body),  _DocSt, R) :- !, R = htmlenv(em, Body).
@@ -418,7 +422,7 @@ try_highlight(Lang, Text, TextR) :-
       \+ setting_value(syntax_highlight, no) -> % (default is 'yes')
         ( highlight_string_to_html_string(LangAtm, Text, HtmlStr) ->
             TextR = raw(HtmlStr)
-        ; autodoc_message(error,"could not highlight code block for ~w syntax", [LangAtm]),
+        ; autodoc_message(error,"Could not highlight code block for ~w syntax", [LangAtm]),
           fail
         )
     ; fail

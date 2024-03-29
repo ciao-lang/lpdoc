@@ -172,7 +172,7 @@ setting_value_or_default(Name, Value) :-
     ; ( Value0 = ~default_val(Name) ->
           Value = Value0
       ; autodoc_message(error,
-          "no ~w provided and no default value available.", [Name]),
+          "No ~w provided and no default value available", [Name]),
         fail
       )
     ). 

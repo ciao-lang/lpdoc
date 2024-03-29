@@ -121,10 +121,10 @@ gen(Format) :-
 % report_cmd(BegEnd, Ext) :-
 %       file_format_name(Ext, FormatName),
 %       !,
-%       autodoc_message(progress, "~w manual generation in ~w (~w) format.",
+%       autodoc_message(progress, "~w manual generation in ~w (~w) format",
 %           [BegEnd, Ext, FormatName]).
 % report_cmd(BegEnd, Base) :-
-%       autodoc_message(progress, "~w processing of '~w'.", [BegEnd, Base]).
+%       autodoc_message(progress, "~w processing of '~w'", [BegEnd, Base]).
 
 % Load doc_module (for extensions)
 % TODO: unload is missing!
@@ -255,7 +255,7 @@ add_settings_dep(SpecF) := ['SOURCE'(SpecF)|Fs] :-
     components_target(Backend,dr,FdrComps),
     Deps = [gen_doctree(Backend,Spec)|FdrComps].
 'fsmemo.run'(compute_grefs(Backend)) :- !,
-    autodoc_message(verbose, "Computing globally resolved references."),
+    autodoc_message(verbose, "Computing globally resolved references"),
     compute_grefs(Backend).
 
 compute_grefs(Backend) :-
@@ -294,7 +294,7 @@ translate_doctree(Backend, FileBase) :-
     components_target(Backend,cr,FcrComps),
     Deps = [translate_doctree(Backend,Spec)|FcrComps].
 'fsmemo.run'(autodoc_finish(Backend)) :- !,
-    autodoc_message(verbose, "Post-processing the document."),
+    autodoc_message(verbose, "Post-processing the document"),
     autodoc_finish(Backend).
 
 % ---------------------------------------------------------------------------
@@ -306,7 +306,7 @@ translate_doctree(Backend, FileBase) :-
 'fsmemo.deps'(autodoc_gen_alternative(Backend,_Alt),Deps) :- !,
     Deps = [autodoc_finish(Backend)].
 'fsmemo.run'(autodoc_gen_alternative(Backend,Alt)) :- !,
-    autodoc_message(verbose, "Generating document in ~w format.",[Alt]),
+    autodoc_message(verbose, "Generating document in ~w format",[Alt]),
     autodoc_gen_alternative(Backend,Alt).
 
 % ---------------------------------------------------------------------------

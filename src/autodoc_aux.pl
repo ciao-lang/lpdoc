@@ -31,7 +31,7 @@ read_file(File, Content) :-
     read_stream(IS, Content),
     close(IS).
 read_file(File, []) :-
-    autodoc_message(error,"file ~w not found", [File]).
+    autodoc_message(error,"File ~w not found", [File]).
 
 % TODO: duplicate of read_to_end/2?
 read_stream(IS, Content) :-

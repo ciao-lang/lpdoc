@@ -153,21 +153,32 @@ rw_command(email(Address), _, NBody) :- !,
 rw_command(email(Text, Address), _DocSt, NBody) :- !,
     NBody = [raw("@email{"), Address, raw(","), Text, raw("}")].
 rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
-    locate_and_convert_image(IFile0, ['.eps'], DocSt, IFile1),
-    ( append(IFile2, ".eps", IFile1) -> true % required by texinfo.tex
-    ; IFile2 = IFile1
-    ),
-    atom_codes(AFile2, IFile2),
-    % TODO: Possible bug here: make sure that IFile is a relative
-    % file and that images are preserved (for distributing .texi)
-    docst_backend(DocSt, Backend),
-    absfile_for_aux(AFile2, Backend, AFile),
-    atom_codes(AFile, IFile),
-    ( Opts = [] ->
-        NBody = [raw("@image{"), raw(IFile), raw("}")]
-    ; Opts = [Width, Height] ->
-        NBody = [raw("@image{"), raw(IFile), raw(","), raw(Width),
-                 raw("pt,"), raw(Height), raw("pt}")]
+    ( locate_and_convert_image(IFile0, ['.eps'], DocSt, IFile1) -> 
+        ( append(IFile2, ".eps", IFile1) -> true % required by texinfo.tex
+        ; IFile2 = IFile1
+        ),
+        atom_codes(AFile2, IFile2),
+        % TODO: Possible bug here: make sure that IFile is a relative
+        % file and that images are preserved (for distributing .texi)
+        % 
+        % MH: Call to absfile_for_aux/3 (and docst_backend/2) not
+        % needed here since we access the images when running tex
+        % inside the cache dir. However, need to run the other
+        % converters inside the cache directory (below).
+        % 
+        % docst_backend(DocSt, Backend),
+        % absfile_for_aux(AFile2, Backend, AFile),
+        % 
+        AFile=AFile2,
+        atom_codes(AFile, IFile),
+        ( Opts = [] ->
+            NBody = [raw("@image{"), raw(IFile), raw("}")]
+        ; Opts = [Width, Height] ->
+            NBody = [raw("@image{"), raw(IFile), raw(","), raw(Width),
+                     raw("pt,"), raw(Height), raw("pt}")]
+        )
+    ; autodoc_message(error, "-> Skipping image ~w", [IFile0]),
+      NBody = [raw("[ Image: "),raw(IFile0),raw(" ]")]
     ).
 rw_command('}',                _, raw("@}")) :- !.
 rw_command('{',                _, raw("@{")) :- !.
@@ -807,42 +818,39 @@ infodir_base(Mod, ModInfodir) :-
 
 :- multifile autodoc_gen_alternative_hook/2.
 autodoc_gen_alternative_hook(texinfo, Alt) :-
-    texinfo_gen_alternative(Alt).
+    texi_file_and_base(TexiFile, _, FileBase),
+    texinfo_gen_alternative(Alt, TexiFile, FileBase).
+    
 
 % TODO: Fix run_* so that logs are written in separate directories
 % TODO: Computations are repeated! (not a problem if only PDF is generated)
-texinfo_gen_alternative(dvi) :- !,
-    texi_file_and_base(TexiFile, _, FileBase),
+texinfo_gen_alternative(dvi, TexiFile, FileBase) :- !,
     DVIFile = ~atom_concat(FileBase, '.dvi'),
     do_texi_to_dvi(TexiFile, DVIFile, FileBase),
     clean_tex_intermediate(TexiFile).
 %
-texinfo_gen_alternative(ps) :- !,
-    texi_file_and_base(TexiFile, _, FileBase),
+texinfo_gen_alternative(ps, TexiFile, FileBase) :- !,
     DVIFile = ~atom_concat(FileBase, '.dvi'),
     PSFile = ~atom_concat(FileBase, '.ps'),
     do_texi_to_dvi(TexiFile, DVIFile, FileBase),
-    do_dvi_to_ps(DVIFile, PSFile),
+    do_dvi_to_ps(TexiFile, DVIFile, PSFile),
     clean_tex_intermediate(TexiFile).
 %
-texinfo_gen_alternative(pdf) :- !,
-    texi_file_and_base(TexiFile, _, FileBase),
+texinfo_gen_alternative(pdf, TexiFile, FileBase) :- !,
     DVIFile = ~atom_concat(FileBase, '.dvi'),
     PSFile = ~atom_concat(FileBase, '.ps'),
     PDFFile = ~atom_concat(FileBase, '.pdf'),
     do_texi_to_dvi(TexiFile, DVIFile, FileBase),
-    do_dvi_to_ps(DVIFile, PSFile),
+    do_dvi_to_ps(TexiFile, DVIFile, PSFile),
     do_ps_to_pdf(PSFile, PDFFile),
     clean_tex_intermediate(TexiFile).
 %
-texinfo_gen_alternative(info) :- !,
-    texi_file_and_base(TexiFile, _, FileBase),
-    atom_concat(FileBase, '.info', InfoFile),
-    atom_concat(FileBase, '.infoindex', InfoindexFile),
+texinfo_gen_alternative(info, TexiFile, FileBase) :- !,
+    InfoFile = ~atom_concat(FileBase, '.info'),
+    InfoindexFile = ~atom_concat(FileBase, '.infoindex'),
     do_texi_to_info(TexiFile, InfoFile, InfoindexFile, FileBase).
 %
-texinfo_gen_alternative(ascii) :- !,
-    texi_file_and_base(TexiFile, _, FileBase),
+texinfo_gen_alternative(ascii, TexiFile, FileBase) :- !,
     AsciiFile = ~atom_concat(FileBase, '.ascii'),
     do_texi_to_ascii(TexiFile, AsciiFile, FileBase).
 
@@ -854,6 +862,7 @@ texinfo_gen_alternative(ascii) :- !,
 %% This depends on how smart your ~tex and ~texindex are...
 % TODO: We allow errors in ~tex (can it be fixed?)
 do_texi_to_dvi(TexiFile, DVIFile, FileBase) :-
+    autodoc_message(verbose, "Generating .dvi using ~w", [~tex]),
     texipaths(TexiFile, TexiDir, TexiName, FileBase, _AbsFileBase),
     copy_texinfo_style_if_needed(TexiDir),
     TexArgs = ['-file-line-error-style',
@@ -875,7 +884,8 @@ do_texi_to_dvi(TexiFile, DVIFile, FileBase) :-
     atom_concat(TexiNoext, '.dvi', DVIFile0),
     file_exists(DVIFile0),
     del_file_nofail(DVIFile),
-    rename_file(DVIFile0, DVIFile).
+    copy_file(DVIFile0, DVIFile, [overwrite]).
+    % rename_file(DVIFile0, DVIFile).
 
 run_texindex(Indices, LogBaseIdx, TexiDir) :-
     ( find_executable(~awk,_) ->
@@ -912,24 +922,34 @@ copy_texinfo_style_if_needed(TexiDir) :-
 
 %% Make sure it generates postscript fonts, not bitmaps (selecting
 %% -Ppdf often does the trick). -z preserves hypertext links.
-do_dvi_to_ps(DVIFile, PSFile) :-
+do_dvi_to_ps(TexiFile, _DVIFile, PSFile) :-
+    autodoc_message(verbose, "Generating .ps using ~w", [~dvips]),
     cmd_logbase(texinfo, 'run_dvips', LogBase),
-    autodoc_process_call(path(~dvips), ['-z', '-Ppdf', DVIFile, '-o', PSFile],
-                         [logbase(LogBase)]),
+    path_split(TexiFile, TexiDir, TexiName),
+    atom_concat(TexiNoext,'.texic',TexiName),
+    atom_concat(TexiNoext,'.dvi',CDVIFile),
+    autodoc_process_call(path(~dvips), ['-z', '-Ppdf', CDVIFile, '-o', PSFile],
+                         [cwd(TexiDir), logbase(LogBase)]),
     % This, really to fix a bug in some versions of dvips:
-    warn_on_nosuccess(del_files_nofail(['head.tmp', 'body.tmp'])).
+    warn_on_nosuccess(del_files_nofail(['head.tmp', 'body.tmp'])),
+    path_concat(TexiDir,PSFile,CPSFile),
+    rename_file(CPSFile, PSFile).
+
+
 
 % (Using ps2pdf)
 % Good for ps figures, but must make sure that no bitmap fonts are
 % generated (at least -Ppdf in dvips MUST be set)
 % TODO: Use pdftex instead?
 do_ps_to_pdf(PSFile, PDFFile) :-
+    autodoc_message(verbose, "Generating .pdf using ~w", [~ps2pdf]),
     setting_value_or_default(papertype, PaperType),
     ghostscript_papertype(PaperType, GSPaperType),
     Env = ['GS_OPTIONS' = ~atom_concat('-sPAPERSIZE=', GSPaperType)],
     cmd_logbase(texinfo, 'run_ps2pdf', LogBase),
     autodoc_process_call(path(~ps2pdf), [PSFile, PDFFile],
                          [env(Env), logbase(LogBase)]).
+
 
 ghostscript_papertype(letterpaper, letter).
 ghostscript_papertype(smallbook,   isob5). % This is an approximation
@@ -949,8 +969,7 @@ texipaths(TexiFile, TexiDir, TexiName, FileBase0, FileBase) :-
 %% but needed: otherwise incomplete info file generated if there are any errors
 %% As an alternative, set error limit very high... --error-limit 100000
 do_texi_to_info(TexiFile, InfoFile, InfoindexFile, FileBase) :-
-    % autodoc_message(note, "Generating info file and index for ~w using ~w",
-    %    [FileBase, ~makeinfo]),
+    autodoc_message(verbose, "Generating info file and index for ~w using ~w",[FileBase, ~makeinfo]),
     texipaths(TexiFile, TexiDir, TexiName, FileBase, AbsFileBase),
     atom_concat(AbsFileBase, '.info.tmp', TmpFile2),
     %
@@ -975,6 +994,7 @@ do_texi_to_info(TexiFile, InfoFile, InfoindexFile, FileBase) :-
     delete_file(TmpFile2).
 
 do_texi_to_ascii(TexiFile, AsciiFile, FileBase) :-
+    autodoc_message(verbose, "Generating .txt using ~w", [~makeinfo]),
     texipaths(TexiFile, TexiDir, TexiName, FileBase, AbsFileBase),
     atom_concat(AbsFileBase, '.ascii.tmp', TmpFile2),
     cmd_logbase(texinfo, 'run_makeinfo_ascii', LogBase),

@@ -1131,7 +1131,7 @@ version_string(Version, Str) :-
     ),
     list_concat([Sv, " ", Sd], Str).
 version_string(Version, Str) :-
-    autodoc_message(warning, "unrecognized version format '~w'", [Version]),
+    autodoc_message(warning, "Unrecognized version format '~w'", [Version]),
     Str = "".
 
 :- export(parse_changelog_version/3).
@@ -1206,7 +1206,7 @@ resolve_ref(Ref, FullTree, R) :-
         R = ref_link(Link, Ref)
     ; % TODO: Emit warning here?
       R = missing_link(Ref),
-      autodoc_message(warning, "could not resolve @ref{~s}~n", [Ref])
+      autodoc_message(warning, "Could not resolve @ref{~s}~n", [Ref])
     ).
 
 % ---------------------------------------------------------------------------

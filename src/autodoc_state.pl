@@ -515,7 +515,7 @@ enum_indices(IdxName, DocSt) :-
 get_doc(Id, MessageType, DocSt, Value) :-
     ( doc_id_type(Id, Type, ValueType) -> 
         get_doc_(Id, Type, ValueType, MessageType, DocSt, Value)
-    ; autodoc_message(error, "Unrecognized doc/comment declaration type '~w'.",[Id]),
+    ; autodoc_message(error, "Unrecognized doc/comment declaration type '~w'",[Id]),
       fail % TODO: recover from this error?
     ). 
 
@@ -558,7 +558,7 @@ treat_missing_docdecl(dofail, _, _) :- !, fail.
 treat_missing_docdecl(MessageType, Id, DocSt) :-
     docst_inputfile(DocSt, S),
     autodoc_message(MessageType, loc(S, 1, 1),
-        "no "":- doc(~w,...)"" declaration found", [Id]).
+        "No "":- doc(~w,...)"" declaration found", [Id]).
 
 :- export(get_doc_changes/2).
 % Retrieve the changelog (list of change/2).
@@ -589,7 +589,7 @@ get_doc_pred_varnames(F/A, CArgs) :-
     ( all_vars(CArgs) ->
         true
     ; % TODO: should we create new non-colliding names instead?
-      autodoc_message(warning, Loc, "nonvariable argument(s) in comment head ~w, "
+      autodoc_message(warning, Loc, "Nonvariable argument(s) in comment head ~w, "
             || "variable names ignored", [CH]),
       fail
     ),

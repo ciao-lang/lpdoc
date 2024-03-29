@@ -125,7 +125,7 @@ get_autodoc_opts(_Backend, Mod, Opts) :-
         % MH: agreed, not the right place; also, should be a NOTE
         % Complain about not defined values (only when documenting mainmod)
         warn_if_empty(Indices,
-                  "No value specifed for 'index' setting, using defaults.")
+                  "No value specifed for 'index' setting, using defaults")
     ; Opts0 = ~all_setting_values(doc_compopts)
     ),
     Opts = [indices(Indices),
@@ -176,7 +176,7 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
     docst_new_with_src(Backend, FileBase, FileExt, Opts, DocSt),
     %
     docst_filetype(DocSt, FileType),
-    autodoc_message(verbose, "File being documented as '~w'.", [FileType]),
+    autodoc_message(verbose, "File being documented as '~w'", [FileType]),
     get_mod_comment(DocSt, ModCommentR, Changes),
     get_last_version(Changes, Version, GlobalVers, DocSt),
     %
@@ -200,7 +200,7 @@ autodoc_gen_doctree(Backend, FileBase, FileExt, Opts, Mod) :-
     flush_output(user),
     !.
 autodoc_gen_doctree(_, FileBase, _, _, _) :-
-    autodoc_message(error,"formatting ~w could not be completed", [FileBase]).
+    autodoc_message(error,"Formatting ~w could not be completed", [FileBase]).
 
 % Scan the references, save them, and save the doctree.
 doctree_scan_and_save(_, _, DocSt) :-
@@ -355,7 +355,7 @@ add_author_defs([A|As], DocSt, [B|Bs]) :-
 
 fmt_infodir_entry(DocSt, Version, Mod) :-
     % TODO: Do not generate if not necessary (e.g. readme files...)
-    autodoc_message(verbose, "Generating info index"),
+    autodoc_message(progress, "Generating info index"),
     docst_backend(DocSt, Backend),
     main_output_name(Backend, InfoBase),
     % ( docst_opt(no_version, DocSt) ->
@@ -439,7 +439,7 @@ get_last_version_(Changes, Version, GlobalVers, Dir, DocSt) :-
     %% version maintained in dir (computed relative to .pl file Dir!)
     path_concat(Dir, VDir, DirVDir),
     path_concat(DirVDir, 'GlobalChangeLog', ChangeLogFile),
-    autodoc_message(verbose, "Getting global version from ~w.", [ChangeLogFile]),
+    autodoc_message(verbose, "Getting global version from ~w", [ChangeLogFile]),
     ( file_exists(ChangeLogFile) ->
         open(ChangeLogFile, read, CLFS),
         read(CLFS, (:- doc(GlobalVers, _))),
@@ -456,13 +456,13 @@ get_last_version_(Changes, Version, Version, _Dir, DocSt) :-
 
 get_last_local_version(Changes, Version, DocSt) :-
     %% get last version in doc/2 decls in file
-    autodoc_message(verbose, "Getting local version from file."),
+    autodoc_message(verbose, "Getting local version from file"),
     ( Changes = [change(LVersion, _)|_] ->
         Version = LVersion
     ; ( setting_value(comment_version, yes) ->
           docst_inputfile(DocSt, I),
           autodoc_message(note, loc(I, 1, 1),
-            "no "":- doc(version(...),...)"" declaration found", [])
+            "No "":- doc(version(...),...)"" declaration found", [])
       ; true
       ),
       Version = []
@@ -1000,7 +1000,7 @@ fmt_stability(DocSt) := RText :-
         ; % MH: Is there a better way? (I had to export it...)
           ( get_docdecl(stability, _, _, Loc) -> true ; fail ), % Get first
           autodoc_message(error,Loc,
-            "Unrecognized stability level '~w'.", [Stability]),
+            "Unrecognized stability level '~w'", [Stability]),
           RText = []
         )
     ; RText = [] % No stability assertion
@@ -1198,7 +1198,7 @@ doc_interface(DocSt) := R :-
     docst_mvar_get(DocSt, fileinfo, FileSt),
     FileSt = fileinfo(M, Base),
     %
-    autodoc_message(verbose, "Generating library header."),
+    autodoc_message(verbose, "Generating library header"),
     %
     docst_filetype(DocSt, FileType),
     % Exported predicates
@@ -1211,7 +1211,7 @@ doc_interface(DocSt) := R :-
     check_no_definitions(FileType, Exports, Multifiles, DocSt),
     % Source files whose contents should not be documented
     NoDocS = ~get_doc(nodoc, ignore, DocSt),
-    autodoc_message(verbose, "Not documenting: ~w.", [NoDocS]),
+    autodoc_message(verbose, "Not documenting: ~w", [NoDocS]),
     % - Operators
     get_ops(FileType, NoDocS, SOps),
     %  - The modes (only "exported" if package or include)
@@ -1281,7 +1281,7 @@ check_no_definitions(FileType, Exports, Multifiles, DocSt) :-
       ) ->
         docst_inputfile(DocSt, I),
         autodoc_message(warning, loc(I, 1, 1),
-            "no exported predicates to be documented", [])
+            "No exported predicates to be documented", [])
     ; true
     ).
 
@@ -1507,7 +1507,7 @@ export_list(Base, DocSt, AllExports) :-
       % but for which there is an assertion?
       findall(F/A, defines(Base, F, A, _, _), DupAllExports),
       eliminate_duplicates(DupAllExports, AllExports),
-      autodoc_message(verbose, "Documenting all defined predicates: ~w.", [AllExports])
+      autodoc_message(verbose, "Documenting all defined predicates: ~w", [AllExports])
     ).
 
 %% ---------------------------------------------------------------------------
@@ -1841,7 +1841,7 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
     FileSt = fileinfo(M, Base),
     %
     autodoc_message(verbose, 
-       "Generating documentation for predicate or declaration ~w:~w/~w.", 
+       "Generating documentation for predicate or declaration ~w:~w/~w", 
        [M, F, A]),
     functor(P, F, A),
     predicate_usages(P, DefKind, M, DocSt, Usages),
@@ -1868,7 +1868,7 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
           NCommentR = string_esc("No further documentation available for this predicate."),
           get_first_loc_for_pred(F, A, Loc),
           autodoc_message(note,Loc,
-            "no assertions or comments found for ~w ~w", [PType, F/A])
+            "No assertions or comments found for ~w ~w", [PType, F/A])
       ; %% Else, probably imported (otherwise, fail globally)
         fail
       )
@@ -1899,7 +1899,7 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
                 FS, "/", AS,
                 "}\n"], TNComment), %% Added \n
         get_first_loc_for_pred(F, A, Loc),
-        autodoc_message(note, Loc, "no comment text for ~s ~w, including definition", [PropText, F/A]),
+        autodoc_message(note, Loc, "No comment text for ~s ~w, including definition", [PropText, F/A]),
         parse_docstring0(DocSt, TNComment, NNCommentR0)
     ; NNCommentR0 = NCommentR
     ),      
@@ -1932,15 +1932,15 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
     %% in the file in which they are defined!
     !,
     ( pred_has_docprop(F/A, doinclude) ->
-        autodoc_message(verbose, "Following reexport chain for ~w to ~w.", [F/A, UM]),
+        autodoc_message(verbose, "Following reexport chain for ~w to ~w", [F/A, UM]),
         fmt_definition(F/A, DefKind, fileinfo(UM, UBase), DocSt, R)
     ;
-        autodoc_message(verbose, "~w reexported from ~w (not documented).", [F/A, UM]),
+        autodoc_message(verbose, "~w reexported from ~w (not documented)", [F/A, UM]),
         Type = udreexp,
         assrt_type_text(Type, PText, _, _),
         atom_codes(UM, UMS),
         list_concat(["\n\Imported from @lib{", UMS,
-                "} (see the corresponding documentation for details)."],
+                "} (see the corresponding documentation for details)"],
             Text),
         parse_docstring0(DocSt, Text, RText),
         R = [defpred(local_label(_), Type, PText, F/A, [], [~add_lines(RText)]),
@@ -1948,7 +1948,7 @@ fmt_definition(F/A, DefKind, FileSt, DocSt, R) :-
     ).
 fmt_definition(P, _, _FileSt, _DocSt, R) :-
     R = [],
-    autodoc_message(error,_, "could not document predicate or new declaration ~w", [P]).
+    autodoc_message(error,_, "Could not document predicate or new declaration ~w", [P]).
 
 %% ---------------------------------------------------------------------------
 %% Abstracted out parts of doc_predicate:
@@ -2066,7 +2066,7 @@ handle_pred_type(AType, R, Type, Loc) :-
     %% Must be identical to previously found type.
     ( Type == AType -> true
     ; autodoc_message(warning, Loc,
-        "incompatible assertion types ~w and ~w", [Type, AType]),
+        "Incompatible assertion types ~w and ~w", [Type, AType]),
       fail
     ),
     look_for_pred_type(R, _, Type).
@@ -2328,7 +2328,7 @@ doc_site(T, Loc, Cond, Props, P, PType, Status, DocSt, R) :-
 doc_site(T, Loc, _Cond, Props, P, _PType, _Status, _DocSt, R) :-
     R = [],
     autodoc_message(warning, Loc,
-        "problem while formatting ~w properties ~w for predicate ~w",
+        "Problem while formatting ~w properties ~w for predicate ~w",
         [T, Props, P]).
 
 fmt_site_begin(Text, bullet, BeginR) :-
@@ -2432,7 +2432,7 @@ doc_property(Prop, Loc, P, DocSt, PropR) :-
     ; NPM = undefined,
       DocR = undefined,
       VarDict = [],
-      autodoc_message(error, Loc, "unknown property ~w in assertion for ~w", [Prop, P]),
+      autodoc_message(error, Loc, "Unknown property ~w in assertion for ~w", [Prop, P]),
       flush_output(user)
     ),
     fmt_property(DocSt, Prop, NPM, DocR, VarDict, PropR).
@@ -2471,7 +2471,7 @@ fmt_property(DocSt, Prop, PM, DocString, VarDict, PropR) :-
     ).
 fmt_property(_DocSt, Prop, PM, _DocString, _VarDict, PropR) :-
     PropR = [],
-    autodoc_message(error,"could not format property ~w:~w", [PM, Prop]).   
+    autodoc_message(error,"Could not format property ~w:~w", [PM, Prop]).   
 
 fmt_propcode(PM, Prop, DocSt, R) :-
     % TODO: the module is ignored for indexing; wrong
@@ -2502,7 +2502,7 @@ doc_description(Desc, _Loc, P, _DocSt, DescR) :-
     ),
     !,
     DescR = [].
-%%      autodoc_message(note, "no comment found for usage in ~w/~w",[F,A]).
+%%      autodoc_message(note, "No comment found for usage in ~w/~w",[F,A]).
 doc_description(Desc, Loc, _P, DocSt, DescR) :-
     parse_docstring_loc(DocSt, Loc, Desc, DescR).
 
@@ -2598,7 +2598,7 @@ fmt_commas_period([A|As], [R|Rs]) :-
 references (including bibliography)".
 % (do not call for components)
 autodoc_compute_grefs(Backend, Mod, Opts) :-
-    autodoc_message(verbose, "Globally resolving references", []),
+    autodoc_message(progress, "Resolving references globally", []),
     docst_new_no_src(Backend, Mod, Opts, DocSt),
     compute_refs_and_biblio(DocSt),
     autodoc_message(verbose,"Done resolving references", []).
@@ -2611,7 +2611,7 @@ autodoc_compute_grefs(Backend, Mod, Opts) :-
 :- pred autodoc_translate_doctree/3 # "Translate the doctree using the specific
 backend".
 autodoc_translate_doctree(Backend, Opts, Mod) :-
-    autodoc_message(verbose, "(Backend ~w) Translating intermediate representation of ~w", [Backend, Mod]),
+    autodoc_message(progress, "Running ~w backend for ~w", [Backend, Mod]),
     docst_new_no_src(Backend, Mod, Opts, DocSt),
     absfile_for_subtarget(Mod, Backend, cr, OutFile),
     doctree_restore_and_write(Mod, OutFile, DocSt),
@@ -2621,7 +2621,7 @@ autodoc_translate_doctree(Backend, Opts, Mod) :-
         fmt_infodir_entry2(DocSt, Mod)
     ; true
     ),
-    autodoc_message(verbose, "(Backend ~w) Done translating intermediate representation of ~w", [Backend,Mod]).
+    autodoc_message(verbose, "Done running ~w backend for ~w", [Backend,Mod]).
 
 % ---------------------------------------------------------------------------
 
@@ -2708,13 +2708,16 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 
 :- doc(subsection, "Future Work").
 
-:- doc(bug, "Need to suppport reexports better.").
+:- doc(bug, "Reexports: now included if 'doinclude'. Perhaps instead
+   include by default and not do it with 'hide'?").
 
-:- doc(bug, "We need to automatically create a projected, local subset
-   of the (clip) bibtex files within the Ciao tree in order to make
-   the manuals standalone.").
+:- doc(bug, "We need to have a stanalone way to create a projected,
+   local subset of the (clip) bibtex files within the Ciao tree in
+   order to make the manuals standalone. Probably with the bibtools
+   bundle. For now it is done with a script and bibtool (see the
+   alldocs bundle).").
 
-:- doc(bug, "Fix utf8, texinfo (basically done).").
+:- doc(bug, "Fix utf8, texinfo (basically done). Images?").
 
 :- doc(bug, "Include a quick tutorial (e.g., the calculator.pl one).").
 
