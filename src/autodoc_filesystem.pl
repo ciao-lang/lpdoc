@@ -178,6 +178,7 @@ file_format_name(infoindex, 'GNU info hypertext (directory)').
 file_format_name(manl,  'Unix man').
 
 :- export(supported_file_format/1).
+:- regtype supported_file_format(F) # "@var{F} is a supported LPdoc target doc format.".
 supported_file_format(texi).
 supported_file_format(dvi).
 supported_file_format(ps).

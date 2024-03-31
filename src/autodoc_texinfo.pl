@@ -153,33 +153,45 @@ rw_command(email(Address), _, NBody) :- !,
 rw_command(email(Text, Address), _DocSt, NBody) :- !,
     NBody = [raw("@email{"), Address, raw(","), Text, raw("}")].
 rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
-    ( locate_and_convert_image(IFile0, ['.eps'], DocSt, IFile1) -> 
-        ( append(IFile2, ".eps", IFile1) -> true % required by texinfo.tex
-        ; IFile2 = IFile1
-        ),
-        atom_codes(AFile2, IFile2),
-        % TODO: Possible bug here: make sure that IFile is a relative
-        % file and that images are preserved (for distributing .texi)
-        % 
-        % MH: Call to absfile_for_aux/3 (and docst_backend/2) not
-        % needed here since we access the images when running tex
-        % inside the cache dir. However, need to run the other
-        % converters inside the cache directory (below).
-        % 
-        % docst_backend(DocSt, Backend),
-        % absfile_for_aux(AFile2, Backend, AFile),
-        % 
-        AFile=AFile2,
-        atom_codes(AFile, IFile),
-        ( Opts = [] ->
-            NBody = [raw("@image{"), raw(IFile), raw("}")]
-        ; Opts = [Width, Height] ->
-            NBody = [raw("@image{"), raw(IFile), raw(","), raw(Width),
-                     raw("pt,"), raw(Height), raw("pt}")]
-        )
-    ; autodoc_message(error, "-> Skipping image ~w", [IFile0]),
-      NBody = [raw("[ Image: "),raw(IFile0),raw(" ]")]
-    ).
+    all_setting_values(docformat, Formats),
+    ( \+ Formats = [info],
+      % Not generating only info: need eps
+      locate_and_convert_image(IFile0, ['.eps'], DocSt, IFile1) -> 
+          ( append(IFile2, ".eps", IFile1) -> true % required by texinfo.tex
+          ; IFile2 = IFile1
+          ),
+          % TODO: Possible bug here: make sure that IFile is a relative
+          % file and that images are preserved (for distributing .texi)
+          % 
+          % MH: Call to absfile_for_aux/3 (and docst_backend/2) not
+          % needed here since we access the images when running tex
+          % inside the cache dir. However, need to run the other
+          % converters inside the cache directory (below).
+          % 
+          % atom_codes(AFile2, IFile2),
+          % docst_backend(DocSt, Backend),
+          % absfile_for_aux(AFile2, Backend, AFile),
+          % atom_codes(AFile, IFile),
+          %
+          build_texinfo_image_command(IFile2,Opts,NBody),
+          ( member(info,Formats) ->
+              locate_and_convert_image(IFile0, ['.txt'], DocSt, IFile1Info)
+          ; true ) 
+      ;
+          ( \+ member(info,Formats) ->
+              autodoc_message(error, "-> Adding dummy text for missing image ~w", [IFile0]),
+              NBody = [raw("[ Image: "),raw(IFile0),raw(" ]")]
+          ;
+              ( locate_and_convert_image(IFile0, ['.txt'], DocSt, IFile1Info) ->
+                  ( append(IFile2Info, ".txt", IFile1Info)
+                  ; IFile2Info = IFile1Info ),
+                  build_texinfo_image_command(IFile2Info,Opts,NBody)
+              ;
+                  autodoc_message(error, "-> Adding dummy text for missing image ~w", [IFile0]),
+                  NBody = [raw("[ Image: "),raw(IFile0),raw(" ]")]
+              )
+          )
+      ).
 rw_command('}',                _, raw("@}")) :- !.
 rw_command('{',                _, raw("@{")) :- !.
 rw_command('@',                _, raw("@@")) :- !.
@@ -398,6 +410,15 @@ rw_command_body(copyright(""), "copyright",    raw("")) :- !.
 rw_command_body(bullet(""),    "bullet",       raw("")) :- !.
 rw_command_body(result(""),    "result",       raw("")) :- !.
 
+build_texinfo_image_command(IFile,Opts,NBody) :- 
+    ( Opts = [] ->
+        NBody = [raw("@image{"), raw(IFile), raw("}")]
+    ; Opts = [Width, Height] ->
+        NBody = [raw("@image{"), raw(IFile), raw(","), raw(Width),
+                 raw("pt,"), raw(Height), raw("pt}")]
+    ).
+
+
 def_cmd_args(I, N, []) :- I >= N, !.
 def_cmd_args(I, N, [X|Xs]) :-
     number_codes(I, IS),
@@ -566,12 +587,13 @@ fmt_header_and_cover(TitleR, PaperType, DocSt, R) :-
         infocmd("hbadness", raw("10000"))
       ]),
       %
-      infoenv("macro", raw("hfill"), [
-        infoenv("tex", [
-          % note: this is plain tex
-          raw_fc, raw("@hfill"), raw_nleb
-        ])
-      ]),
+%%% **** Newer texinfos do not like it...
+%%       infoenv("macro", raw("hfill"), [
+%%         infoenv("tex", [
+%%           % note: this is plain tex
+%%           raw_fc, raw("@hfill"), raw_nleb
+%%         ])
+%%       ]),
 %% Not necessary if defined in texinfo.tex
 %%      format(OS, "@macro dotlessi\n", []),
 %%      format(OS, "@tex\n", []),
@@ -929,7 +951,7 @@ do_dvi_to_ps(TexiFile, _DVIFile, PSFile) :-
     atom_concat(TexiNoext,'.texic',TexiName),
     atom_concat(TexiNoext,'.dvi',CDVIFile),
     autodoc_process_call(path(~dvips), ['-z', '-Ppdf', CDVIFile, '-o', PSFile],
-                         [cwd(TexiDir), logbase(LogBase)]),
+                         [cwd(TexiDir), logbase(LogBase), status(_)]),
     % This, really to fix a bug in some versions of dvips:
     warn_on_nosuccess(del_files_nofail(['head.tmp', 'body.tmp'])),
     path_concat(TexiDir,PSFile,CPSFile),
@@ -1027,8 +1049,27 @@ autogen_warning("[This file was autogenerated by LPdoc, please do not edit.]\n\n
 % ---------------------------------------------------------------------------
 
 % Clean the temporary files created by TeX
-clean_tex_intermediate(_TexiFile) :-
-    % (ignored, all intermediate files stored in <main>.cachedoc/texinfo/ dir)
+clean_tex_intermediate(TexiFile) :-
+    texi_file_and_base(TexiFile, _, FileBase),
+    all_setting_values(docformat, Formats),
+    ( \+ member(dvi,Formats) -> 
+        del_file_nofail(~atom_concat(FileBase, '.dvi'))
+    ;  true), 
+    ( \+ member(ps,Formats) -> 
+        del_file_nofail(~atom_concat(FileBase, '.ps'))
+    ;  true), 
+    ( \+ member(info,Formats) -> 
+        del_file_nofail(~atom_concat(FileBase, '.info'))
+    ;  true), 
+%% infoindex needed
+%%     ( \+ member(texi,Formats) -> 
+%%         del_file_nofail(~atom_concat(FileBase, '.infoindex'))
+%%     ;  true), 
+%% texi needed for dependencies?
+%%     ( \+ member(texi,Formats) -> 
+%%         del_file_nofail(~atom_concat(FileBase, '.texi'))
+%%     ;  true), 
+    % (Rest of intermediate files stored in <main>.cachedoc/texinfo/ dir)
     true.
 
 % % Clean the temporary files created by TeX

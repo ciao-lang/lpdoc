@@ -142,6 +142,7 @@ gen_actions(all, Actions) :- !,
     % All (operational) formats
     findall(Action,
             (setting_value(docformat, Format), % (nondet)
+             supported_file_format_check(Format), % TODO: use check/1
              action_for_format(Format, Action),
              action_is_operational(Action)),
             Actions).
@@ -174,6 +175,16 @@ action_is_operational(Action) :-
     !,
     autodoc_is_operational(Backend, Alt).
 action_is_operational(_).
+
+
+:- pred supported_file_format_check(F) # "Checks if @var{F} is a supported LPdoc target doc format.".
+supported_file_format_check(F) :-
+    supported_file_format(F),
+    !.
+supported_file_format_check(F) :-
+    autodoc_message(error, "Output format '~w' is not supported.",[F]),
+    fail.
+    
 
 % ===========================================================================
 :- doc(section, "Documentation Checking").

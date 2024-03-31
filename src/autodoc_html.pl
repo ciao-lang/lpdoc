@@ -160,7 +160,7 @@ rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
             NBody = [raw("<img src="""), raw(IFile), raw(""" width="), raw(Width),
                      raw(" height="), raw(Height), raw(">")]
         )
-    ; autodoc_message(error, "-> Skipping image ~w", [IFile0]),
+    ; autodoc_message(error, "-> Adding dummy text for missing image ~w in html", [IFile0]),
       NBody = [htmlenv(tt, [raw("[ Image: "),raw(IFile0),raw(" ]<br //>")])]
       % NBody = [raw("[ Image: "),raw(IFile0),raw(" ]<br //>")]
     ).
