@@ -1,8 +1,8 @@
 
 :- use_package([assertions]).
 
-% :- doc(filetype, documentation).
-:- doc(filetype, part).
+:- doc(filetype, documentation).
+% :- doc(filetype, part).
 
 :- doc(title,"Writing documentation").
 

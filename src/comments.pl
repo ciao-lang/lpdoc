@@ -443,24 +443,26 @@ doc_id_type(version_maintenance, single, docstr).
    => =(version_maintenance) * version_maintenance_type
 
    # "Defines the type of version maintenance that should be performed
-      by the @apl{emacs} Ciao mode. 
+   by the @apl{emacs} Ciao mode. 
 
-     @begin{itemize}
-     @item @em{Example:}
-     @end{itemize}
+   @begin{itemize}
+   @item @em{Example:}
+   @end{itemize}
 @begin{verbatim}
 :- doc(version_maintenance,dir('../version')).
 @end{verbatim}
 
-     Version control info is kept in directory @tt{../version}. See
-     the definition of @pred{version_maintenance_type/1} for more
-     information on the different version maintenance modes. See the
-     documentation on the @index{emacs Ciao mode} in the Ciao manual
-     for information on how to automatically insert version control
-     @decl{doc/2} declarations in files.
+@comment{* This lower indentation is needed when mardown enabled:}
 
-     The version maintenance mode can also be set alternatively by
-     inserting a comment such as:
+   Version control info is kept in directory @tt{../version}. See
+   the definition of @pred{version_maintenance_type/1} for more
+   information on the different version maintenance modes. See the
+   documentation on the @index{emacs Ciao mode} in the Ciao manual
+   for information on how to automatically insert version control
+   @decl{doc/2} declarations in files.
+
+   The version maintenance mode can also be set alternatively by
+   inserting a comment such as:
 
 @begin{verbatim}
 %% Local Variables: 
@@ -469,16 +471,16 @@ doc_id_type(version_maintenance, single, docstr).
 %% End:
 @end{verbatim}
 
-      The lines above instruct emacs to put the buffer visiting the
-      file in @concept{emacs Ciao mode} and to turn version
-      maintenance off.  Setting the version maintenance mode in this
-      way has the disadvantage that @apl{lpdoc} will not be aware of
-      the type of version maintenance being performed (the lines above
-      are comments for Prolog). However, this can be useful in fact
-      for setting the @index{version maintenance mode for packages}
-      and other files meant for inclusion in other files, since that
-      way the settings will not affect the file in which the package
-      is included.
+   The lines above instruct emacs to put the buffer visiting the
+   file in @concept{emacs Ciao mode} and to turn version
+   maintenance off.  Setting the version maintenance mode in this
+   way has the disadvantage that @apl{lpdoc} will not be aware of
+   the type of version maintenance being performed (the lines above
+   are comments for Prolog). However, this can be useful in fact
+   for setting the @index{version maintenance mode for packages}
+   and other files meant for inclusion in other files, since that
+   way the settings will not affect the file in which the package
+   is included.
 
 ".
 
@@ -554,11 +556,13 @@ doc_id_type(filetype, single, term). % dofail
 :- doc(filetype,user).
 @end{verbatim}
 
-     There is another special case: the value @tt{part}. This
-     @em{filetype} is used to flag files which serve as introductions
-     to boundaries between major @index{parts in large
-     documents}. See @ref{Splitting large documents into parts} for
-     details.
+   @comment{* This lower indentation is needed when mardown enabled:}
+
+   There is another special case: the value @tt{part}. This
+   @em{filetype} is used to flag files which serve as introductions
+   to boundaries between major @index{parts in large
+   documents}. See @ref{Splitting large documents into parts} for
+   details.
 
      ".
 

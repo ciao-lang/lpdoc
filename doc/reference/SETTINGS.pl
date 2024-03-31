@@ -45,17 +45,17 @@ doc_structure :=
           'metaprops/meta_props'
       ],
       'lpdoc_examples',
+%         'example_module',
+      %
+      % TODO: If we want to include the example output, it should be
+      %         in a different manual so that we do not mess the
+      %         current indices (e.g., q/1 is not a predicate from
+      %         LPdoc). 
+      %
       'Runnables'-[ 
           'factorial_peano_iso_source',
           'factorial_peano_iso'
       ]
-      %
-      % TODO: If we want to include it, it should be in a
-      %         different manual so that we do not mess the
-      %         current indices (e.g., q/1 is not a predicate from
-      %         LPdoc)
-%         'example_module',
-      %
 %         'rtchecks_doc',
 %         'unittest'-
 %             ['unittest/unittest_props',
