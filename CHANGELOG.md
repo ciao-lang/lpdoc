@@ -1,5 +1,58 @@
 # Changelog
 
+## [3.8.0] - 2024-4-1
+
+### Added
+
+ - Added .txt and .pdf as admissible formats.
+ - Cleanup of some unneeded intermediate formats in target dir (not cache).
+ - Raise error if a requested output format out of several is not supported.
+ - Support for @@frac and utf8 nearrow (extended texinfo.tex)
+ - Predicates starting with $ (normally internal predicates) are now
+   not documented by default. This allows, e.g., correct documentation
+   of files using sr/bfall and others. Documentation can be forced
+   with doinclude. Also applied to call_in_module/2 as special case.
+
+### Fixed
+
+ - Recovered inclusion of .txt figures in info (was not working).
+ - Sometimes figures were not not being found by the texinfo backends.
+   Fixed by running tex and conversion to pdf inside the cache dir.
+ - Fixed spurious error message about no predicates being exported
+   when there are in fact some exported via :- doc(doinclude, ...).
+ - Correction in documentation of verbosity (all->full).
+ - Fixed in documentation some dangling references to sections and
+   wrong commands.
+ - Fixed too large cartouches that do not fit on one page (changed
+   filetype from part to documentation).
+ - Fixed problem w/texinfo backend related to dotless i,j,etc.
+  
+### Improved
+
+ - Better image selection and conversion for different formats.
+ - Improvements documentation:
+    - Mention use within the new IDEs supported (playground, VSC) in
+      manual.
+    - Improved the pointers to the documentation of the options
+      available in SETTINGS files (doccfg) affecting manual
+      generation.
+    - Included additional mentioning of .md files and markdown.
+    - Reduced some indentations that were generating spurious
+      verbatims since due to markdown activation by default.
+ - For large documents lpdoc was sometimes silent for relatively
+   long periods. Improved by:
+      - Changing some of the messages from verbose to progress.
+      - Including also back-end messages in progress (and made them a
+        bit shorter).
+ - Better image conversion error messages.
+ - Unified further the format of messages and improved texts.
+
+### Changed
+
+ - Not finding a figure gives warning instead of abort (and inserts
+   figure name in doc). 
+
+
 ## [3.7.0] - 2024-2-16
 
 ### Added
