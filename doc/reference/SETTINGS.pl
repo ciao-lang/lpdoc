@@ -26,24 +26,7 @@ doc_structure :=
           'doccomments_doc' % Maturity?
       ],
       'Markdown',
-      'assertions/assertions_doc'-[
-          'assertions/assertions_props',
-          'regtypes/regtypes_doc',
-          'basic_props',
-          % 'assertions/native_props',
-          % props native to analyzers, in chapters
-          'assertions/native_props'-[
-              'assertions/native_props_shfrg_doc',
-              'assertions/native_props_nfdet_doc',
-              'assertions/native_props_cardinality_doc',
-              'assertions/native_props_exceptions_doc',
-              'assertions/native_props_sideff_doc',
-              'assertions/native_props_polyhedral_doc',
-              'assertions/native_props_cost_doc'
-          ],
-          %
-          'metaprops/meta_props'
-      ],
+      % 'assertions/assertions_doc'-[...] % Note: assertions moved to alldocs
       'lpdoc_examples',
 %         'example_module',
       %
