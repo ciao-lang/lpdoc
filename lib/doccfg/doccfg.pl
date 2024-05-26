@@ -1,6 +1,6 @@
 :- package(doccfg).
 
-% Package to define a LPdoc manual configuration settings
+% Package to define configuration settings for an LPdoc manual 
 :- use_package(fsyntax).
 :- use_package(assertions).
 :- use_package(regtypes).
