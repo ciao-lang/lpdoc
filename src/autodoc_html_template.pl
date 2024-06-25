@@ -24,6 +24,8 @@ prefix_htmlurl(Path) := Path2 :-
     HtmlURL = ~setting_value(htmlurl),
     !,
     ( HtmlURL = '' -> Path2 = Path
+    ; atom_concat('http:', _, Path) -> Path2 = Path
+    ; atom_concat('https:', _, Path) -> Path2 = Path
     ; path_concat(HtmlURL, Path, Path2)
     ).
 prefix_htmlurl(Path) := Path. % no htmlurl value
