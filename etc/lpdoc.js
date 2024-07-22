@@ -457,6 +457,13 @@ function update_github_stars_theme() {
 /* Load playground functionality if needed */
 
 var urlPREFIX = null; /* global */
+var urlVERS = "?v=1";  /* NOTE: 1.23.0 -> 1; increment for each playground version  */
+
+/* resolve a URL: add urlPREFIX for different roots, and urlVERS
+   version suffix to avoid browser caching */
+function res_URL(url) {
+  return urlPREFIX+url+urlVERS;
+}
 
 function load_playground() {
   (async() => {
@@ -477,8 +484,8 @@ function load_playground() {
     for (const p of prefixes) {
       urlPREFIX = p;
       try {
-        await tryImportScript(urlPREFIX+pg);
-        console.log(`{loaded playground from '${urlPREFIX+pg}'}`);
+        await tryImportScript(res_URL(pg));
+        console.log(`{loaded playground from '${res_URL(pg)}'}`);
         break;
       } catch(e) {
       }
