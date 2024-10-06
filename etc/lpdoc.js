@@ -1,7 +1,7 @@
 /*
  * LPdoc UI basic elements
  *
- * (c) 2018-2022 The Ciao Development Team
+ * (c) 2018-2024 The Ciao Development Team
  * 
  * This is a JavaScript support library for LPdoc HTML backend and
  * Ciao playgrounds.
@@ -160,6 +160,9 @@ const theme_svg = elem_from_str(`<svg class="header-icon-img" viewBox="0 0 32 32
 <polygon points="5.47 25.13 7.59 23 9 24.42 6.88 26.54 5.47 25.13" fill="currentColor"/>
 <path d="M16,8a8,8,0,1,0,8,8A8,8,0,0,0,16,8Zm0,14a6,6,0,0,1,0-12Z" fill="currentColor"/>
 </svg>`);
+const slide_svg = elem_from_str(`<svg class="header-icon-img" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
+<path d="M 11.5 6 C 8.4802259 6 6 8.4802259 6 11.5 L 6 36.5 C 6 39.519774 8.4802259 42 11.5 42 L 36.5 42 C 39.519774 42 42 39.519774 42 36.5 L 42 11.5 C 42 8.4802259 39.519774 6 36.5 6 L 11.5 6 z M 11.5 9 L 36.5 9 C 37.898226 9 39 10.101774 39 11.5 L 39 13 L 9 13 L 9 11.5 C 9 10.101774 10.101774 9 11.5 9 z M 9 16 L 39 16 L 39 32 L 9 32 L 9 16 z M 9 35 L 39 35 L 39 36.5 C 39 37.898226 37.898226 39 36.5 39 L 11.5 39 C 10.101774 39 9 37.898226 9 36.5 L 9 35 z" fill="currentColor"></path>
+</svg>`);
 const search_svg = elem_from_str(`<svg class="header-icon-img" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <path d="M344.5,298c15-23.6,23.8-51.6,23.8-81.7c0-84.1-68.1-152.3-152.1-152.3C132.1,64,64,132.2,64,216.3  c0,84.1,68.1,152.3,152.1,152.3c30.5,0,58.9-9,82.7-24.4l6.9-4.8L414.3,448l33.7-34.3L339.5,305.1L344.5,298z M301.4,131.2  c22.7,22.7,35.2,52.9,35.2,85c0,32.1-12.5,62.3-35.2,85c-22.7,22.7-52.9,35.2-85,35.2c-32.1,0-62.3-12.5-85-35.2  c-22.7-22.7-35.2-52.9-35.2-85c0-32.1,12.5-62.3,35.2-85c22.7-22.7,52.9-35.2,85-35.2C248.5,96,278.7,108.5,301.4,131.2z" fill="currentColor"/>
 </svg>`);
@@ -247,6 +250,7 @@ function new_theme_button(base_el) {
                              theme_set_value(value);
                              update_theme_hook();
                            });
+  theme_button.btn_el.style.fontSize = '14px'; // TODO: tweak for alignment
   theme_button.highlight(theme_get_value());
   return theme_button;
 }
@@ -493,19 +497,269 @@ function load_playground() {
   })();
 }
 
-if (typeof lpdocPG !== 'undefined') {
-  // Enable playground now
-  load_playground();
-} else {
-  // Wait for document to be loaded and load playground only if some
-  // some runnable codeblock is detected
-  document.addEventListener("DOMContentLoaded", function() {
-    if (typeof lpdocPG === 'undefined') {
-      const runnables = document.getElementsByClassName("lpdoc-codeblock-runnable");
-      if (runnables.length > 0) {
-        lpdocPG = 'runnable';
-        load_playground();
+/* =========================================================================== */
+/* Document view modes */
+
+/** Viewer with SlideShow support */
+class SlideShow {
+  constructor() {
+    this.enabled = false;
+    this.curr_slide = 0;
+    this.base_el = null;
+    this.update_dimensions_hook = () => {};
+    this.has_focus_hook = () => { return false; };
+  }
+
+  prepare(base_el) {
+    this.auto_slides(base_el);
+    //slideshow.set_slide_mode(true);
+    this.base_el.classList.remove('lpdoc-slide-mode'); // make sure slide mode is off
+    this.add_slide_button();
+    this.add_slide_bindings();
+  }
+
+  /** Patch the lpdoc document at base_el for slide mode */
+  //  - LPdoc output sections into separate div with different ids.
+  //  - No visual changes unless lpdoc-slide-mode class is added to the parent (dynamically).
+  //  - Automatically identify them and add the slide class.
+  // TODO: TOO complicated, do from LPdoc output
+  auto_slides(base_el) {
+    this.base_el = base_el;
+    if (base_el.querySelectorAll('lpdoc-slide').length > 0) {
+      // Return if the document has been processed
+      return;
+    }
+    let headers;
+    // Add slide class to all subsections
+    headers = base_el.querySelectorAll('h2');
+    headers.forEach((e) => {
+      let p = e.closest('div'); // for h2, just parent div
+      if (p) p.classList.add('lpdoc-slide');
+    });
+    // Add slide class to cover (assume only one h1)
+    headers = base_el.querySelectorAll('h1');
+    if (headers.length >= 1) {
+      let e = headers[0];
+      let p = e.closest('div');
+      if (e.classList.contains('lpdoc-cover-h1')) {
+        // for h1 in cover we need parent of parent
+        if (p) p = p.parentElement.closest('div');
+        if (p) p = p.closest('div');
+        if (p) {
+          p.classList.add('lpdoc-slide');
+          // Then re-insert all orphan nodes into this recover some of the
+          // orphan divs between the first and the second slide
+          let curr = p.nextSibling;
+          while (true) {
+            if (!curr) break;
+            if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
+            let next = curr.nextSibling;
+            p.appendChild(curr);
+            curr = next;
+          }
+        }
+      } else { // h1 not in cover
+        p.classList.add('lpdoc-slide');
+        // otherwise we need move slides upward
+        let curr = e.nextSibling;
+        let up_p = p.parentElement;
+        while (true) {
+          if (!curr) break;
+          if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
+          curr = curr.nextSibling;
+        }
+        while (true) {
+          if (!curr) break;
+          let next = curr.nextSibling;
+          p.insertAdjacentElement('afterend', curr);
+          curr = next;
+        }
       }
     }
-  });
+  }
+
+  #slide_els() {
+    return this.base_el.getElementsByClassName("lpdoc-slide");
+  }
+  get_num_slides() {
+    return this.#slide_els().length;
+  }
+
+  // Get current 'position' (view state and slide number)
+  get_pos() {
+    return [this.enabled, this.curr_slide];
+  }
+  // Restore position (see above), fix if needed
+  restore_pos(pos) {
+    let slide = pos[1];
+    let num_slides = this.get_num_slides();
+    if (slide >= num_slides) slide = num_slides - 1;
+    this.curr_slide = slide;
+    this.set_slide_mode(pos[0]);
+  }
+
+  set_slide_mode(enable) {
+    if (this.enabled == enable) return;
+    this.enabled = enable;
+    if (enable) { /* enable */
+      this.base_el.classList.add('lpdoc-slide-mode'); // turn slide mode
+      if (this.base_el.classList.contains('preview-container')) {
+        // TODO: needed for playground
+        this.base_el.style.removeProperty('overflow-x');
+      }
+      this.set_visible_slide(this.curr_slide);
+    } else { /* disable */
+      this.base_el.classList.remove('lpdoc-slide-mode');
+      if (this.base_el.classList.contains('preview-container')) {
+        // TODO: needed for playground
+        this.base_el.style.overflowX = 'auto';
+      }
+      let slides = this.#slide_els();
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "block";  
+      }
+      // Disable slide container scaling
+      let div = this.base_el.getElementsByClassName("lpdoc-main")[0];
+      div.style.transform = '';
+    }
+    this.update_dimensions();
+  }
+
+  // Insert slide mode button
+  add_slide_button() {
+    let nav_el = null;
+
+    // Use lpdoc-nav (not in playground preview mode)
+    let nav_els = this.base_el.getElementsByClassName('lpdoc-nav');
+    if (nav_els.length > 0) nav_el = nav_els[0];
+    
+    if (nav_el === null) return;
+
+    let li = document.createElement('a');
+    li.href = '';
+    li.innerHTML = ""; li.appendChild(slide_svg.cloneNode(true));
+    li.onclick = () => {
+      this.set_slide_mode(true);
+      this.base_el.focus(); // TODO: handy for playground
+      return false;
+    };
+    nav_el.prepend(li);
+  }
+
+  // Add some key bindings for slides
+  // TODO: Document:
+  //  - Escape: exit slide mode
+  //  - Left/right arrows: previous/next slide
+  //  - P/N: previous/next slide
+  //  - ',' / '.' : first/last slide
+  add_slide_bindings() {
+    this.base_el.addEventListener("keydown", (event) => {
+      if (!this.enabled) return;
+      if (this.has_focus()) return; // exit if some element has the focus
+      if (event.code === "Escape") { // turn off slide mode
+        this.set_slide_mode(false);
+        return;
+      }
+      let prev_slide = this.curr_slide;
+      let nslides = this.get_num_slides();
+      if (event.code === "ArrowLeft") { // event.code === "ArrowUp"
+        this.curr_slide -= 1;
+      } else if (event.code === "ArrowRight") { // event.code === "ArrowDown"
+        this.curr_slide += 1;
+      } else if (event.code === "Space") {
+        this.curr_slide += 1;
+      } else if (event.code === "KeyN") {
+        this.curr_slide += 1;
+      } else if (event.code === "KeyP") {
+        this.curr_slide -= 1;
+      } else if (event.code === "Comma") { // Actually, we mean < but same as , 
+        this.curr_slide = 0;
+      } else if (event.code === "Period") { // Actually, we mean > but same as .
+        this.curr_slide = nslides - 1;
+      }
+      if (this.curr_slide >= nslides) { this.curr_slide = nslides-1; }
+      if (this.curr_slide < 0) { this.curr_slide = 0; }
+      if (this.curr_slide !== prev_slide) {
+        this.set_visible_slide(this.curr_slide);
+        this.update_dimensions();
+      }
+    });
+  }
+
+  set_visible_slide(n) {
+    if (!this.enabled) return; // slide mode disabled
+    let slides = this.#slide_els();
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+    }
+    slides[n].style.display = "block";  
+  }
+
+  update_dimensions() {
+    this.update_dimensions_hook();
+    if (this.enabled) {
+      // slide mode disabled
+      /* // TODO: custom scaling per slide?
+         slides[this.curr_slide].style.transform = 'scale(1)';
+         slides[this.curr_slide].style.transformOrigin = 'top left';
+      */
+      // Scale slide container
+      const w = 800; // see lpdoc-main width in lpdoc.css
+      let div = this.base_el.getElementsByClassName("lpdoc-main")[0];
+      //const scaleValue = window.innerWidth / w;
+      const scaleValue = this.base_el.clientWidth / w;
+      div.style.transform = `scale(${scaleValue})`;
+    }
+  }
+  has_focus() {
+    return this.has_focus_hook();
+  }
 }
+
+/** Plain viewer */
+class PlainView {
+  constructor() {
+    this.update_dimensions_hook = () => {};
+  }
+  prepare(base_el) {
+  }
+  update_dimensions() {
+    this.update_dimensions_hook();
+  }
+  has_focus() {
+    return false;
+  }
+}
+
+// TODO: avoid globals?
+let main_doc = null;
+
+window.addEventListener("resize", () => {
+  if (main_doc) main_doc.update_dimensions();
+});
+
+// ---------------------------------------------------------------------------
+
+// Heuristic for main_doc
+if (typeof lpdocPG !== 'undefined') {
+  if (lpdocPG === 'runnable') {
+    main_doc = new SlideShow(); // optional slideshow viewer
+  } else {
+    main_doc = new PlainView(); // plain viewer (e.g. full playground)
+  }
+} else {
+  main_doc = new SlideShow(); // optional slideshow viewer
+}
+
+// Wait for document to be loaded, prepare, and load playground if needed
+document.addEventListener("DOMContentLoaded", function() {
+  main_doc.prepare(document.body);
+  // Force 'runnable' mode if runnables are detected
+  // TODO: needed now? lpdoc emits lpdocPG='runnable' when needed? good for custom HTML?
+  if (typeof lpdocPG === 'undefined' &&
+      document.getElementsByClassName("lpdoc-codeblock-runnable").length > 0) {
+    lpdocPG = 'runnable';
+  }
+  // Enable playground if needed
+  if (typeof lpdocPG !== 'undefined') load_playground();
+});

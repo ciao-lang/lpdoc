@@ -1,7 +1,7 @@
 /*
  * LPdoc stylesheet for the HTML backend (+playground components)
  *
- * (c) 2018-2022 The Ciao Development Team
+ * (c) 2018-2024 The Ciao Development Team
  */
 
 /* --------------------------------------------------------------------------- */
@@ -1198,11 +1198,28 @@ div.dropdown-content a:hover {
 }
 
 .preview-container {
-  width: 100%;
-  height: 100%;
-  border: 1px solid var(--codeblock-border);
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  border: 1px solid var(--border);
   overflow: hidden;
   border-radius: 6px;
+  /* some default background */
+  background-image:
+    repeating-linear-gradient(45deg, var(--border) 25%, transparent 25%, transparent 75%, var(--border) 75%, var(--border)),
+    repeating-linear-gradient(45deg, var(--border) 25%, var(--bg) 25%, var(--bg) 75%, var(--border) 75%, var(--border));
+  background-position: 0 0, 8px 8px;
+  background-size: 16px 16px;
+}
+
+/* Minor style adjustements when using the preview container */
+
+.preview-container h1.lpdoc-cover-h1 {
+  margin:0px;
+}
+
+.preview-container div.lpdoc-nav .header-icon-img {
+  margin-left: 10px;
+  margin-right: 0px;
 }
 
 /* --------------------------------------------------------------------------- */
@@ -1263,4 +1280,56 @@ div.dropdown-content a:hover {
   .main-menu {
     font-size: 14px;
   }
+}
+
+/* --------------------------------------------------------------------------- */
+/* Style for slide mode */
+
+/* Reset sidebar position */
+.lpdoc-slide-mode .leftbar > div.lpdoc-main,
+.lpdoc-slide-mode .fixleftbar > div.lpdoc-main { margin-left: 0; }
+.lpdoc-slide-mode .rightbar > div.lpdoc-main,
+.lpdoc-slide-mode .fixrightbar > div.lpdoc-main { margin-right: 0; }
+
+.lpdoc-slide-mode a#sidebar-toggle-button,
+.lpdoc-slide-mode div#sidebar,
+.lpdoc-slide-mode div#sidebar.sidebar-toggled,
+.lpdoc-slide-mode .lpdoc-sidebar,
+.lpdoc-slide-mode .lpdoc-footer {
+  display: none;
+}
+
+.lpdoc-slide-mode p {
+  margin-block-start: 0.2em;
+  margin-block-end: 0.2em;
+}
+
+.lpdoc-slide-mode .lpdoc-slide {
+  width: calc(100% - 64px);
+  height: calc(100% - 32px);
+  padding: 16px 32px 16px 32px;
+}
+
+.lpdoc-slide-mode img {
+  vertical-align: middle;
+}
+
+.lpdoc-slide-mode body,
+.lpdoc-slide-mode html {
+  height: 100%;
+}
+
+.lpdoc-slide-mode h1.lpdoc-cover-h1 {
+  text-align:center;
+}
+
+/* this will act as slide container */
+.lpdoc-slide-mode .lpdoc-main {
+  /* 16:9 ratio */
+  width: 800px;
+  min-height: 500px; /* (do not fix height, allow vertical scrollbar) */
+  position: relative;
+  padding: 0px;
+  /* transform: ... */ /* calculated dynamically */
+  transform-origin: top left;
 }
