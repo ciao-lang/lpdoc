@@ -620,7 +620,8 @@ class SlideShow {
       }
       // Disable slide container scaling
       let div = this.base_el.getElementsByClassName("lpdoc-main")[0];
-      div.style.transform = '';
+      //div.style.transform = '';
+      div.style.zoom = '';
     }
     this.update_dimensions();
   }
@@ -708,7 +709,8 @@ class SlideShow {
       let div = this.base_el.getElementsByClassName("lpdoc-main")[0];
       //const scaleValue = window.innerWidth / w;
       const scaleValue = this.base_el.clientWidth / w;
-      div.style.transform = `scale(${scaleValue})`;
+      //div.style.transform = `scale(${scaleValue})`;
+      div.style.zoom = `${scaleValue}`;
     }
   }
   has_focus() {
