@@ -562,16 +562,17 @@ class SlideShow {
         p.classList.add('lpdoc-slide');
         // otherwise we need move slides upward
         let curr = e.nextSibling;
-        let up_p = p.parentElement;
         while (true) {
           if (!curr) break;
           if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
           curr = curr.nextSibling;
         }
+        let parent = p.parentElement;
+        let end = p.nextSibling;
         while (true) {
           if (!curr) break;
           let next = curr.nextSibling;
-          p.insertAdjacentElement('afterend', curr);
+          parent.insertBefore(curr, end);
           curr = next;
         }
       }
