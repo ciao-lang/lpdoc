@@ -534,7 +534,8 @@ class SlideShow {
     headers = base_el.querySelectorAll('h2');
     headers.forEach((e) => {
       let p = e.closest('div'); // for h2, just parent div
-      if (p) p.classList.add('lpdoc-slide');
+      if (p && (!p.classList.contains('lpdoc-main') /* TODO: hack for "Parts of this manual" */))
+        p.classList.add('lpdoc-slide');
     });
     // Add slide class to cover (assume only one h1)
     headers = base_el.querySelectorAll('h1');
