@@ -514,6 +514,7 @@ class SlideShow {
     this.auto_slides(base_el);
     //slideshow.set_slide_mode(true);
     this.base_el.classList.remove('lpdoc-slide-mode'); // make sure slide mode is off
+    this.base_el.classList.remove('lpdoc-slide-scroll');
     this.add_slide_button();
     this.add_slide_bindings();
   }
@@ -605,6 +606,7 @@ class SlideShow {
     this.enabled = enable;
     if (enable) { /* enable */
       this.base_el.classList.add('lpdoc-slide-mode'); // turn slide mode
+      this.base_el.classList.add('lpdoc-slide-scroll');
       if (this.base_el.classList.contains('preview-container')) {
         // TODO: needed for playground
         this.base_el.style.removeProperty('overflow-x');
@@ -612,6 +614,7 @@ class SlideShow {
       this.set_visible_slide(this.curr_slide);
     } else { /* disable */
       this.base_el.classList.remove('lpdoc-slide-mode');
+      this.base_el.classList.remove('lpdoc-slide-scroll');
       if (this.base_el.classList.contains('preview-container')) {
         // TODO: needed for playground
         this.base_el.style.overflowX = 'auto';
@@ -622,8 +625,7 @@ class SlideShow {
       }
       // Disable slide container scaling
       let div = this.base_el.getElementsByClassName("lpdoc-main")[0];
-      //div.style.transform = '';
-      div.style.zoom = '';
+      div.style.removeProperty('zoom');
     }
     this.update_dimensions();
   }
@@ -700,18 +702,25 @@ class SlideShow {
 
   update_dimensions() {
     this.update_dimensions_hook();
+    // TODO: custom scaling per slide?
     if (this.enabled) {
-      // slide mode disabled
-      /* // TODO: custom scaling per slide?
-         slides[this.curr_slide].style.transform = 'scale(1)';
-         slides[this.curr_slide].style.transformOrigin = 'top left';
-      */
       // Scale slide container
+      /* NOTE: Scaling with auto scrollbars is complex. Simply
+         calculating clientWidth/w as scale value does not work, since
+         it may be affected by the size of the scrollbar. As height
+         crosses the ideal size to fit the whole slide, there is a
+         region where the scale value is not monotous: no scrollbar
+         makes it taller, which exceeds the available height and again
+         makes the scrollbar necessary, etc. We opt here for using a
+         thin scrollbar (see .lpdoc-slide-scroll) and scale ignoring
+         the scrollbar width. This looks aesthetically nicer than any
+         other tried solution. */
       const w = 800; // see lpdoc-main width in lpdoc.css
       let div = this.base_el.getElementsByClassName("lpdoc-main")[0];
-      //const scaleValue = window.innerWidth / w;
-      const scaleValue = this.base_el.clientWidth / w;
-      //div.style.transform = `scale(${scaleValue})`;
+      // Compute scale with the whole clientWidth
+      div.style.display = 'none'; // hide to obtain clientWidth without scrollbar
+      let scaleValue = this.base_el.clientWidth / w;
+      div.style.removeProperty('display'); // unhide
       div.style.zoom = `${scaleValue}`;
     }
   }

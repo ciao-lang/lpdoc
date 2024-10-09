@@ -1330,6 +1330,12 @@ div.dropdown-content a:hover {
   min-height: 500px; /* (do not fix height, allow vertical scrollbar) */
   position: relative;
   padding: 0px;
-  /* transform: ... */ /* calculated dynamically */
-  transform-origin: top left;
+  /* zoom: ... */ /* calculated dynamically */
+}
+
+/* Scrollbar for slideshows (see lpdoc.js for details) */
+.lpdoc-slide-scroll {
+  scrollbar-width: thin;
+  /* NOTE: we'd really want overlay scrollbars where we can see through
+   the scrollbar track, but this is not supported directly in CSS */
 }
