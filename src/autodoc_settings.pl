@@ -290,5 +290,7 @@ makeinfo := 'makeinfo'.
 
 %% The command that converts graphics files to other formats
 :- export(convertc/1).
-convertc := 'convert'.
+convertc := 'magick'.
+:- export(convertc_alt/1).
+convertc_alt := 'convert'.
 

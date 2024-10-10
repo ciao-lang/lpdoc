@@ -140,16 +140,23 @@ image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
         close(O),
         autodoc_message(warning, % TODO: documentation will be wrong, mark status somewhere
                         "Could not find ~w.txt for info backend",[SrcName])
-    ; find_executable(~convertc, Cmd) -> % TODO: use other commands?
+    ; find_executable(~convertc, Cmd) -> % TODO: use other commands? be able to try several commands?
         ( catch(process_call(Cmd, [Source, AbsFile], [status(0)]),_,fail) ->
             true
         ; autodoc_message(error, % TODO: documentation will be wrong, mark status somewhere
                           "'~w' could not comvert image ~w to ~w",[~convertc, Source,AbsFile]),
           fail
         )
+    ; find_executable(~convertc_alt, Cmd) -> % TODO: use other commands? be able to try several commands?
+        ( catch(process_call(Cmd, [Source, AbsFile], [status(0)]),_,fail) ->
+            true
+        ; autodoc_message(error, % TODO: documentation will be wrong, mark status somewhere
+                          "'~w' could not comvert image ~w to ~w",[~convertc_alt, Source,AbsFile]),
+          fail
+        )
     ; autodoc_message(error, % TODO: documentation will be wrong, mark status somewhere
-            "'~w' command not found in path, skipping '~w' image conversion",
-            [~convertc, Source])
+            "neither '~w' or '~w' commands could be found in path, skipping '~w' image conversion",
+            [~convertc,~convertc_alt,Source])
 %       ; throw(error(unknown_target_ext(TargetExt), image_convert/5))
     ).
 
