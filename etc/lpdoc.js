@@ -737,8 +737,9 @@ class SlideShow {
          thin scrollbar (see .lpdoc-slide-scroll) and scale ignoring
          the scrollbar width. This looks aesthetically nicer than any
          other tried solution. */
-      const w = 800; // see lpdoc-main width in lpdoc.css
       let div = this.base_el.getElementsByClassName("lpdoc-main")[0];
+      // const w = 800; // see lpdoc-main width in lpdoc.css
+      const w = div.offsetWidth;
       // Compute scale with the whole clientWidth
       div.style.display = 'none'; // hide to obtain clientWidth without scrollbar
       let scaleValue = this.base_el.clientWidth / w;
