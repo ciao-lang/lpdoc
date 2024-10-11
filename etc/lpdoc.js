@@ -526,18 +526,39 @@ class SlideShow {
   // TODO: TOO complicated, do from LPdoc output
   auto_slides(base_el) {
     this.base_el = base_el;
-    if (base_el.querySelectorAll('lpdoc-slide').length > 0) {
+    if (base_el.querySelectorAll('.lpdoc-slide').length > 0) {
       // Return if the document has been processed
       return;
     }
     let headers;
     // Add slide class to all subsections
-    headers = base_el.querySelectorAll('h2');
+    headers = base_el.querySelectorAll('h2, h3, h4, h5, h6');
     headers.forEach((e) => {
-      let p = e.closest('div'); // for h2, just parent div
+      let p = e.closest('div'); // for h2, etc., just parent div
       if (p && (!p.classList.contains('lpdoc-main') /* TODO: hack for "Parts of this manual" */))
         p.classList.add('lpdoc-slide');
     });
+    // function to flatten slides (any nested slide is moved as sibling, recursively)
+    function move_up(p) {
+      let curr = p.firstChild;
+      // locate first nested slide
+      while (true) {
+        if (!curr) break;
+        if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
+        curr = curr.nextSibling;
+      }
+      let parent = p.parentElement;
+      let end = p.nextSibling;
+      while (true) {
+        if (!curr) break;
+        if (curr.classList && curr.classList.contains('lpdoc-slide')) {
+          move_up(curr); // recursive if it is a slide
+        }
+        let next = curr.nextSibling;
+        parent.insertBefore(curr, end);
+        curr = next;
+      }
+    }
     // Add slide class to cover (assume only one h1)
     headers = base_el.querySelectorAll('h1');
     if (headers.length >= 1) {
@@ -549,36 +570,37 @@ class SlideShow {
         if (p) p = p.closest('div');
         if (p) {
           p.classList.add('lpdoc-slide');
-          // Then re-insert all orphan nodes into this recover some of the
-          // orphan divs between the first and the second slide
-          let curr = p.nextSibling;
-          while (true) {
-            if (!curr) break;
-            if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
-            let next = curr.nextSibling;
-            p.appendChild(curr);
-            curr = next;
-          }
+//          // Then re-insert all orphan nodes into this recover some of the
+//          // orphan divs between the first and the second slide
+//          let curr = p.nextSibling;
+//          while (true) {
+//            if (!curr) break;
+//            if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
+//            let next = curr.nextSibling;
+//            p.appendChild(curr);
+//            curr = next;
+//          }
         }
       } else { // h1 not in cover
         p.classList.add('lpdoc-slide');
-        // otherwise we need move slides upward
-        let curr = e.nextSibling;
-        while (true) {
-          if (!curr) break;
-          if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
-          curr = curr.nextSibling;
-        }
-        let parent = p.parentElement;
-        let end = p.nextSibling;
-        while (true) {
-          if (!curr) break;
-          let next = curr.nextSibling;
-          parent.insertBefore(curr, end);
-          curr = next;
-        }
       }
     }
+    //
+    base_el.querySelectorAll('.lpdoc-slide').forEach((e) => {
+      move_up(e);
+    });
+    // Then re-insert all orphan nodes after each slide
+    // (for h1 in cover or separate ":- doc(module, ...)" without sections)
+    base_el.querySelectorAll('.lpdoc-slide').forEach((e) => {
+      let curr = e.nextSibling;
+      while (true) {
+        if (!curr) break;
+        if (curr.classList && curr.classList.contains('lpdoc-slide')) break;
+        let next = curr.nextSibling;
+        e.appendChild(curr);
+        curr = next;
+      }
+    });
   }
 
   #slide_els() {

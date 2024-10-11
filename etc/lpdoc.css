@@ -1338,4 +1338,5 @@ div.dropdown-content a:hover {
   scrollbar-width: thin;
   /* NOTE: we'd really want overlay scrollbars where we can see through
    the scrollbar track, but this is not supported directly in CSS */
+  overflow-x: hidden;
 }
