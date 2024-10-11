@@ -1312,6 +1312,7 @@ div.dropdown-content a:hover {
 
 .lpdoc-slide-mode img {
   vertical-align: middle;
+  max-width: 700px;
 }
 
 .lpdoc-slide-mode body,
