@@ -1341,3 +1341,32 @@ div.dropdown-content a:hover {
    the scrollbar track, but this is not supported directly in CSS */
   overflow-x: hidden;
 }
+
+/* A non-active slide (hidden) */
+.lpdoc-slide-mode .lpdoc-slide-hide {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Style for print */
+
+/* TODO: add some margin/padding while still hiding headers and footers */
+@media print {
+  @page {
+    size: auto;
+    /* margin: 0; */ /* hide headers and footers */
+  }
+  /* hide headers and footers added by the browser */
+  header, footer {
+    display: none;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  .lpdoc-slide-mode .lpdoc-slide-hide {
+    display: block;
+  }
+}

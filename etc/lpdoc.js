@@ -719,9 +719,13 @@ class SlideShow {
     if (!this.enabled) return; // slide mode disabled
     let slides = this.#slide_els();
     for (let i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";  
+      // Modify style.display via a CSS property (useful for "@media print")
+      if (i == n) {
+        slides[n].classList.remove('lpdoc-slide-hide');
+      } else {
+        slides[i].classList.add('lpdoc-slide-hide');
+      }
     }
-    slides[n].style.display = "block";  
   }
 
   update_dimensions() {
