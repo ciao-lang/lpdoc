@@ -1369,4 +1369,18 @@ div.dropdown-content a:hover {
   .lpdoc-slide-mode .lpdoc-slide-hide {
     display: block;
   }
+
+  /* Reset sidebar position */
+  .leftbar > div.lpdoc-main,
+  .fixleftbar > div.lpdoc-main { margin-left: 0; }
+  .rightbar > div.lpdoc-main,
+  .fixrightbar > div.lpdoc-main { margin-right: 0; }
+  
+  a#sidebar-toggle-button,
+  div#sidebar,
+  div#sidebar.sidebar-toggled,
+  .lpdoc-sidebar,
+  .lpdoc-footer {
+    display: none;
+  }
 }
