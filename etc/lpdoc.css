@@ -1357,7 +1357,8 @@ div.dropdown-content a:hover {
     /* margin: 0; */ /* hide headers and footers */
   }
   @page landscape-page {
-    size: landscape;
+    /* size: landscape; */
+    size: 297mm 185.625mm; /* A4 width with 16:10 ratio for slides */
     /* margin: 0; */ /* hide headers and footers */
   }
   /* hide headers and footers added by the browser */
