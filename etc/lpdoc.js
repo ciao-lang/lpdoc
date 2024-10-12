@@ -689,20 +689,22 @@ class SlideShow {
       }
       let prev_slide = this.curr_slide;
       let nslides = this.get_num_slides();
-      if (event.code === "ArrowLeft") { // event.code === "ArrowUp"
-        this.curr_slide -= 1;
-      } else if (event.code === "ArrowRight") { // event.code === "ArrowDown"
-        this.curr_slide += 1;
-      } else if (event.code === "Space") {
-        this.curr_slide += 1;
-      } else if (event.code === "KeyN") {
-        this.curr_slide += 1;
-      } else if (event.code === "KeyP") {
-        this.curr_slide -= 1;
-      } else if (event.code === "Comma") { // Actually, we mean < but same as , 
-        this.curr_slide = 0;
-      } else if (event.code === "Period") { // Actually, we mean > but same as .
-        this.curr_slide = nslides - 1;
+      if (!event.altKey && !event.ctrlKey && !event.metaKey) { // no modifier keys
+        if (event.code === "ArrowLeft") { // event.code === "ArrowUp"
+          this.curr_slide -= 1;
+        } else if (event.code === "ArrowRight") { // event.code === "ArrowDown"
+          this.curr_slide += 1;
+        } else if (event.code === "Space") {
+          this.curr_slide += 1;
+        } else if (event.code === "KeyN") {
+          this.curr_slide += 1;
+        } else if (event.code === "KeyP") {
+          this.curr_slide -= 1;
+        } else if (event.code === "Comma") { // Actually, we mean < but same as , 
+          this.curr_slide = 0;
+        } else if (event.code === "Period") { // Actually, we mean > but same as .
+          this.curr_slide = nslides - 1;
+        }
       }
       if (this.curr_slide >= nslides) { this.curr_slide = nslides-1; }
       if (this.curr_slide < 0) { this.curr_slide = 0; }
