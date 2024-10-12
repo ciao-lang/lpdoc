@@ -1356,6 +1356,10 @@ div.dropdown-content a:hover {
     size: auto;
     /* margin: 0; */ /* hide headers and footers */
   }
+  @page landscape-page {
+    size: landscape;
+    /* margin: 0; */ /* hide headers and footers */
+  }
   /* hide headers and footers added by the browser */
   header, footer {
     display: none;
@@ -1368,6 +1372,16 @@ div.dropdown-content a:hover {
 
   .lpdoc-slide-mode .lpdoc-slide-hide {
     display: block;
+  }
+
+  .lpdoc-slide-mode .lpdoc-slide {
+    page-break-before: always; /* page break before the element */
+  }
+  .lpdoc-slide-mode .lpdoc-main {
+    page: landscape-page;
+  }
+  .lpdoc-slide-mode div.lpdoc-clearer {
+    display: none;
   }
 
   /* Reset sidebar position */
