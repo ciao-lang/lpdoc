@@ -461,7 +461,7 @@ function update_github_stars_theme() {
 /* Load playground functionality if needed */
 
 var urlPREFIX = null; /* global */
-var urlVERS = "?v=1";  /* NOTE: 1.23.0 -> 1; increment for each playground version  */
+var urlVERS = "?v=2";  /* NOTE: 1.24.0 -> 2; increment for each playground version  */
 
 /* resolve a URL: add urlPREFIX for different roots, and urlVERS
    version suffix to avoid browser caching */
