@@ -47,7 +47,7 @@ async (pg) => {
 ```
 ~~~
 
-# Custom style
+# Change slide fonts with custom CSS
 
 ~~~
 ```ciao_runnable
@@ -67,6 +67,34 @@ const cssString = `
   font-family: 'Yanone Kaffeesatz';
   font-weight: 400;
   margin-bottom: 0;
+}
+`;
+  const style_el = document.createElement("style");
+  style_el.textContent = cssString;
+  document.head.appendChild(style_el);
+}
+%! \end{jseval}
+```
+~~~
+
+# Effects with custom CSS
+
+Make the Ciao logo swing.
+~~~
+```ciao_runnable
+%! \begin{jseval}
+async(pgcell) => {
+const cssString = `
+@keyframes rotate {
+  from {
+    transform: rotate(-10deg);
+  }
+  to {
+    transform: rotate(10deg);
+  }
+}
+#logo {
+  animation: rotate 1s ease infinite alternate;
 }
 `;
   const style_el = document.createElement("style");
@@ -120,6 +148,14 @@ async(pgcell) => {
 %! \end{jseval}
 ```
 ~~~
+
+# TODO: Interact with runnables
+
+TODO: Load some runnable
+
+TODO: Load some query
+
+TODO: Fill runnable data
 
 ## Generate PDF for slides from the command line
 
