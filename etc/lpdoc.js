@@ -530,6 +530,10 @@ class SlideShow {
       // Return if the document has been processed
       return;
     }
+    if (base_el.querySelectorAll('.lpdoc-horiz-menu').length > 0) {
+      // Do nothing for website layout
+      return;
+    }
     let headers;
     // Add slide class to all subsections
     headers = base_el.querySelectorAll('h2, h3, h4, h5, h6');
