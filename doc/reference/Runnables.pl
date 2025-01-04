@@ -10,9 +10,9 @@
 :- doc(module,"
 
 This section describes how to include editable and runnable code
-blocks in @apl{LPdoc} documents, to create interactive @em{Active
+blocks inside @apl{LPdoc} documents, to create interactive @em{Active
 Logic Documents} (@apl{ALD}s). These code blocks can either run
-embedded in the document or be loaded into a playground,
+embedded in the document or be loaded into the Prolog playground.
 
 @section{Runnable Code Blocks}
 
@@ -26,9 +26,10 @@ the language is marked as @tt{ciao_runnable}, as follows:
 ~~~
 
 These code fragments are automatically rendered as editable cells that
-can be run, either in place, embedded in the document, for
-formats/backends that support this (typically @tt{html}), or loaded
-into a separate playground. Additional commands can be included within
+can be run, in place, embedded in the document, for
+formats/backends that support this (typically @tt{html}), or which can
+be loaded into a separate playground for other output formats.
+Additional commands can be included within
 the code which allow marking code areas specially to provide different
 behaviors and functionality.  Below, we provide an overview of the
 available commands along with a brief explanation for each:
@@ -296,12 +297,10 @@ factorial(N,F) :-
 %! \\end{solution}
 ```
 
-The examples shows how tests can be included, hints and solutions provided,
-etc.
-
-The following example illustrates the use of @tt{\\@begin\\{focus\\}}
-and @tt{\\@end\\{focus\\}} directives to specify that only some parts
-of the code be shown:
+Note that the example also shows how tests can be included, hints and
+solutions provided, etc. The following example further illustrates the
+use of @tt{\\@begin\\{focus\\}} and @tt{\\@end\\{focus\\}} directives
+to show only some parts of the code:
 
 ~~~
 ```ciao_runnable
