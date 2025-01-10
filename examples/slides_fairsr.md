@@ -3,7 +3,11 @@
 \begin{alert}
 This is an example of slides with embedded, runnable code. 
 
-- Hit the slides icon in top right to switch to slides mode. 
+- Hit the rectangular slides icon in top right to switch to slides mode. 
+
+- Hit the arrows button to enter presentation mode.
+
+- Hit the pencil button to edit the slides.
 
 - Hit \key{ESC} to exit slides mode.
 
