@@ -1024,13 +1024,6 @@ div.dropdown-content a:hover {
   display: flex;
 }
 
-.file-upload {
-  opacity: 0;
-  width: 0.1px;
-  height: 0.1px;
-  position: absolute;
-}
-
 .main-menu label {
   display: block;
   position: relative;
