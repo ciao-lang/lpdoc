@@ -1,4 +1,4 @@
-:- module(puzzle,[solution/2]).
+:- module(puzzle,[solution/1]).
 :- use_package(doccomments).
 
 %! \title Example - A simple puzzle
@@ -14,7 +14,7 @@
 % 
 % `[1,9,1,2,1,8,2,4,6,2,7,9,4,5,8,6,3,4,7,5,3,9,6,8,3,5,7]`
 
-%! solution(S): `S` is a solution of the puzzle
+%! solution(S): `S` is a solution to the puzzle
 
 solution( S ) :-
  % S must be a 27 element list: 
@@ -30,8 +30,8 @@ solution( S ) :-
  sublist( [8,_,_,_,_,_,_,_,_,8,_,_,_,_,_,_,_,_,8], S ),
  sublist( [9,_,_,_,_,_,_,_,_,_,9,_,_,_,_,_,_,_,_,_,9], S ).
 
-%! sublist( Y, XYZ ): list `Y` is a sublist of list `XYZ`.
-
+%! sublist( Y, XYZ ): List `Y` is a sublist of list `XYZ`.
+%! \doinclude sublist/2
 sublist( Y, XYZ ) :- 
  append( _X, YZ, XYZ ),  append( Y, _Z, YZ ).
 
