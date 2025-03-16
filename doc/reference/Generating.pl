@@ -105,7 +105,7 @@ into a larger document.
 @comment{Generating manuals from other IDEs and from bundles:}
 
 @noindent As mentioned before, you can generate manuals easily also
-from the the other supported IDEs such as @apl{VSC}, the
+from the other supported IDEs such as @apl{VSC}, the
 @tt{playground}, etc. which all have buttons and menus for the task.
 @concept{Bundle}s can also be configured through their manifest files
 to generate manuals automatically from builder commands (@tt{ciao
