@@ -1,4 +1,4 @@
-\title Using Ciao Prolog's Fair Search Rule
+\title Teaching LP and Prolog Using Ciao Prolog's Fair Search Rules
 
 \begin{alert}
 This is an example of slides with embedded, runnable code. 
@@ -16,9 +16,12 @@ This is an example of slides with embedded, runnable code.
 
 \begin{note}
 
-These are a few slides adapted from the presentation for the paper 
-[Teaching Pure LP with Prolog and a Fair Search Rule](https://ceur-ws.org/Vol-3799/paper2PEG2.0.pdf), 
-in the [Prolog Education Group's (PEG 2.0) 2024 Workshop](https://prolog-lang.org/Education/PrologEducationWS2024.html)
+These are a few slides adapted from [this
+presentation](https://cliplab.org/papers/teaching-w-fair-search-rule/)
+of the paper [Teaching Pure LP with Prolog and a Fair Search
+Rule](https://ceur-ws.org/Vol-3799/paper2PEG2.0.pdf), in the [Prolog
+Education Group's (PEG 2.0) 2024
+Workshop](https://prolog-lang.org/Education/PrologEducationWS2024.html)
 at [ICLP 2024](https://www.iclp24.utdallas.edu/).
 
 \end{note}
