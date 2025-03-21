@@ -1516,7 +1516,7 @@ export_list(Base, DocSt, AllExports) :-
    argument. It also eliminates by default predicates that start with
    $, which are typically internal predicates, unless they have a
    @tt{doinclude} property (treated separately). We also catch
-   @pred{call_in_module/2} (temporary artifact).".
+   @pred{'\006\call_in_module'/2} (temporary artifact).".
 
 eliminate_hidden([],           []).
 eliminate_hidden([Pred|Preds], EPreds) :-
@@ -1531,10 +1531,9 @@ eliminate_hidden([F/N|Preds], EPreds) :-
     !,
     eliminate_hidden(Preds, EPreds).
 % Special case for call_in_module/2 (temporary artifact).
-eliminate_hidden([call_in_module/2|Preds], EPreds) :-
+eliminate_hidden(['\006\call_in_module'/2|Preds], EPreds) :-
     !,
     eliminate_hidden(Preds, EPreds).
-% Special case for call_in_module/2 (temporary artifact).
 eliminate_hidden([Pred|Preds], [Pred|EPreds]) :-
     eliminate_hidden(Preds, EPreds).
 
