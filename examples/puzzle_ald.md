@@ -40,6 +40,7 @@ solution(S) :-
 
 
 %! \begin{solution}
+% A possible solution: 
 solution( S ) :- 
  % S must be a 27 element list: 
  S = [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
