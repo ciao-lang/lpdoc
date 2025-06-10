@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.9.0] - 2024-10-13
+
+### Added
+
+ - Slideshow view mode for HTML backend, including a slideshow
+   button in the navigation bar for enabling "view as slides" mode.
+   Slideshow allows keyboard navigation and a style for print media.
+ - (lpdoc.css) Style for print media for slide mode.
+ - Support for versioning URLs in lpdoc.js to invalidate
+   browser caches. URLs with version suffixes (e.g., .../foo.html?v=1)
+   allow invalidating browser caches when the version param is
+   updated. That param is ignored when fetching data from the HTTP
+   server.
+ - Updated manual to mention new IDEs (Playground, VSCode).
+ - .txt and .pdf as admissible formats for image handling.
+
+### Improved
+
+ - Documented some ALD tricks (not yet in the manual).
+ - Shorter but more frequent progress messages (useful for
+   large documents).
+ - Predicates starting with `$` (normally internal predicates)
+   are now not documented by default.
+
+### Fixed 
+
+ - Error messages related to no exports when there are doincludes.
+ - Fix location of (some) figures in texinfo backend.
+ - Updated `texinfo.tex` to avoid issues with dotless i, j.
+ - Try `magick` then `convert` as ImageMagick command
+
 ## [3.8.0] - 2024-4-1
 
 ### Added
